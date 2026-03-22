@@ -5,11 +5,11 @@ import { BookCard } from "@/shared/ui/book-card";
 import { motion } from "framer-motion";
 
 const books = [
-  { title: "O último suspiro", author: "Maria Silva", coverColor: "#8B4513" },
-  { title: "Noites de luar", author: "João Pedro", coverColor: "#2F4F4F" },
-  { title: "Fragmentos", author: "Ana Clara", coverColor: "#800020" },
-  { title: "Travessias", author: "Ricardo Borges", coverColor: "#1E3A5F" },
-  { title: "Sinais de fumaça", author: "Carla Mendes", coverColor: "#4A4A4A" },
+  { id: "1", title: "O último suspiro", author: "Maria Silva", coverColor: "#8B4513" },
+  { id: "2", title: "Noites de luar", author: "João Pedro", coverColor: "#2F4F4F" },
+  { id: "3", title: "Fragmentos", author: "Ana Clara", coverColor: "#800020" },
+  { id: "4", title: "Travessias", author: "Ricardo Borges", coverColor: "#1E3A5F" },
+  { id: "5", title: "Sinais de fumaça", author: "Carla Mendes", coverColor: "#4A4A4A" },
 ];
 
 export function BookCarousel() {
@@ -42,6 +42,7 @@ export function BookCarousel() {
               className="shrink-0"
             >
               <BookCard
+                id={book.id}
                 title={book.title}
                 author={book.author}
                 coverColor={book.coverColor}

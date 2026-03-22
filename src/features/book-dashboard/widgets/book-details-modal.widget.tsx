@@ -69,7 +69,7 @@ export function BookDetailsModalWidget({
       </motion.div>
 
       <motion.div
-        className="hidden xl:block fixed top-[73px] right-0 bottom-0 w-96 z-40 bg-primary-100 border-l border-primary-300 shadow-xl overflow-y-auto"
+        className="hidden xl:block fixed top-18.25 right-0 bottom-0 w-96 z-40 bg-primary-100 border-l border-primary-300 shadow-xl overflow-y-auto"
         initial={{ x: 20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 20, opacity: 0 }}

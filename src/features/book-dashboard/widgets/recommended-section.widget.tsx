@@ -92,7 +92,7 @@ export function RecommendedSectionWidget({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="flex-shrink-0 w-[70%] sm:w-[48%] sm:max-w-[280px] snap-start px-4 sm:px-0 first:pl-4 sm:first:pl-0 last:pr-4 sm:last:pr-0"
+            className="shrink-0 w-[70%] sm:w-[48%] sm:max-w-70 snap-start px-4 sm:px-0 first:pl-4 sm:first:pl-0 last:pr-4 sm:last:pr-0"
           >
             <RecommendedBookCard
               book={book}
@@ -120,7 +120,7 @@ function RecommendedBookCard({
       className="w-full flex flex-col items-center p-3 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow"
     >
       <div
-        className="w-full aspect-[2/3] max-w-[160px] rounded-xl shadow-md flex flex-col items-center justify-center p-3"
+        className="w-full aspect-2/3 max-w-40 rounded-xl shadow-md flex flex-col items-center justify-center p-3"
         style={{ backgroundColor: book.coverColor }}
       >
         <div className="flex-1 flex items-center justify-center">

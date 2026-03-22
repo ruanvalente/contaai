@@ -19,7 +19,7 @@ export function AudioPage() {
       <main className="p-4 lg:p-6">
         <Container>
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-6 sm:p-8 border border-amber-100">
+            <div className="bg-linear-to-br from-amber-50 to-orange-50 rounded-3xl p-6 sm:p-8 border border-amber-100">
               <div className="flex flex-col items-center text-center py-8 sm:py-12">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 bg-accent-500/10 rounded-full flex items-center justify-center mb-6 relative">
                   <HeadphonesIcon className="w-12 h-12 sm:w-14 sm:h-14 text-accent-500" />
@@ -138,7 +138,7 @@ function FeatureCard({
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-primary-200">
       <div className="flex items-start gap-3">
         <div
-          className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center flex-shrink-0 ${iconColor}`}
+          className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center shrink-0 ${iconColor}`}
         >
           {icon}
         </div>

@@ -13,6 +13,26 @@
   --color-gray-700: #4a4a4a;
   --color-gray-500: #7a7a7a;
 
+  --color-primary: #2563EB;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #dbeafe;
+
+  --color-background: #f5f3ef;
+  --color-surface: #FFFFFF;
+  --color-highlight: #2d2419;
+  --color-highlight-hover: #3d3429;
+
+  --color-sidebar-text: #c2a47e;
+  --color-sidebar-text-active: #FFFFFF;
+  --color-sidebar-hover: #3d3429;
+
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
   --font-display: var(--font-playfair);
   --font-sans: var(--font-inter);
 }
@@ -29,6 +49,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  overflow-x: hidden;
 }
 
 body {
@@ -50,4 +71,23 @@ h6 {
 
 button:hover {
   cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-border-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-500);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-700);
 }

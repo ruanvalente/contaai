@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
@@ -23,11 +23,14 @@ export function Header() {
   const { user, signOut, initialize } = useAuthStore();
   const { query, setQuery, results, setResults, isSearching, setIsSearching, getFromCache, addToCache, clearResults } = useSearchStore();
   const router = useRouter();
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isDiscoveryPage = pathname === "/dashboard";
 
   useEffect(() => {
     initialize();
@@ -127,6 +130,7 @@ export function Header() {
             <Menu className="w-5 h-5 text-gray-700" />
           </button>
 
+          {isDiscoveryPage && (
           <div className="relative flex-1 max-w-xl" ref={searchRef}>
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <input
@@ -184,6 +188,7 @@ export function Header() {
               </div>
             )}
           </div>
+        )}
         </div>
 
         <div className="shrink-0 ml-2">

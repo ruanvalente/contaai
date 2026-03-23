@@ -43,4 +43,5 @@ next-env.d.ts
 supabase/.branches/
 supabase/.temp/
 supabase/supabase/
+supabase/snippets/
 *.sql.bak

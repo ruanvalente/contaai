@@ -20,16 +20,16 @@ type SidebarProps = {
 }
 
 const menuItems = [
-  { href: "/", label: "Descobrir", icon: Compass },
-  { href: "/category", label: "Categorias", icon: LayoutGrid },
-  { href: "/library", label: "Minha Biblioteca", icon: Library },
-  { href: "/downloads", label: "Downloads", icon: Download },
-  { href: "/audio-books", label: "Audio Books", icon: Headphones },
-  { href: "/favorites", label: "Favoritos", icon: Heart },
+  { href: "/dashboard", label: "Descobrir", icon: Compass },
+  { href: "/dashboard/category", label: "Categorias", icon: LayoutGrid },
+  { href: "/dashboard/library", label: "Minha Biblioteca", icon: Library },
+  { href: "/dashboard/downloads", label: "Downloads", icon: Download },
+  { href: "/dashboard/audio", label: "Audio Books", icon: Headphones },
+  { href: "/dashboard/favorites", label: "Favoritos", icon: Heart },
 ];
 
 const footerItems = [
-  { href: "/settings", label: "Configurações", icon: Settings },
+  { href: "/dashboard/settings", label: "Configurações", icon: Settings },
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
@@ -52,7 +52,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex flex-col h-full">
           <div className="p-6">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex items-center gap-2"
               onClick={onClose}
             >

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { BookCover } from "./book-cover";
 import { StarRating } from "./star-rating";
 
-interface BookCardProps {
+type BookCardProps = {
   id: string;
   title: string;
   author: string;

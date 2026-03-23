@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookDetailsPanelWidget } from "./book-details-panel.widget";
 
-interface BookDetailsModalWidgetProps {
+type BookDetailsModalWidgetProps = {
   book: Book | null;
   onClose: () => void;
 }

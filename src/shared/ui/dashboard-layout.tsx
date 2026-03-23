@@ -4,7 +4,7 @@ import { useSidebar } from "@/shared/hooks/use-sidebar";
 import { Sidebar } from "@/shared/ui/sidebar";
 import { Container } from "@/shared/ui/container";
 
-interface DashboardLayoutProps {
+type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
   subtitle?: string;

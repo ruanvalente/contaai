@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { Book } from "../types/book.types";
 
-interface UseSelectedBookReturn {
+type UseSelectedBookReturn = {
   selectedBook: Book | null;
   selectBook: (book: Book | null) => void;
   selectBookById: (bookId: string) => void;

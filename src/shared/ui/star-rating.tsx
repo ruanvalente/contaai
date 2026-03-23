@@ -1,4 +1,4 @@
-interface StarRatingProps {
+type StarRatingProps = {
   rating: number;
   maxRating?: number;
   size?: "sm" | "md" | "lg";

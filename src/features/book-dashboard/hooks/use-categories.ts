@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { Category, CATEGORIES } from "../types/book.types";
 
-interface UseCategoriesReturn {
+type UseCategoriesReturn = {
   categories: Category[];
   activeCategory: Category;
   setActiveCategory: (category: Category) => void;

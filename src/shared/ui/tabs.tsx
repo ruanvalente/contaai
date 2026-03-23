@@ -1,6 +1,6 @@
 "use client";
 
-interface TabsProps {
+type TabsProps = {
   tabs: string[];
   activeTab: string;
   onTabChange: (tab: string) => void;

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { ChevronLeftIcon, ChevronRightIcon, StarIcon } from "../ui/icons.ui";
 
-interface RecommendedSectionWidgetProps {
+type RecommendedSectionWidgetProps = {
   books: Book[];
   onBookSelect: (book: Book) => void;
   isLoading?: boolean;

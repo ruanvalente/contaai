@@ -3,7 +3,7 @@
 import { SearchInput } from "./search-input";
 import { Avatar } from "./avatar";
 
-interface TopbarProps {
+type TopbarProps = {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   userName?: string;

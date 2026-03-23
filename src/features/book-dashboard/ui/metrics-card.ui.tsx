@@ -1,4 +1,4 @@
-interface MetricsCardProps {
+type MetricsCardProps = {
   label: string;
   value: number;
   icon: React.ReactNode;

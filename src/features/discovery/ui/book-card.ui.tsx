@@ -1,6 +1,6 @@
 import { Book } from "@/features/book-dashboard/types/book.types";
 
-interface BookCardProps {
+type BookCardProps = {
   book: Book;
   isSelected: boolean;
   onSelect: (book: Book) => void;

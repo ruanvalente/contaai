@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-interface BookCoverProps {
+type BookCoverProps = {
   title: string;
   coverUrl?: string;
   coverColor: string;

@@ -1,6 +1,6 @@
 import { Book } from "@/features/book-dashboard/types/book.types";
 
-export interface DiscoverState {
+export type DiscoverState = {
   books: Book[];
   recommendedBooks: Book[];
   filteredBooks: Book[];
@@ -10,7 +10,7 @@ export interface DiscoverState {
   query: string;
 }
 
-export interface DiscoverActions {
+export type DiscoverActions = {
   handleBookSelect: (book: Book) => void;
   handleClearSelection: () => void;
   handleLogin: () => void;

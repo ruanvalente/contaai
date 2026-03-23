@@ -5,7 +5,7 @@ import { Book, Category, CATEGORIES } from "@/features/book-dashboard/types/book
 import { BookCard } from "../ui/book-card.ui";
 import { Tabs } from "@/shared/ui/tabs";
 
-interface CategoriesSectionWidgetProps {
+type CategoriesSectionWidgetProps = {
   books: Book[];
   onBookSelect: (book: Book) => void;
   isLoading?: boolean;

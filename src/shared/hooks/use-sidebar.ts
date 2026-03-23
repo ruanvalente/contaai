@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 
-interface UseSidebarReturn {
+type UseSidebarReturn = {
   isOpen: boolean;
   isCollapsed: boolean;
   open: () => void;

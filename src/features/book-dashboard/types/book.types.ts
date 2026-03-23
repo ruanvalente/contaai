@@ -17,7 +17,7 @@ export const CATEGORIES: Category[] = [
   "Geography",
 ];
 
-export interface Book {
+export type Book = {
   id: string;
   title: string;
   author: string;
@@ -32,7 +32,7 @@ export interface Book {
   createdAt: Date;
 }
 
-export interface BookStats {
+export type BookStats = {
   pages: number;
   ratings: number;
   reviews: number;

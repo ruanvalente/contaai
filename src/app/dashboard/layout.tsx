@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface DashboardShellProps {
+type DashboardShellProps = {
   children: React.ReactNode;
 }
 
@@ -38,7 +38,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
   );
 }
 
-interface SidebarProps {
+type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
 }

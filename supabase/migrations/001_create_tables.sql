@@ -19,10 +19,12 @@ CREATE TABLE IF NOT EXISTS books (
 ALTER TABLE books ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access
+DROP POLICY IF EXISTS "Allow public read access" ON books;
 CREATE POLICY "Allow public read access" ON books
   FOR SELECT USING (true);
 
 -- Allow authenticated insert
+DROP POLICY IF EXISTS "Allow authenticated insert" ON books;
 CREATE POLICY "Allow authenticated insert" ON books
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 

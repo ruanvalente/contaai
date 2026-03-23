@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-interface AvatarProps {
+type AvatarProps = {
   name?: string;
   src?: string;
   size?: "sm" | "md" | "lg";

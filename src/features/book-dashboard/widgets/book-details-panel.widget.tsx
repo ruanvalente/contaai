@@ -13,7 +13,7 @@ import {
   MessageIcon,
 } from "../ui/icons.ui";
 
-interface BookDetailsPanelWidgetProps {
+type BookDetailsPanelWidgetProps = {
   book: Book | null;
   isLoading?: boolean;
 }

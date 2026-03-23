@@ -8,11 +8,16 @@ import { Book } from "@/features/book-dashboard/types/book.types";
 import { featuredBooks } from "@/features/book-dashboard/data/books";
 import { DiscoverHookReturn } from "../types/discover.types";
 
-export function useDiscover(): DiscoverHookReturn {
-  const { books, isLoading } = useBooks();
+type UseDiscoverProps = {
+  initialBooks?: Book[];
+}
+
+export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): DiscoverHookReturn {
+  const { books: fetchedBooks, isLoading } = useBooks();
   const { query, setQuery, hasQuery } = useSearch();
   const router = useRouter();
 
+  const books = initialBooks.length > 0 ? initialBooks : fetchedBooks;
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const recommendedBooks = useMemo(() => {
@@ -49,7 +54,7 @@ export function useDiscover(): DiscoverHookReturn {
     filteredBooks,
     selectedBook,
     isSearchActive: hasQuery,
-    isLoading,
+    isLoading: initialBooks.length > 0 ? false : isLoading,
     query,
     handleBookSelect,
     handleClearSelection,

@@ -5,7 +5,7 @@ import { useSidebar } from "@/shared/hooks/use-sidebar";
 import { useSearch } from "@/shared/hooks/use-search";
 import { SearchIcon, CloseIcon, MenuIcon } from "../ui/icons.ui";
 
-interface BookDashboardHeaderWidgetProps {
+type BookDashboardHeaderWidgetProps = {
   onLogin?: () => void;
 }
 

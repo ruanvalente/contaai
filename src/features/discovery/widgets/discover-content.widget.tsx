@@ -2,7 +2,7 @@ import { Book } from "@/features/book-dashboard/types/book.types";
 import { RecommendedSectionWidget } from "@/features/book-dashboard/widgets/recommended-section.widget";
 import { CategoriesSectionWidget } from "@/features/book-dashboard/widgets/categories-section.widget";
 
-interface DiscoverContentProps {
+type DiscoverContentProps = {
   books: Book[];
   recommendedBooks: Book[];
   onBookSelect: (book: Book) => void;

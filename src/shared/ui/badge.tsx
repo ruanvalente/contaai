@@ -1,4 +1,4 @@
-interface BadgeProps {
+type BadgeProps = {
   children: React.ReactNode;
   variant?: "default" | "primary" | "secondary" | "outline";
   size?: "sm" | "md";

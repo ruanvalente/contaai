@@ -1,4 +1,4 @@
-interface StatsCardProps {
+type StatsCardProps = {
   label: string;
   value: string | number;
   icon?: React.ReactNode;

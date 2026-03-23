@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 
-interface UseSearchReturn {
+type UseSearchReturn = {
   query: string;
   setQuery: (query: string) => void;
   clearQuery: () => void;

@@ -1,7 +1,7 @@
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookCard } from "./book-card.ui";
 
-interface BookGridProps {
+type BookGridProps = {
   books: Book[];
   selectedBook: Book | null;
   onSelectBook: (book: Book) => void;

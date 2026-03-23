@@ -1,4 +1,4 @@
-interface DiscoverHeaderProps {
+type DiscoverHeaderProps = {
   query: string;
   onQueryChange: (query: string) => void;
   onLogin: () => void;

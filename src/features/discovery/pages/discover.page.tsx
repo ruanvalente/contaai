@@ -6,8 +6,13 @@ import { DiscoverContent } from "../widgets/discover-content.widget";
 import { SearchResults } from "../widgets/search-results.widget";
 import { BookDetailsModal } from "../widgets/book-details-modal.widget";
 import { useDiscover } from "../hooks/use-discover.hook";
+import { Book } from "@/features/book-dashboard/types/book.types";
 
-export function DiscoverPage() {
+type DiscoverPageProps = {
+  initialBooks?: Book[];
+}
+
+export function DiscoverPage({ initialBooks = [] }: DiscoverPageProps) {
   const {
     books,
     recommendedBooks,
@@ -20,7 +25,7 @@ export function DiscoverPage() {
     handleClearSelection,
     handleLogin,
     setQuery,
-  } = useDiscover();
+  } = useDiscover({ initialBooks });
 
   return (
     <>

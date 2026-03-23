@@ -2,7 +2,7 @@ import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookGrid } from "../ui/book-grid.ui";
 import { EmptyState, SearchEmptyIcon } from "../ui/empty-state.ui";
 
-interface SearchResultsProps {
+type SearchResultsProps = {
   query: string;
   books: Book[];
   selectedBook: Book | null;

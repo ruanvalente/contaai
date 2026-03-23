@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Avatar } from "../ui/avatar";
 
-interface UserDropdownProps {
+type UserDropdownProps = {
   userName?: string;
   email?: string;
   userAvatar?: string;

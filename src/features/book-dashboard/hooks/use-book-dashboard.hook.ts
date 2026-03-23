@@ -7,7 +7,7 @@ import { useSearch } from "@/shared/hooks/use-search";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { featuredBooks } from "@/features/book-dashboard/data/books";
 
-interface UseBookDashboardReturn {
+type UseBookDashboardReturn = {
   books: Book[];
   recommendedBooks: Book[];
   filteredBooks: Book[];

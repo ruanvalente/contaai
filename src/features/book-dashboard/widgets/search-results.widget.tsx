@@ -3,7 +3,7 @@
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookCard } from "../ui/book-card.ui";
 
-interface SearchResultsWidgetProps {
+type SearchResultsWidgetProps = {
   query: string;
   books: Book[];
   onSelectBook: (book: Book) => void;

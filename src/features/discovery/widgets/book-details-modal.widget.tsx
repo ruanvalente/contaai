@@ -1,25 +1,11 @@
 import { motion } from "framer-motion";
+import { X } from "lucide-react";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookDetailsPanelWidget } from "@/features/book-dashboard/widgets/book-details-panel.widget";
 
 type BookDetailsModalProps = {
   book: Book | null;
   onClose: () => void;
-}
-
-function CloseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
 }
 
 export function BookDetailsModal({
@@ -47,7 +33,7 @@ export function BookDetailsModal({
               className="p-2 rounded-full hover:bg-primary-200 transition-colors"
               aria-label="Fechar"
             >
-              <CloseIcon className="w-4 h-4 lg:w-5 lg:h-5 text-gray-500" />
+              <X className="w-4 h-4 lg:w-5 lg:h-5 text-gray-500" />
             </button>
           </div>
           <BookDetailsPanelWidget book={book} isLoading={false} />
@@ -80,7 +66,7 @@ export function BookDetailsModal({
                 className="p-2 rounded-full hover:bg-primary-200 transition-colors"
                 aria-label="Fechar"
               >
-                <CloseIcon className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
           </div>

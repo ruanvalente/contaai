@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { Button } from "@/shared/ui/button";
 import { mockBooks } from "@/features/book-dashboard/data/books";
+import { BookOpen } from "lucide-react";
 
 type TabType = "my-stories" | "reading" | "completed";
 
@@ -86,7 +87,7 @@ export function LibraryPage() {
             {getBooks().length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookIcon className="w-10 h-10 text-gray-400" />
+                  <BookOpen className="w-10 h-10 text-gray-400" />
                 </div>
                 <p className="text-gray-500 max-w-sm mx-auto">{getEmptyMessage()}</p>
                 {activeTab === "my-stories" && (
@@ -149,15 +150,6 @@ export function LibraryPage() {
         </Container>
       </main>
     </>
-  );
-}
-
-function BookIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
   );
 }
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { Tabs } from "@/shared/ui/tabs";
 import { mockBooks } from "@/features/book-dashboard/data/books";
+import { Star } from "lucide-react";
 
 const categories = [
   { id: "all", name: "Todos", icon: "📚" },
@@ -121,7 +122,7 @@ export function CategoryPage() {
                         {book.author}
                       </p>
                       <div className="flex items-center gap-1 mt-2">
-                        <StarIcon className="w-3 h-3 text-warning" filled />
+                        <Star className="w-3 h-3 text-warning fill-warning" />
                         <span className="text-xs text-gray-600">
                           {book.rating}
                         </span>
@@ -144,25 +145,5 @@ export function CategoryPage() {
         </Container>
       </main>
     </>
-  );
-}
-
-function StarIcon({
-  className,
-  filled,
-}: {
-  className?: string;
-  filled?: boolean;
-}) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
   );
 }

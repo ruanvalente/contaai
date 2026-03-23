@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { mockBooks } from "@/features/book-dashboard/data/books";
+import { HardDrive, Download, Trash2 } from "lucide-react";
 
 const downloadedBooks = mockBooks.slice(0, 4);
 
@@ -35,7 +36,7 @@ export function DownloadsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-accent-500/10 rounded-lg flex items-center justify-center">
-                    <StorageIcon className="w-5 h-5 text-accent-600" />
+                    <HardDrive className="w-5 h-5 text-accent-600" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">Armazenamento usado</p>
@@ -58,7 +59,7 @@ export function DownloadsPage() {
             {downloads.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <DownloadIcon className="w-10 h-10 text-gray-400" />
+                  <Download className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum download</h3>
                 <p className="text-gray-500 max-w-sm mx-auto">
@@ -104,7 +105,7 @@ export function DownloadsPage() {
                         className="p-2 text-gray-400 hover:text-error transition-colors"
                         aria-label="Remover download"
                       >
-                        <TrashIcon className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                       <button className="text-xs px-3 py-1.5 rounded-lg bg-accent-500 text-white hover:bg-accent-600 transition-colors">
                         Ler
@@ -118,33 +119,5 @@ export function DownloadsPage() {
         </Container>
       </main>
     </>
-  );
-}
-
-function StorageIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="2" width="20" height="20" rx="2" />
-      <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h5M12 12h5M12 17h5" />
-    </svg>
-  );
-}
-
-function DownloadIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  );
-}
-
-function TrashIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    </svg>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { Container } from "@/shared/ui/container";
-import { BookDashboardHeaderWidget } from "../widgets/book-dashboard-header.widget";
 import { BookDetailsModalWidget } from "../widgets/book-details-modal.widget";
 import { RecommendedSectionWidget } from "../widgets/recommended-section.widget";
 import { CategoriesSectionWidget } from "../widgets/categories-section.widget";
@@ -18,12 +17,10 @@ export function BookDashboardPage() {
     isLoading,
     handleBookSelect,
     handleClearSelection,
-    handleLogin,
   } = useBookDashboard();
 
   return (
     <>
-      <BookDashboardHeaderWidget onLogin={handleLogin} />
       <main className="pb-8">
         <Container>
           {isSearchActive ? (

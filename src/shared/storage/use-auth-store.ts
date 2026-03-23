@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/shared/config/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 type AuthState = {
   user: User | null;
@@ -24,6 +24,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   isInitialized: false,
 
   initialize: async () => {
+    const supabase = createClient();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -43,6 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signIn: async (email, password) => {
     set({ isLoading: true });
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -53,6 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signUp: async (email, password) => {
     set({ isLoading: true });
+    const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -63,12 +66,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signOut: async () => {
     set({ isLoading: true });
+    const supabase = createClient();
     await supabase.auth.signOut();
     set({ user: null, session: null, isLoading: false });
   },
 
   signInWithOAuth: async (provider) => {
     set({ isLoading: true });
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {

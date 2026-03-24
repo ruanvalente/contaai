@@ -38,32 +38,40 @@ export async function getUserProfile(): Promise<Profile | null> {
     const supabase = await getSupabaseServerClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return null;
     }
 
     const { data: profile, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", session.user.id)
-      .single();
+      .eq("id", user.id)
+      .maybeSingle();
 
-    if (error) {
+    if (error && error.code !== "PGRST116") {
       console.error("Error fetching profile:", error);
-      return null;
     }
 
+    const profileData = profile || {
+      id: user.id,
+      name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      bio: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
     return {
-      id: profile.id,
-      name: profile.name,
-      email: session.user.email || "",
-      avatar_url: profile.avatar_url,
-      bio: profile.bio,
-      created_at: profile.created_at,
-      updated_at: profile.updated_at,
+      id: profileData.id,
+      name: profileData.name,
+      email: user.email || "",
+      avatar_url: profileData.avatar_url,
+      bio: profileData.bio,
+      created_at: profileData.created_at,
+      updated_at: profileData.updated_at,
     };
   } catch (err) {
     console.error("Error in getUserProfile:", err);
@@ -78,10 +86,10 @@ export async function updateUserProfile(
     const supabase = await getSupabaseServerClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return { success: false, error: "Usuário não autenticado." };
     }
 
@@ -111,8 +119,10 @@ export async function updateUserProfile(
 
     const { data: updatedProfile, error } = await supabase
       .from("profiles")
-      .update(updates)
-      .eq("id", session.user.id)
+      .upsert({
+        id: user.id,
+        ...updates,
+      })
       .select()
       .single();
 
@@ -126,7 +136,7 @@ export async function updateUserProfile(
       profile: {
         id: updatedProfile.id,
         name: updatedProfile.name,
-        email: session.user.email || "",
+        email: user.email || "",
         avatar_url: updatedProfile.avatar_url,
         bio: updatedProfile.bio,
         created_at: updatedProfile.created_at,

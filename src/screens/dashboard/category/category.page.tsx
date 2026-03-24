@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { Tabs } from "@/shared/ui/tabs";
 import { mockBooks } from "@/features/book-dashboard/data/books";
+import { Star, Search } from "lucide-react";
 
 const categories = [
   { id: "all", name: "Todos", icon: "📚" },
@@ -32,6 +33,7 @@ const storyCategories = [
 export function CategoryPage() {
   const [activeTab, setActiveTab] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBooks = selectedCategory
     ? mockBooks.filter(
@@ -39,6 +41,14 @@ export function CategoryPage() {
           book.category.toLowerCase() === selectedCategory.toLowerCase(),
       )
     : mockBooks;
+
+  const displayedBooks = filteredBooks
+    .filter((book) => activeTab === "All" || book.category === activeTab)
+    .filter(
+      (book) =>
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   return (
     <>
@@ -92,50 +102,54 @@ export function CategoryPage() {
                 tabs={storyCategories}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                className="mb-6"
+                className="mb-4"
               />
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {filteredBooks
-                  .filter(
-                    (book) =>
-                      activeTab === "All" || book.category === activeTab,
-                  )
-                  .map((book) => (
-                    <button
-                      key={book.id}
-                      className="flex flex-col items-center p-3 rounded-2xl bg-white shadow-sm hover:shadow-md transition-all hover:scale-[1.02]"
-                    >
-                      <div
-                        className="w-full aspect-2/3 max-w-35 rounded-lg shadow flex items-center justify-center p-2 mb-3"
-                        style={{ backgroundColor: book.coverColor }}
-                      >
-                        <span className="text-white/90 font-display text-xs text-center line-clamp-3">
-                          {book.title}
-                        </span>
-                      </div>
-                      <h3 className="text-sm font-medium text-gray-900 text-center line-clamp-2 w-full">
-                        {book.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {book.author}
-                      </p>
-                      <div className="flex items-center gap-1 mt-2">
-                        <StarIcon className="w-3 h-3 text-warning" filled />
-                        <span className="text-xs text-gray-600">
-                          {book.rating}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar nas categorias..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-primary-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                />
               </div>
 
-              {filteredBooks.filter(
-                (book) => activeTab === "All" || book.category === activeTab,
-              ).length === 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {displayedBooks.map((book) => (
+                  <button
+                    key={book.id}
+                    className="flex flex-col items-center p-3 rounded-2xl bg-white shadow-sm hover:shadow-md transition-all hover:scale-[1.02]"
+                  >
+                    <div
+                      className="w-full aspect-2/3 max-w-35 rounded-lg shadow flex items-center justify-center p-2 mb-3"
+                      style={{ backgroundColor: book.coverColor }}
+                    >
+                      <span className="text-white/90 font-display text-xs text-center line-clamp-3">
+                        {book.title}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900 text-center line-clamp-2 w-full">
+                      {book.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {book.author}
+                    </p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <Star className="w-3 h-3 text-warning fill-warning" />
+                      <span className="text-xs text-gray-600">
+                        {book.rating}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {displayedBooks.length === 0 && (
                 <div className="text-center py-12">
                   <p className="text-gray-500">
-                    Nenhuma história encontrada nesta categoria.
+                    Nenhuma história encontrada{searchQuery ? ` para "${searchQuery}"` : ""}.
                   </p>
                 </div>
               )}
@@ -144,25 +158,5 @@ export function CategoryPage() {
         </Container>
       </main>
     </>
-  );
-}
-
-function StarIcon({
-  className,
-  filled,
-}: {
-  className?: string;
-  filled?: boolean;
-}) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
   );
 }

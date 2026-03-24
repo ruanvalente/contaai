@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { mockBooks } from "@/features/book-dashboard/data/books";
+import { Search, Heart, Star } from "lucide-react";
 
 const favoriteBooks = mockBooks.slice(0, 6);
 
@@ -38,7 +39,7 @@ export function FavoritesPage() {
           <div className="space-y-6">
             {favorites.length > 0 && (
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -52,7 +53,7 @@ export function FavoritesPage() {
             {favorites.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <HeartIcon className="w-10 h-10 text-gray-400" />
+                  <Heart className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Nenhum favorito
@@ -85,7 +86,7 @@ export function FavoritesPage() {
                         className="absolute top-2 right-2 z-10 p-2 bg-white/90 rounded-full shadow-sm hover:bg-error hover:text-white transition-colors"
                         aria-label="Remover dos favoritos"
                       >
-                        <HeartFilledIcon className="w-4 h-4 text-accent-500" />
+                        <Heart className="w-4 h-4 text-accent-500 fill-accent-500" />
                       </button>
 
                       <div className="p-3">
@@ -106,7 +107,7 @@ export function FavoritesPage() {
                         </p>
 
                         <div className="flex items-center gap-1 mt-2">
-                          <StarIcon className="w-3 h-3 text-warning" filled />
+                          <Star className="w-3 h-3 text-warning fill-warning" />
                           <span className="text-xs text-gray-600">
                             {book.rating}
                           </span>
@@ -121,68 +122,5 @@ export function FavoritesPage() {
         </Container>
       </main>
     </>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function HeartIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
-function HeartFilledIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
-function StarIcon({
-  className,
-  filled,
-}: {
-  className?: string;
-  filled?: boolean;
-}) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
   );
 }

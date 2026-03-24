@@ -1,3 +1,5 @@
+import { Search, Library } from "lucide-react";
+
 type EmptyStateProps = {
   title: string;
   description: string;
@@ -19,19 +21,9 @@ export function EmptyState({ title, description, icon }: EmptyStateProps) {
 }
 
 export function SearchEmptyIcon() {
-  return (
-    <svg className="w-10 h-10 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
+  return <Search className="w-10 h-10 text-gray-400" />;
 }
 
 export function BookEmptyIcon() {
-  return (
-    <svg className="w-10 h-10 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-    </svg>
-  );
+  return <Library className="w-10 h-10 text-gray-400" />;
 }

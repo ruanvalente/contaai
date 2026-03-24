@@ -1,7 +1,6 @@
 "use client";
 
 import { Container } from "@/shared/ui/container";
-import { DiscoverHeader } from "../ui/discover-header.ui";
 import { DiscoverContent } from "../widgets/discover-content.widget";
 import { SearchResults } from "../widgets/search-results.widget";
 import { BookDetailsModal } from "../widgets/book-details-modal.widget";
@@ -23,18 +22,10 @@ export function DiscoverPage({ initialBooks = [] }: DiscoverPageProps) {
     query,
     handleBookSelect,
     handleClearSelection,
-    handleLogin,
-    setQuery,
   } = useDiscover({ initialBooks });
 
   return (
     <>
-      <DiscoverHeader
-        query={query}
-        onQueryChange={setQuery}
-        onLogin={handleLogin}
-      />
-
       <main className={`pb-8 transition-all duration-300 ${selectedBook ? "xl:pr-96" : ""}`}>
         <Container>
           {isSearchActive ? (

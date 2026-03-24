@@ -3,17 +3,18 @@
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
 import { Avatar } from "@/shared/ui/avatar";
+import { User, Palette, BookOpen, Bell, Shield, Info, Sun, Moon, Monitor } from "lucide-react";
 
 export function SettingsPage() {
   const [activeSection, setActiveSection] = useState("profile");
 
   const sections = [
-    { id: "profile", label: "Perfil", icon: ProfileIcon },
-    { id: "appearance", label: "Aparência", icon: PaletteIcon },
-    { id: "reading", label: "Leitura", icon: BookIcon },
-    { id: "notifications", label: "Notificações", icon: BellIcon },
-    { id: "privacy", label: "Privacidade", icon: ShieldIcon },
-    { id: "about", label: "Sobre", icon: InfoIcon },
+    { id: "profile", label: "Perfil", icon: User },
+    { id: "appearance", label: "Aparência", icon: Palette },
+    { id: "reading", label: "Leitura", icon: BookOpen },
+    { id: "notifications", label: "Notificações", icon: Bell },
+    { id: "privacy", label: "Privacidade", icon: Shield },
+    { id: "about", label: "Sobre", icon: Info },
   ];
 
   return (
@@ -152,9 +153,9 @@ function AppearanceSection() {
               }`}
             >
               <div className="w-full h-12 bg-primary-100 rounded-lg mb-2 flex items-center justify-center">
-                {theme === "light" && <SunIcon className="w-6 h-6 text-warning" />}
-                {theme === "dark" && <MoonIcon className="w-6 h-6 text-gray-600" />}
-                {theme === "system" && <MonitorIcon className="w-6 h-6 text-gray-600" />}
+                {theme === "light" && <Sun className="w-6 h-6 text-warning" />}
+                {theme === "dark" && <Moon className="w-6 h-6 text-gray-600" />}
+                {theme === "system" && <Monitor className="w-6 h-6 text-gray-600" />}
               </div>
               <span className="text-sm font-medium text-gray-700 capitalize">{theme}</span>
             </button>
@@ -280,7 +281,7 @@ function AboutSection() {
       
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 bg-accent-500 rounded-2xl flex items-center justify-center">
-          <BookIcon className="w-8 h-8 text-white" />
+          <BookOpen className="w-8 h-8 text-white" />
         </div>
         <div>
           <h3 className="text-xl font-bold text-gray-900">ContaAI</h3>
@@ -318,96 +319,5 @@ function ToggleSwitch({ defaultChecked }: { defaultChecked?: boolean }) {
         }`}
       />
     </button>
-  );
-}
-
-function ProfileIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function PaletteIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="13.5" cy="6.5" r="2.5" />
-      <circle cx="17.5" cy="10.5" r="2.5" />
-      <circle cx="8.5" cy="7.5" r="2.5" />
-      <circle cx="6.5" cy="12.5" r="2.5" />
-      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z" />
-    </svg>
-  );
-}
-
-function BookIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-    </svg>
-  );
-}
-
-function BellIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
-  );
-}
-
-function ShieldIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
-function InfoIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-  );
-}
-
-function SunIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-  );
-}
-
-function MoonIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function MonitorIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-      <line x1="8" y1="21" x2="16" y2="21" />
-      <line x1="12" y1="17" x2="12" y2="21" />
-    </svg>
   );
 }

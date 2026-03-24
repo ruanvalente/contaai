@@ -5,6 +5,7 @@ import { useAuthStore } from "@/shared/storage/use-auth-store";
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Book } from "lucide-react";
 
 export function RegisterFormWidget() {
   const [name, setName] = useState("");
@@ -53,7 +54,7 @@ export function RegisterFormWidget() {
         <div className="bg-surface rounded-2xl shadow-sm p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <BookIcon className="w-10 h-10 text-primary" />
+              <Book className="w-10 h-10 text-primary" />
               <span className="text-2xl font-bold text-gray-900">ContaAI</span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900">Criar conta</h1>
@@ -186,21 +187,6 @@ export function RegisterFormWidget() {
         </div>
       </div>
     </div>
-  );
-}
-
-function BookIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
   );
 }
 

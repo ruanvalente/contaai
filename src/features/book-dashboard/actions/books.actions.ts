@@ -110,14 +110,20 @@ export async function getBookByIdAction(id: string): Promise<Book | null> {
 }
 
 export async function searchBooksAction(query: string): Promise<Book[]> {
+  console.log("[DEBUG] searchBooksAction called with:", JSON.stringify({ query, type: typeof query }));
   try {
     const supabase = await getSupabaseAdmin();
+    
+    const searchQuery = typeof query === "string" ? query : String(query);
+    console.log("[DEBUG] Search query:", searchQuery);
     
     const { data, error } = await supabase
       .from("books")
       .select("*")
-      .or(`title.ilike.%${query}%,author.ilike.%${query}%,category.ilike.%${query}%`)
+      .or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`)
       .order("created_at", { ascending: false });
+    
+    console.log("[DEBUG] Search results:", { dataCount: data?.length, error });
 
     if (error) {
       console.error("Error searching books:", error);

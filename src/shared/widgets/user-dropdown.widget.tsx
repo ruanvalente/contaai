@@ -3,7 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Avatar } from "../ui/avatar";
-import { ChevronDown, User, Library, Heart, Settings, LogOut } from "lucide-react";
+import {
+  ChevronDown,
+  User,
+  Library,
+  Heart,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 type UserDropdownProps = {
   userName?: string;
@@ -12,7 +19,7 @@ type UserDropdownProps = {
   isAuthenticated: boolean;
   onLogin: () => void;
   onLogout: () => void;
-}
+};
 
 export function UserDropdown({
   userName,
@@ -67,7 +74,7 @@ export function UserDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-lg border border-border overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-lg border border-border overflow-hidden z-100">
           <div className="p-4 border-b border-border">
             <p className="font-medium text-gray-900">{userName || "Usuário"}</p>
             <p className="text-sm text-gray-500">{email || ""}</p>

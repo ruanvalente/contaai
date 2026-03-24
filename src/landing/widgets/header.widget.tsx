@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Container } from "@/shared/ui/container";
 import { Button } from "@/shared/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,11 +20,11 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary-100/80 backdrop-blur-md border-b border-primary-300">
       <Container>
         <nav className="flex items-center justify-between h-20">
-          <a href="/landingpage" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl font-display font-bold text-gray-900">
               Conta<span className="text-accent-500">AI</span>
             </span>
-          </a>
+          </Link>
 
           <ul className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
@@ -39,12 +40,16 @@ export function Header() {
           </ul>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="secondary" className="px-5 py-2 text-sm">
-              Entrar
-            </Button>
-            <Button variant="primary" className="px-5 py-2 text-sm">
-              Criar Conta
-            </Button>
+            <Link href="/login">
+              <Button variant="secondary" className="px-5 py-2 text-sm">
+                Entrar
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button variant="primary" className="px-5 py-2 text-sm">
+                Criar Conta
+              </Button>
+            </Link>
           </div>
 
           <button
@@ -91,12 +96,16 @@ export function Header() {
                   </li>
                 ))}
                 <li className="flex flex-col gap-3 pt-4 border-t border-primary-300">
-                  <Button variant="secondary" className="w-full">
-                    Log In
-                  </Button>
-                  <Button variant="primary" className="w-full">
-                    Sign Up
-                  </Button>
+                  <Link href="/login" className="w-full">
+                    <Button variant="secondary" className="w-full">
+                      Entrar
+                    </Button>
+                  </Link>
+                  <Link href="/register" className="w-full">
+                    <Button variant="primary" className="w-full">
+                      Criar Conta
+                    </Button>
+                  </Link>
                 </li>
               </ul>
             </Container>

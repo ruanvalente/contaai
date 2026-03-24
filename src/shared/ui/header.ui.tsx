@@ -6,6 +6,7 @@ import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 import { useSearchStore } from "@/shared/store/search.store";
 import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
+import { signOutAction } from "@/features/auth/actions/auth.actions";
 import { Avatar } from "@/shared/ui/avatar";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { 
@@ -20,7 +21,7 @@ import {
 
 export function Header() {
   const toggle = useSidebarStore((state) => state.toggle);
-  const { user, signOut, initialize } = useAuthStore();
+  const { user, initialize, clearAuth } = useAuthStore();
   const { query, setQuery, results, setResults, isSearching, setIsSearching, getFromCache, addToCache, clearResults } = useSearchStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -95,7 +96,8 @@ export function Header() {
   }, [query, getFromCache, setResults, addToCache, setIsSearching]);
 
   const handleLogout = async () => {
-    await signOut();
+    await signOutAction();
+    clearAuth();
     router.push("/login");
   };
 
@@ -112,9 +114,9 @@ export function Header() {
     setIsSearchFocused(false);
   };
 
-  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "Usuário";
+  const userName = user?.name || user?.email?.split("@")[0] || "Usuário";
   const userEmail = user?.email || "";
-  const userAvatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
+  const userAvatar = "";
 
   const showSearchResults = isSearchFocused && query.trim().length > 0;
 

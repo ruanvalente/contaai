@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { LandingPageScreen } from "@/screens/landing-page/page";
 
 export default function Home() {
-  redirect("/book-dashboard");
+  return <LandingPageScreen />;
 }

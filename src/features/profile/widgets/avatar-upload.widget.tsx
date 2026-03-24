@@ -9,7 +9,7 @@ type AvatarUploadProps = {
   src?: string | null;
   size?: "sm" | "md" | "lg" | "xl";
   userId: string;
-  onUploadComplete?: (url: string) => void;
+  onUploadComplete?: (file: File, previewUrl: string) => void;
   isUploading?: boolean;
 };
 
@@ -34,7 +34,8 @@ export function AvatarUpload({
     };
     reader.readAsDataURL(file);
 
-    onUploadComplete?.(URL.createObjectURL(file));
+    const previewUrl = URL.createObjectURL(file);
+    onUploadComplete?.(file, previewUrl);
   };
 
   const handleClick = () => {

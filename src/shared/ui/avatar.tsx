@@ -17,7 +17,7 @@ export function Avatar({
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
     lg: "w-12 h-12 text-base",
-    xl: "w-16 h-16 text-lg",
+    xl: "w-24 h-24 text-xl",
   };
 
   const getInitials = (name?: string) => {
@@ -32,7 +32,9 @@ export function Avatar({
   const initials = getInitials(name);
 
   if (src) {
-    const isExternal = src.startsWith("http") || src.startsWith("//");
+    const isExternal = (src.startsWith("http") || src.startsWith("//")) 
+      && !src.includes("127.0.0.1") 
+      && !src.includes("localhost");
     
     return (
       <div

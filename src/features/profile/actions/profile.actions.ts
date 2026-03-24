@@ -1,37 +1,7 @@
 "use server";
 
 import { Profile, UpdateProfileInput, ProfileResult } from "@/features/profile/types/profile.types";
-
-async function getSupabaseServerClient() {
-  const { createServerClient } = await import("@supabase/ssr");
-  const { cookies } = await import("next/headers");
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing");
-  }
-
-  const cookieStore = await cookies();
-
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Ignore errors from Server Components
-        }
-      },
-    },
-  });
-}
+import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 export async function getUserProfile(): Promise<Profile | null> {
   try {
@@ -55,14 +25,20 @@ export async function getUserProfile(): Promise<Profile | null> {
       console.error("Error fetching profile:", error);
     }
 
+    const fallbackName = user.user_metadata?.full_name || user.user_metadata?.name || null;
+    
     const profileData = profile || {
       id: user.id,
-      name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+      name: fallbackName,
       avatar_url: user.user_metadata?.avatar_url || null,
       bio: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+
+    if (profile && !profile.name && fallbackName) {
+      profileData.name = fallbackName;
+    }
 
     return {
       id: profileData.id,

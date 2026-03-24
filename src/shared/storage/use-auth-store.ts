@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: user ? {
           id: user.id,
           email: user.email || "",
-          name: user.user_metadata?.full_name,
+          name: user.user_metadata?.full_name || user.user_metadata?.name,
           avatar_url: user.user_metadata?.avatar_url,
         } : null,
         isInitialized: true,
@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             user: {
               id: session.user.id,
               email: session.user.email || "",
-              name: session.user.user_metadata?.full_name,
+              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
               avatar_url: session.user.user_metadata?.avatar_url,
             },
           });

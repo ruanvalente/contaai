@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
-import { ProfileFormWidget } from "@/features/profile/components/profile-form.widget";
+import { ProfileFormWidget } from "@/features/profile/widgets/profile-form.widget";
 import { User, Palette, BookOpen, Bell, Shield, Info, Sun, Moon, Monitor } from "lucide-react";
 
 export function SettingsPage() {

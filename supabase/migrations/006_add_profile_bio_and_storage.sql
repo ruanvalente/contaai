@@ -40,12 +40,12 @@ DROP POLICY IF EXISTS "Authenticated users can upload to contaai" ON storage.obj
 CREATE POLICY "Authenticated users can upload to contaai" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'contaai' 
-    AND auth.role() = 'authenticated'
+    AND auth.uid() = (storage.foldername(name))[1]::uuid
   );
 
 DROP POLICY IF EXISTS "Users can manage own files in contaai" ON storage.objects;
 CREATE POLICY "Users can manage own files in contaai" ON storage.objects
   FOR ALL USING (
     bucket_id = 'contaai' 
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND auth.uid() = (storage.foldername(name))[1]::uuid
   );

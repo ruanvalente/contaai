@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { User, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 
 export type AuthUser = {
   id: string;
   email: string;
   name?: string;
+  avatar_url?: string;
 };
 
 type AuthState = {
@@ -42,6 +43,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           id: session.user.id,
           email: session.user.email || "",
           name: session.user.user_metadata?.full_name,
+          avatar_url: session.user.user_metadata?.avatar_url,
         } : null,
         isInitialized: true,
         isLoading: false,
@@ -54,6 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             id: session.user.id,
             email: session.user.email || "",
             name: session.user.user_metadata?.full_name,
+            avatar_url: session.user.user_metadata?.avatar_url,
           } : null,
         });
       });

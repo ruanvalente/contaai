@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
-import { Avatar } from "@/shared/ui/avatar";
+import { ProfileFormWidget } from "@/features/profile/components/profile-form.widget";
 import { User, Palette, BookOpen, Bell, Shield, Info, Sun, Moon, Monitor } from "lucide-react";
 
 export function SettingsPage() {
@@ -75,49 +75,7 @@ function ProfileSection() {
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
       <h2 className="text-lg font-semibold text-gray-900">Perfil</h2>
       
-      <div className="flex items-center gap-4">
-        <Avatar name="Usuário" size="lg" />
-        <button className="text-sm text-accent-600 hover:underline">
-          Alterar foto
-        </button>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-          <input
-            type="text"
-            defaultValue="Usuário"
-            className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            defaultValue="usuario@email.com"
-            className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-        <textarea
-          rows={3}
-          placeholder="Conte um pouco sobre você..."
-          className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
-        />
-      </div>
-
-      <div className="flex gap-3 pt-4 border-t border-primary-200">
-        <button className="px-6 py-2.5 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-colors">
-          Salvar Alterações
-        </button>
-        <button className="px-6 py-2.5 border border-primary-300 text-gray-700 rounded-xl font-medium hover:bg-primary-200 transition-colors">
-          Cancelar
-        </button>
-      </div>
+      <ProfileFormWidget />
 
       <div className="pt-6 border-t border-primary-200">
         <h3 className="text-base font-semibold text-gray-900 mb-4">Segurança</h3>

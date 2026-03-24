@@ -126,7 +126,7 @@ export function Header() {
 
   const userName = user?.name || user?.email?.split("@")[0] || "Usuário";
   const userEmail = user?.email || "";
-  const userAvatar = "";
+  const userAvatar = user?.avatar_url || "";
 
   const showSearchResults = isSearchFocused && query.trim().length > 0;
 

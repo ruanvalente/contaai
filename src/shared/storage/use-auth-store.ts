@@ -34,31 +34,35 @@ export const useAuthStore = create<AuthState>((set) => ({
       const supabase = createClient();
       
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        data: { user },
+      } = await supabase.auth.getUser();
       
       set({
-        session,
-        user: session?.user ? {
-          id: session.user.id,
-          email: session.user.email || "",
-          name: session.user.user_metadata?.full_name,
-          avatar_url: session.user.user_metadata?.avatar_url,
+        session: null,
+        user: user ? {
+          id: user.id,
+          email: user.email || "",
+          name: user.user_metadata?.full_name,
+          avatar_url: user.user_metadata?.avatar_url,
         } : null,
         isInitialized: true,
         isLoading: false,
       });
 
       supabase.auth.onAuthStateChange((_event, session) => {
-        set({
-          session,
-          user: session?.user ? {
-            id: session.user.id,
-            email: session.user.email || "",
-            name: session.user.user_metadata?.full_name,
-            avatar_url: session.user.user_metadata?.avatar_url,
-          } : null,
-        });
+        if (session?.user) {
+          set({
+            session,
+            user: {
+              id: session.user.id,
+              email: session.user.email || "",
+              name: session.user.user_metadata?.full_name,
+              avatar_url: session.user.user_metadata?.avatar_url,
+            },
+          });
+        } else {
+          set({ session: null, user: null });
+        }
       });
     } catch (err) {
       console.error("Error initializing auth:", err);

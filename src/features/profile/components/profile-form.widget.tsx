@@ -15,6 +15,8 @@ export function ProfileFormWidget() {
   const [bio, setBio] = useState("");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [originalName, setOriginalName] = useState("");
+  const [originalBio, setOriginalBio] = useState("");
   const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -31,10 +33,13 @@ export function ProfileFormWidget() {
         setBio(profile.bio || "");
         setEmail(profile.email || "");
         setAvatarUrl(profile.avatar_url);
+        setOriginalName(profile.name || "");
+        setOriginalBio(profile.bio || "");
         setOriginalAvatarUrl(profile.avatar_url);
       } else if (user) {
         setEmail(user.email);
         setName(user.name || "");
+        setOriginalName(user.name || "");
       }
       setIsLoading(false);
     };
@@ -43,8 +48,8 @@ export function ProfileFormWidget() {
   }, [user]);
 
   const hasChanges =
-    name !== (user?.name || "") ||
-    bio !== "" ||
+    name !== originalName ||
+    bio !== originalBio ||
     selectedFile !== null;
 
   const handleAvatarChange = (previewUrl: string) => {
@@ -57,8 +62,8 @@ export function ProfileFormWidget() {
   };
 
   const handleCancel = () => {
-    setName(user?.name || "");
-    setBio("");
+    setName(originalName);
+    setBio(originalBio);
     setAvatarUrl(originalAvatarUrl);
     setSelectedFile(null);
     setError(null);
@@ -120,6 +125,8 @@ export function ProfileFormWidget() {
           avatar_url: result.profile.avatar_url || undefined,
         });
 
+        setOriginalName(result.profile.name || "");
+        setOriginalBio(result.profile.bio || "");
         setOriginalAvatarUrl(newAvatarUrl);
         setSuccess("Perfil atualizado com sucesso!");
       } catch (err) {

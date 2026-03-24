@@ -131,7 +131,7 @@ export function Header() {
   const showSearchResults = isSearchFocused && query.trim().length > 0;
 
   return (
-    <header className="sticky top-0 z-30 bg-primary-100/95 backdrop-blur-md border-b border-primary-300">
+    <header className="sticky top-0 z-50 bg-primary-100/95 backdrop-blur-md border-b border-primary-300">
       <div className="flex justify-between items-center px-3 py-3 lg:px-6">
         <div className="flex items-center gap-2 flex-1">
           <button
@@ -232,7 +232,7 @@ export function Header() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-[100]">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-100">
                   <div className="p-4 border-b border-primary-200">
                     <p className="font-medium text-gray-900">{userName}</p>
                     <p className="text-sm text-gray-500 truncate">

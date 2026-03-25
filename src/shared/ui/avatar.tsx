@@ -32,30 +32,18 @@ export function Avatar({
   const initials = getInitials(name);
 
   if (src) {
-    const isExternal = (src.startsWith("http") || src.startsWith("//")) 
-      && !src.includes("127.0.0.1") 
-      && !src.includes("localhost");
-    
     return (
       <div
         className={`${sizes[size]} rounded-full overflow-hidden ${className}`}
       >
-        {isExternal ? (
-          <Image
-            priority
-            src={src}
-            alt={name || "Avatar"}
-            width={96}
-            height={96}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <img
-            src={src}
-            alt={name || "Avatar"}
-            className="w-full h-full object-cover"
-          />
-        )}
+        <Image
+          priority
+          src={src}
+          alt={name || "Avatar"}
+          width={96}
+          height={96}
+          className="w-full h-full object-cover"
+        />
       </div>
     );
   }

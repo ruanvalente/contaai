@@ -1,11 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/", "/landingpage", "/login", "/register", "/forgot-password", "/terms", "/privacy"];
-  const isPublicPath = publicPaths.some((path) => pathname === path || pathname.startsWith("/auth/"));
+  const publicPaths = [
+    "/",
+    "/landingpage",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/terms",
+    "/privacy",
+  ];
+  const isPublicPath = publicPaths.some(
+    (path) => pathname === path || pathname.startsWith("/auth/"),
+  );
 
   if (isPublicPath) {
     return NextResponse.next();

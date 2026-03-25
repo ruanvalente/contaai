@@ -45,3 +45,7 @@ supabase/.temp/
 supabase/supabase/
 supabase/snippets/
 *.sql.bak
+
+# agents / skills
+.agents/
+skills-lock.json

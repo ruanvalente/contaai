@@ -12,6 +12,7 @@ export async function proxy(request: NextRequest) {
     "/forgot-password",
     "/terms",
     "/privacy",
+    "/api/health",
   ];
   const isPublicPath = publicPaths.some(
     (path) => pathname === path || pathname.startsWith("/auth/"),
@@ -61,6 +62,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/health|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

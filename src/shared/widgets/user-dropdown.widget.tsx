@@ -3,7 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Avatar } from "../ui/avatar";
-import { ChevronDown, User, Library, Heart, Settings, LogOut } from "lucide-react";
+import {
+  ChevronDown,
+  User,
+  Library,
+  Heart,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 type UserDropdownProps = {
   userName?: string;
@@ -12,7 +19,7 @@ type UserDropdownProps = {
   isAuthenticated: boolean;
   onLogin: () => void;
   onLogout: () => void;
-}
+};
 
 export function UserDropdown({
   userName,

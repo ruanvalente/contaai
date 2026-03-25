@@ -1,20 +1,23 @@
 import { create } from "zustand";
-import { User, Session } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/client";
+import { Session } from "@supabase/supabase-js";
+
+export type AuthUser = {
+  id: string;
+  email: string;
+  name?: string;
+  avatar_url?: string;
+};
 
 type AuthState = {
-  user: User | null;
+  user: AuthUser | null;
   session: Session | null;
   isLoading: boolean;
   isInitialized: boolean;
 
   initialize: () => Promise<void>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signOut: () => Promise<void>;
-  signInWithOAuth: (
-    provider: "google" | "github",
-  ) => Promise<{ error: Error | null }>;
+  setUser: (user: AuthUser | null) => void;
+  setSession: (session: Session | null) => void;
+  clearAuth: () => void;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,63 +27,68 @@ export const useAuthStore = create<AuthState>((set) => ({
   isInitialized: false,
 
   initialize: async () => {
-    const supabase = createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    set({
-      session,
-      user: session?.user ?? null,
-      isInitialized: true,
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
+    set({ isLoading: true });
+    
+    try {
+      const { createClient } = await import("@/utils/supabase/client");
+      const supabase = createClient();
+      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      
       set({
-        session,
-        user: session?.user ?? null,
+        session: null,
+        user: user ? {
+          id: user.id,
+          email: user.email || "",
+          name: user.user_metadata?.full_name || user.user_metadata?.name,
+          avatar_url: user.user_metadata?.avatar_url,
+        } : null,
+        isInitialized: true,
+        isLoading: false,
       });
-    });
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          set({
+            session,
+            user: {
+              id: session.user.id,
+              email: session.user.email || "",
+              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
+              avatar_url: session.user.user_metadata?.avatar_url,
+            },
+          });
+        } else {
+          set({ session: null, user: null });
+        }
+      });
+    } catch (err) {
+      console.error("Error initializing auth:", err);
+      set({ isInitialized: true, isLoading: false });
+    }
   },
 
-  signIn: async (email, password) => {
-    set({ isLoading: true });
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    set({ isLoading: false });
-    return { error: error as Error | null };
-  },
+  setUser: (user) => set({ user }),
 
-  signUp: async (email, password) => {
-    set({ isLoading: true });
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    set({ isLoading: false });
-    return { error: error as Error | null };
-  },
+  setSession: (session) => set({ session }),
 
-  signOut: async () => {
-    set({ isLoading: true });
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    set({ user: null, session: null, isLoading: false });
-  },
-
-  signInWithOAuth: async (provider) => {
-    set({ isLoading: true });
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    set({ isLoading: false });
-    return { error: error as Error | null };
-  },
+  clearAuth: () => set({ user: null, session: null }),
 }));
+
+export const useUser = () => {
+  const user = useAuthStore((state) => state.user);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  
+  return { user, isInitialized, isLoading };
+};
+
+export const useRequireAuth = () => {
+  const user = useAuthStore((state) => state.user);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  
+  return { user, isInitialized, isLoading, isAuthenticated: !!user };
+};

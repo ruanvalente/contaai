@@ -13,17 +13,17 @@
   --color-gray-700: #4a4a4a;
   --color-gray-500: #7a7a7a;
 
-  --color-primary: #2563EB;
+  --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-primary-light: #dbeafe;
 
   --color-background: #f5f3ef;
-  --color-surface: #FFFFFF;
+  --color-surface: #ffffff;
   --color-highlight: #2d2419;
   --color-highlight-hover: #3d3429;
 
   --color-sidebar-text: #c2a47e;
-  --color-sidebar-text-active: #FFFFFF;
+  --color-sidebar-text-active: #ffffff;
   --color-sidebar-hover: #3d3429;
 
   --color-border: #e5e7eb;
@@ -40,6 +40,23 @@
 :root {
   --background: #f5f3ef;
   --foreground: #1a1a1a;
+  --reading-font-size: 16px;
+  --reading-background: #ffffff;
+  --reading-foreground: #1a1a1a;
+  --reading-muted: #6b7280;
+}
+
+.reading-mode-night {
+  --reading-background: #f5e6d3 !important;
+  --reading-foreground: #3d3429 !important;
+  --reading-muted: #8b7355 !important;
+}
+
+.reading-content {
+  background-color: var(--reading-background) !important;
+  color: var(--reading-foreground) !important;
+  font-size: var(--reading-font-size) !important;
+  line-height: 1.7 !important;
 }
 
 * {

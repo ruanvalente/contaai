@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "@/landing/widgets/header.widget";
 import { Hero } from "@/landing/widgets/hero.widget";
 import { BookCarousel } from "@/landing/widgets/book-carousel.widget";
@@ -100,12 +101,12 @@ export function LandingPageScreen() {
             <p className="text-gray-700 max-w-xl mx-auto mb-8">
               Compartilhe suas histórias com a comunidade. É grátis e simples.
             </p>
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="inline-block bg-accent-500 text-white px-8 py-4 rounded-full font-medium hover:bg-accent-600 transition-colors"
             >
               Criar Conta
-            </a>
+            </Link>
           </div>
         </Container>
       </section>
@@ -144,7 +145,7 @@ export function LandingPageScreen() {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700/20 text-center">
             <p className="text-gray-500 text-sm">
-              © 2024 ContaAI. Todos os direitos reservados.
+              © 6 ContaAI. Todos os direitos reservados.
             </p>
           </div>
         </Container>

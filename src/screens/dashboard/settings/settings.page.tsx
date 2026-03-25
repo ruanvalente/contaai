@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { Container } from "@/shared/ui/container";
-import { Avatar } from "@/shared/ui/avatar";
-import { User, Palette, BookOpen, Bell, Shield, Info, Sun, Moon, Monitor } from "lucide-react";
+import { ProfileFormWidget } from "@/features/profile/widgets/profile-form.widget";
+import { ReadingSectionWidget } from "@/features/profile/reading/widgets/reading-section.widget";
+import { User, BookOpen, Bell, Shield, Info } from "lucide-react";
 
 export function SettingsPage() {
   const [activeSection, setActiveSection] = useState("profile");
 
   const sections = [
     { id: "profile", label: "Perfil", icon: User },
-    { id: "appearance", label: "Aparência", icon: Palette },
     { id: "reading", label: "Leitura", icon: BookOpen },
     { id: "notifications", label: "Notificações", icon: Bell },
     { id: "privacy", label: "Privacidade", icon: Shield },
@@ -57,8 +57,7 @@ export function SettingsPage() {
 
             <div className="flex-1">
               {activeSection === "profile" && <ProfileSection />}
-              {activeSection === "appearance" && <AppearanceSection />}
-              {activeSection === "reading" && <ReadingSection />}
+              {activeSection === "reading" && <ReadingSectionWidget />}
               {activeSection === "notifications" && <NotificationsSection />}
               {activeSection === "privacy" && <PrivacySection />}
               {activeSection === "about" && <AboutSection />}
@@ -75,49 +74,7 @@ function ProfileSection() {
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
       <h2 className="text-lg font-semibold text-gray-900">Perfil</h2>
       
-      <div className="flex items-center gap-4">
-        <Avatar name="Usuário" size="lg" />
-        <button className="text-sm text-accent-600 hover:underline">
-          Alterar foto
-        </button>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-          <input
-            type="text"
-            defaultValue="Usuário"
-            className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            defaultValue="usuario@email.com"
-            className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-        <textarea
-          rows={3}
-          placeholder="Conte um pouco sobre você..."
-          className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
-        />
-      </div>
-
-      <div className="flex gap-3 pt-4 border-t border-primary-200">
-        <button className="px-6 py-2.5 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-colors">
-          Salvar Alterações
-        </button>
-        <button className="px-6 py-2.5 border border-primary-300 text-gray-700 rounded-xl font-medium hover:bg-primary-200 transition-colors">
-          Cancelar
-        </button>
-      </div>
+      <ProfileFormWidget />
 
       <div className="pt-6 border-t border-primary-200">
         <h3 className="text-base font-semibold text-gray-900 mb-4">Segurança</h3>
@@ -130,88 +87,6 @@ function ProfileSection() {
         <button className="px-4 py-2 text-error hover:underline">
           Excluir Conta
         </button>
-      </div>
-    </div>
-  );
-}
-
-function AppearanceSection() {
-  return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900">Aparência</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Tema</label>
-        <div className="grid grid-cols-3 gap-3">
-          {["light", "dark", "system"].map((theme) => (
-            <button
-              key={theme}
-              className={`p-4 rounded-xl border-2 transition-colors ${
-                theme === "light" 
-                  ? "border-accent-500 bg-accent-500/5" 
-                  : "border-primary-300 hover:border-accent-500"
-              }`}
-            >
-              <div className="w-full h-12 bg-primary-100 rounded-lg mb-2 flex items-center justify-center">
-                {theme === "light" && <Sun className="w-6 h-6 text-warning" />}
-                {theme === "dark" && <Moon className="w-6 h-6 text-gray-600" />}
-                {theme === "system" && <Monitor className="w-6 h-6 text-gray-600" />}
-              </div>
-              <span className="text-sm font-medium text-gray-700 capitalize">{theme}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Fonte</label>
-        <select className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500">
-          <option>Inter (Padrão)</option>
-          <option>Playfair Display</option>
-          <option>Georgia</option>
-        </select>
-      </div>
-
-      <button className="px-6 py-2.5 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-colors">
-        Aplicar
-      </button>
-    </div>
-  );
-}
-
-function ReadingSection() {
-  return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900">Preferências de Leitura</h2>
-      
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium text-gray-900">Tamanho da fonte</p>
-            <p className="text-sm text-gray-500">Ajuste o tamanho do texto</p>
-          </div>
-          <select className="px-4 py-2 border border-primary-300 rounded-xl">
-            <option>16px</option>
-            <option>18px</option>
-            <option>20px</option>
-          </select>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium text-gray-900">Modo noturno</p>
-            <p className="text-sm text-gray-500">Reduz brilho para leitura</p>
-          </div>
-          <ToggleSwitch />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium text-gray-900">Auto-scroll</p>
-            <p className="text-sm text-gray-500">Role automaticamente</p>
-          </div>
-          <ToggleSwitch defaultChecked />
-        </div>
       </div>
     </div>
   );

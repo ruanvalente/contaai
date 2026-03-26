@@ -350,6 +350,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 | Frontend Design | `.agents/skills/frontend-design/` |
 | Supabase Postgres Best Practices | `.agents/skills/supabase-postgres-best-practices/` |
 | Web Artifacts Builder | `.agents/skills/web-artifacts-builder/` |
+| Accessibility Compliance | `.agents/skills/accessibility-compliance/` |
+| Defining Product Vision | `.agents/skills/defining-product-vision/` |
+| Vercel Next Best Practices | `.agents/skills/vercel-next-best-practices/` |
+| Docker Expert | `.agents/skills/docker-expert/` |
+| Next Cache Components | `.agents/skills/next-cache-components/` |
+| Typeset | `.agents/skills/typeset/` |
 
 ### Verificar Skills
 

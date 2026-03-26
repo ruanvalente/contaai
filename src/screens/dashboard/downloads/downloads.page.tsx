@@ -59,7 +59,7 @@ export function DownloadsPage() {
             {downloads.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Download className="w-10 h-10 text-gray-400" />
+                  <Download className="w-10 h-10 text-gray-500" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum download</h3>
                 <p className="text-gray-500 max-w-sm mx-auto">
@@ -94,15 +94,16 @@ export function DownloadsPage() {
                       </h3>
                       <p className="text-xs text-gray-500 mt-0.5">{book.author}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs text-gray-400">2.5 MB</span>
-                        <span className="text-xs text-gray-300">•</span>
-                        <span className="text-xs text-gray-400">{book.pages} páginas</span>
+                        <span className="text-xs text-gray-500">2.5 MB</span>
+                        <span className="text-xs text-gray-400">•</span>
+                        <span className="text-xs text-gray-500">{book.pages} páginas</span>
                       </div>
                     </div>
                     <div className="flex flex-col items-end justify-between">
                       <button
+                        type="button"
                         onClick={() => removeDownload(book.id)}
-                        className="p-2 text-gray-400 hover:text-error transition-colors"
+                        className="p-2 text-gray-500 hover:text-error transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
                         aria-label="Remover download"
                       >
                         <Trash2 className="w-4 h-4" />

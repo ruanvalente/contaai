@@ -27,12 +27,22 @@ export function BookCard({
   onClick,
   className = "",
 }: BookCardProps) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick?.(id);
+    }
+  };
+
   return (
-    <motion.div
-      className={`relative cursor-pointer ${isFeatured ? "sm:scale-105 z-10" : ""} ${className}`}
+    <motion.button
+      type="button"
+      className={`relative cursor-pointer text-left bg-transparent border-none p-0 ${isFeatured ? "sm:scale-105 z-10" : ""} ${className}`}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
       onClick={() => onClick?.(id)}
+      onKeyDown={handleKeyDown}
+      aria-label={`Ver detalhes do livro ${title} de ${author}`}
     >
       <div className="flex flex-col items-center">
         <BookCover
@@ -55,6 +65,6 @@ export function BookCard({
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }

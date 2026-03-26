@@ -28,7 +28,7 @@ export function ProfileFields({
             className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             placeholder="Seu nome"
           />
-          <p className="text-xs text-gray-400 mt-1 text-right">
+            <p className="text-xs text-gray-500 mt-1 text-right">
             {name.length}/100
           </p>
         </div>
@@ -57,7 +57,7 @@ export function ProfileFields({
           placeholder="Conte um pouco sobre você..."
           className="w-full px-4 py-2.5 border border-primary-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
         />
-        <p className="text-xs text-gray-400 mt-1 text-right">
+          <p className="text-xs text-gray-500 mt-1 text-right">
           {bio.length}/500
         </p>
       </div>

@@ -39,7 +39,7 @@ export function FavoritesPage() {
           <div className="space-y-6">
             {favorites.length > 0 && (
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" aria-hidden="true" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -53,7 +53,7 @@ export function FavoritesPage() {
             {favorites.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-gray-400" />
+                  <Heart className="w-10 h-10 text-gray-500" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Nenhum favorito

@@ -47,7 +47,7 @@ export function ReadingSectionWidget() {
       
       <ReadingPreview />
       
-      <p className="text-xs text-gray-400 pt-2">
+      <p className="text-xs text-gray-500 pt-2">
         As alterações são salvas automaticamente e aplicadas em tempo real.
       </p>
     </div>

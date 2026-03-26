@@ -15,6 +15,7 @@ const navItems = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuId = "mobile-menu";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary-100/80 backdrop-blur-md border-b border-primary-300">
@@ -53,9 +54,11 @@ export function Header() {
           </div>
 
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            aria-controls={menuId}
+            aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
           >
             <svg
               width="24"
@@ -78,10 +81,12 @@ export function Header() {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
+            id={menuId}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-primary-100 border-t border-primary-300"
+            role="menu"
           >
             <Container>
               <ul className="py-4 flex flex-col gap-4">

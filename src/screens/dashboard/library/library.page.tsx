@@ -87,7 +87,7 @@ export function LibraryPage() {
             {getBooks().length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-10 h-10 text-gray-400" />
+                  <BookOpen className="w-10 h-10 text-gray-500" aria-hidden="true" />
                 </div>
                 <p className="text-gray-500 max-w-sm mx-auto">{getEmptyMessage()}</p>
                 {activeTab === "my-stories" && (
@@ -118,7 +118,7 @@ export function LibraryPage() {
                       <p className="text-sm text-gray-500 mt-1">{book.author}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge className="text-xs">{book.category}</Badge>
-                        <span className="text-xs text-gray-400">{book.pages} páginas</span>
+                        <span className="text-xs text-gray-500">{book.pages} páginas</span>
                       </div>
                       {activeTab === "reading" && (
                         <div className="mt-3">

@@ -19,7 +19,7 @@ export function Button({
   disabled = false,
 }: ButtonProps) {
   const baseStyles =
-    "px-6 py-3 rounded-full font-medium transition-all duration-300 inline-flex items-center justify-center gap-2";
+    "px-6 py-3 rounded-full font-medium transition-all duration-300 inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2";
 
   const variants = {
     primary: "bg-accent-500 text-white hover:bg-accent-600",

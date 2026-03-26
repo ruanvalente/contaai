@@ -6,6 +6,7 @@ export type BooksFilters = {
   category?: string;
   search?: string;
   limit?: number;
+  offset?: number;
 }
 
 type SupabaseBook = {
@@ -46,15 +47,24 @@ export async function getBooks(filters?: BooksFilters): Promise<Book[]> {
 
   let query = supabase
     .from("books")
-    .select("*")
+    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
     .order("created_at", { ascending: false });
 
   if (filters?.category && filters.category !== "All") {
     query = query.eq("category", filters.category);
   }
 
+  if (filters?.search) {
+    const searchTerm = filters.search.trim();
+    query = query.or(`title.ilike.*${searchTerm}*,author.ilike.*${searchTerm}*,category.ilike.*${searchTerm}*`);
+  }
+
   if (filters?.limit) {
     query = query.limit(filters.limit);
+  }
+
+  if (filters?.offset) {
+    query = query.range(filters.offset, (filters.limit || 20) + (filters.offset || 0) - 1);
   }
 
   const { data, error } = await query;
@@ -64,19 +74,7 @@ export async function getBooks(filters?: BooksFilters): Promise<Book[]> {
     return [];
   }
 
-  let books = (data || []).map(formatBook);
-
-  if (filters?.search) {
-    const searchLower = filters.search.toLowerCase().trim();
-    books = books.filter(
-      (book) =>
-        book.title.toLowerCase().includes(searchLower) ||
-        book.author.toLowerCase().includes(searchLower) ||
-        book.category.toLowerCase().includes(searchLower)
-    );
-  }
-
-  return books;
+  return (data || []).map(formatBook);
 }
 
 export async function getBookById(id: string): Promise<Book | null> {
@@ -85,7 +83,7 @@ export async function getBookById(id: string): Promise<Book | null> {
 
   const { data, error } = await supabase
     .from("books")
-    .select("*")
+    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
     .eq("id", id)
     .single();
 
@@ -103,13 +101,12 @@ export async function getCategories(): Promise<string[]> {
 
   const { data, error } = await supabase
     .from("books")
-    .select("category");
+    .select("category", { count: "exact", head: false });
 
   if (error) {
     console.error("Error fetching categories:", error);
     return [];
   }
 
-  const uniqueCategories = [...new Set(data.map((item) => item.category))];
-  return uniqueCategories;
+  return [...new Set(data.map((item) => item.category))];
 }

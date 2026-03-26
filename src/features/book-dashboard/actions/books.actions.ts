@@ -72,7 +72,7 @@ export async function getBooksAction(): Promise<Book[]> {
     
     const { data, error } = await supabase
       .from("books")
-      .select("*")
+      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -93,7 +93,7 @@ export async function getBookByIdAction(id: string): Promise<Book | null> {
     
     const { data, error } = await supabase
       .from("books")
-      .select("*")
+      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
       .eq("id", id)
       .single();
 
@@ -115,8 +115,8 @@ export async function searchBooksAction(query: string): Promise<Book[]> {
     
     const { data, error } = await supabase
       .from("books")
-      .select("*")
-      .or(`title.ilike.%${query}%,author.ilike.%${query}%,category.ilike.%${query}%`)
+      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+      .or(`title.ilike.*${query}*,author.ilike.*${query}*,category.ilike.*${query}*`)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -137,7 +137,7 @@ export async function getBooksByCategoryAction(category: string): Promise<Book[]
     
     const { data, error } = await supabase
       .from("books")
-      .select("*")
+      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
       .eq("category", category)
       .order("created_at", { ascending: false });
 

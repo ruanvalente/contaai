@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Avatar } from "@/shared/ui/avatar";
 import { Camera } from "lucide-react";
 
@@ -59,9 +60,10 @@ export function AvatarUpload({
             className={`${sizeClasses[size]} rounded-full overflow-hidden ring-2 ring-primary-200`}
           >
             {preview ? (
-              <img
+              <Image
                 src={preview}
                 alt="Preview"
+                fill
                 className="w-full h-full object-cover"
               />
             ) : (

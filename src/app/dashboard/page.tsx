@@ -1,10 +1,8 @@
-import { getBooksAction } from "@/features/book-dashboard/actions/books.actions";
+import { getCachedBooks } from "@/features/book-dashboard/data/cached-books";
 import { DiscoverPageWrapper } from "@/features/discovery/pages/discover-page-wrapper";
 
-export const dynamic = "force-dynamic";
-
 export default async function Page() {
-  const books = await getBooksAction();
+  const books = await getCachedBooks();
 
   return <DiscoverPageWrapper initialBooks={books} />;
 }

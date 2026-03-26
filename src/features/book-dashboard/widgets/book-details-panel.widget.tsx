@@ -45,7 +45,7 @@ function EmptyState() {
   return (
     <div className="w-full max-w-sm mx-auto bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center text-center min-h-64">
       <div className="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center mb-3">
-        <BookOpenIcon className="w-6 h-6 text-gray-400" />
+        <BookOpenIcon className="w-6 h-6 text-gray-500" aria-hidden="true" />
       </div>
       <h3 className="text-sm font-semibold text-gray-900 mb-1">
         Selecione um Livro

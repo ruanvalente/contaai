@@ -62,70 +62,78 @@ export function RegisterFormWidget() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-error/10 text-error rounded-lg text-sm">
+            <div className="mb-4 p-4 bg-error/10 text-error rounded-lg text-sm" role="alert" aria-live="assertive">
               {error}
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-4 p-4 bg-success/10 text-success rounded-lg text-sm">
+            <div className="mb-4 p-4 bg-success/10 text-success rounded-lg text-sm" role="status" aria-live="polite">
               {successMessage}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="register-name" className="block text-sm font-medium text-gray-700 mb-1">
                 Nome
               </label>
               <input
+                id="register-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
                 className="w-full px-4 py-2.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 placeholder="Seu nome"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1">
                 E-mail
               </label>
               <input
+                id="register-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
                 className="w-full px-4 py-2.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 placeholder="seu@email.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">
                 Senha
               </label>
               <input
+                id="register-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                autoComplete="new-password"
                 className="w-full px-4 py-2.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="register-confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirmar senha
               </label>
               <input
+                id="register-confirm-password"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
+                autoComplete="new-password"
                 className="w-full px-4 py-2.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 placeholder="••••••••"
               />

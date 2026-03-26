@@ -32,7 +32,7 @@ export function SearchInput({
 
   return (
     <div className="relative w-full">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
       <input
         type="text"
         value={localValue}
@@ -42,11 +42,12 @@ export function SearchInput({
       />
       {localValue && (
         <button
+          type="button"
           onClick={() => setLocalValue("")}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
           aria-label="Limpar busca"
         >
-          <X className="w-4 h-4 text-gray-400" />
+          <X className="w-4 h-4 text-gray-500" />
         </button>
       )}
     </div>

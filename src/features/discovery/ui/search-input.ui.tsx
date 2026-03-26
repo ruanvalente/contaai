@@ -9,7 +9,7 @@ type SearchInputProps = {
 export function SearchInput({ value, onChange, placeholder = "Buscar..." }: SearchInputProps) {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" aria-hidden="true" />
       <input
         type="text"
         value={value}
@@ -19,11 +19,12 @@ export function SearchInput({ value, onChange, placeholder = "Buscar..." }: Sear
       />
       {value && (
         <button
+          type="button"
           onClick={() => onChange("")}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary-200"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
           aria-label="Limpar busca"
         >
-          <X className="w-4 h-4 text-gray-400" />
+          <X className="w-4 h-4 text-gray-500" aria-hidden="true" />
         </button>
       )}
     </div>

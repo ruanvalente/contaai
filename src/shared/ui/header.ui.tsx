@@ -19,6 +19,10 @@ import {
   LogOut,
 } from "lucide-react";
 
+const SEARCH_ID = "header-search-input";
+const SEARCH_RESULTS_ID = "header-search-results";
+const USER_DROPDOWN_ID = "user-dropdown-menu";
+
 export function Header() {
   const toggle = useSidebarStore((state) => state.toggle);
   const { user, initialize, clearAuth } = useAuthStore();
@@ -40,6 +44,7 @@ export function Header() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null);
 
   const isDiscoveryPage = pathname === "/dashboard";
 
@@ -65,6 +70,22 @@ export function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        if (isDropdownOpen) {
+          setIsDropdownOpen(false);
+          dropdownButtonRef.current?.focus();
+        }
+        if (isSearchFocused) {
+          setIsSearchFocused(false);
+        }
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isDropdownOpen, isSearchFocused]);
 
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -121,7 +142,7 @@ export function Header() {
   const handleClearSearch = () => {
     setQuery("");
     clearResults();
-    setIsSearchFocused(false);
+    document.getElementById(SEARCH_ID)?.focus();
   };
 
   const userName = user?.name || user?.email?.split("@")[0] || "Usuário";
@@ -135,8 +156,9 @@ export function Header() {
       <div className="flex justify-between items-center px-3 py-3 lg:px-6">
         <div className="flex items-center gap-2 flex-1">
           <button
+            type="button"
             onClick={toggle}
-            className="shrink-0 p-2 rounded-lg hover:bg-primary-200 transition-colors lg:hidden"
+            className="shrink-0 p-2 rounded-lg hover:bg-primary-200 transition-colors lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
             aria-label="Abrir menu"
           >
             <Menu className="w-5 h-5 text-gray-700" />
@@ -144,41 +166,59 @@ export function Header() {
 
           {isDiscoveryPage && (
             <div className="relative flex-1 max-w-xl" ref={searchRef}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <label htmlFor={SEARCH_ID} className="sr-only">
+                Buscar livros
+              </label>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" aria-hidden="true" />
               <input
+                id={SEARCH_ID}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 placeholder="Buscar livros..."
                 className="w-full pl-9 pr-10 py-2 text-sm bg-white border border-primary-300 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 transition-colors"
+                aria-autocomplete="list"
+                aria-controls={SEARCH_RESULTS_ID}
+                aria-expanded={showSearchResults}
+                role="combobox"
               />
               {isSearching && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 animate-spin" aria-hidden="true" />
               )}
               {!isSearching && query && (
                 <button
+                  type="button"
                   onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary-200"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
                   aria-label="Limpar busca"
                 >
-                  <X className="w-4 h-4 text-gray-400" />
+                  <X className="w-4 h-4 text-gray-500" />
                 </button>
               )}
 
               {showSearchResults && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-50 max-h-80 overflow-y-auto">
+                <div
+                  id={SEARCH_RESULTS_ID}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-50 max-h-80 overflow-y-auto"
+                  role="listbox"
+                  aria-label="Resultados da busca"
+                >
                   {results.length > 0 ? (
-                    <ul>
+                    <ul role="presentation">
                       {results.slice(0, 8).map((book) => (
                         <li key={book.id}>
                           <button
+                            type="button"
                             onClick={() => handleBookSelect(book)}
-                            className="flex items-center gap-3 w-full px-4 py-3 hover:bg-primary-50 transition-colors text-left"
+                            className="flex items-center gap-3 w-full px-4 py-3 hover:bg-primary-50 transition-colors text-left focus-visible:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                            role="option"
+                            aria-selected={false}
                           >
                             <div
                               className="w-10 h-14 rounded flex items-center justify-center text-white text-xs font-bold shrink-0"
                               style={{ backgroundColor: book.coverColor }}
+                              aria-hidden="true"
                             >
                               {book.title.charAt(0)}
                             </div>
@@ -190,7 +230,7 @@ export function Header() {
                                 {book.author}
                               </p>
                             </div>
-                            <span className="text-xs text-gray-400 shrink-0">
+                            <span className="text-xs text-gray-500 shrink-0">
                               {book.category}
                             </span>
                           </button>
@@ -198,7 +238,7 @@ export function Header() {
                       ))}
                     </ul>
                   ) : !isSearching ? (
-                    <div className="px-4 py-6 text-center text-gray-500">
+                    <div className="px-4 py-6 text-center text-gray-500" role="status" aria-live="polite">
                       <p>Nenhum resultado encontrado</p>
                       <p className="text-sm mt-1">
                         Tente buscar por outro termo
@@ -215,10 +255,13 @@ export function Header() {
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <button
+                ref={dropdownButtonRef}
+                type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 p-1.5 rounded-full hover:bg-primary-200 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-full hover:bg-primary-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
+                aria-controls={USER_DROPDOWN_ID}
               >
                 <Avatar name={userName} src={userAvatar} size="sm" />
                 <span className="hidden sm:block text-sm font-medium text-gray-700">
@@ -228,11 +271,16 @@ export function Header() {
                   className={`w-4 h-4 text-gray-500 transition-transform ${
                     isDropdownOpen ? "rotate-180" : ""
                   }`}
+                  aria-hidden="true"
                 />
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-100">
+                <div
+                  id={USER_DROPDOWN_ID}
+                  className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden z-100"
+                  role="menu"
+                >
                   <div className="p-4 border-b border-primary-200">
                     <p className="font-medium text-gray-900">{userName}</p>
                     <p className="text-sm text-gray-500 truncate">
@@ -240,28 +288,33 @@ export function Header() {
                     </p>
                   </div>
 
-                  <div className="py-2">
+                  <div className="py-2" role="none">
                     <button
+                      type="button"
                       onClick={() => {
                         setIsDropdownOpen(false);
                         router.push("/dashboard/settings");
                       }}
-                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-primary-50 transition-colors w-full text-left"
+                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-primary-50 transition-colors w-full text-left focus-visible:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                      role="menuitem"
                     >
-                      <Settings className="w-5 h-5" />
+                      <Settings className="w-5 h-5" aria-hidden="true" />
                       <span>Configurações</span>
                     </button>
                   </div>
 
-                  <div className="border-t border-primary-200 py-2">
+                  <div className="border-t border-primary-200 py-2" role="none">
                     <button
+                      type="button"
                       onClick={() => {
                         setIsDropdownOpen(false);
                         handleLogout();
                       }}
-                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-primary-50 transition-colors w-full text-left"
+                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-primary-50 transition-colors w-full text-left focus-visible:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                      role="menuitem"
+                      aria-label="Sair da conta"
                     >
-                      <LogOut className="w-5 h-5" />
+                      <LogOut className="w-5 h-5" aria-hidden="true" />
                       <span>Sair</span>
                     </button>
                   </div>
@@ -270,8 +323,9 @@ export function Header() {
             </div>
           ) : (
             <button
+              type="button"
               onClick={() => router.push("/login")}
-              className="px-4 py-2 bg-accent-500 text-white rounded-full text-sm font-medium whitespace-nowrap hover:bg-accent-600 transition-colors"
+              className="px-4 py-2 bg-accent-500 text-white rounded-full text-sm font-medium whitespace-nowrap hover:bg-accent-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             >
               Entrar
             </button>

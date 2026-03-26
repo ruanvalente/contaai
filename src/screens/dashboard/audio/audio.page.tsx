@@ -93,13 +93,13 @@ export function AudioPage() {
                     <div className="h-3 bg-primary-200 rounded w-24 mx-auto sm:mx-0 mb-4" />
                     <div className="flex items-center justify-center sm:justify-start gap-3">
                       <div className="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center">
-                        <SkipBack className="w-4 h-4 text-gray-400" />
+                        <SkipBack className="w-4 h-4 text-gray-500" aria-hidden="true" />
                       </div>
                       <div className="w-14 h-14 rounded-full bg-accent-500 flex items-center justify-center">
-                        <Play className="w-6 h-6 text-white ml-1" />
+                        <Play className="w-6 h-6 text-white ml-1" aria-hidden="true" />
                       </div>
                       <div className="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center">
-                        <SkipForward className="w-4 h-4 text-gray-400" />
+                        <SkipForward className="w-4 h-4 text-gray-500" aria-hidden="true" />
                       </div>
                     </div>
                   </div>
@@ -109,8 +109,8 @@ export function AudioPage() {
                     <div className="h-full w-1/3 bg-accent-500 rounded-full" />
                   </div>
                   <div className="flex justify-between mt-2">
-                    <span className="text-xs text-gray-400">1:24</span>
-                    <span className="text-xs text-gray-400">45:00</span>
+                    <span className="text-xs text-gray-500">1:24</span>
+                    <span className="text-xs text-gray-500">45:00</span>
                   </div>
                 </div>
               </div>

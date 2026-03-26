@@ -25,9 +25,15 @@ export function StarRating({
   const hasHalfStar = rating % 1 >= 0.5;
   const emptyStars = maxRating - fullStars - (hasHalfStar ? 1 : 0);
 
+  const ariaLabel = `${rating} de ${maxRating} estrelas`;
+
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
-      <div className="flex items-center">
+    <div
+      className={`flex items-center gap-1 ${className}`}
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <div className="flex items-center" aria-hidden="true">
         {[...Array(fullStars)].map((_, i) => (
           <Star key={`full-${i}`} className={`${sizes[size]} text-warning fill-warning`} />
         ))}

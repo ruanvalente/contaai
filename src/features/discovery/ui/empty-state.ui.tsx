@@ -21,9 +21,9 @@ export function EmptyState({ title, description, icon }: EmptyStateProps) {
 }
 
 export function SearchEmptyIcon() {
-  return <Search className="w-10 h-10 text-gray-400" />;
+  return <Search className="w-10 h-10 text-gray-500" aria-hidden="true" />;
 }
 
 export function BookEmptyIcon() {
-  return <Library className="w-10 h-10 text-gray-400" />;
+  return <Library className="w-10 h-10 text-gray-500" aria-hidden="true" />;
 }

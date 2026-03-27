@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useBooks } from "@/features/book-dashboard/hooks/use-books";
 import { useSearch } from "@/shared/hooks/use-search";
 import { Book } from "@/features/book-dashboard/types/book.types";
-import { featuredBooks } from "@/features/book-dashboard/data/books";
 import { DiscoverHookReturn } from "../types/discover.types";
 
 type UseDiscoverProps = {
@@ -21,7 +20,6 @@ export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): Disco
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const recommendedBooks = useMemo(() => {
-    if (books.length === 0) return featuredBooks;
     return books.slice(0, 6);
   }, [books]);
 

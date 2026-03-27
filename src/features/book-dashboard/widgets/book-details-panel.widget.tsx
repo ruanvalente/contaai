@@ -5,6 +5,7 @@ import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookCover } from "@/shared/ui/book-cover";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { FavoriteButton } from "@/shared/ui/favorite-button.ui";
 import { RatingStars } from "../ui/rating-stars.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";
 import {
@@ -12,6 +13,7 @@ import {
   UsersIcon,
   MessageIcon,
 } from "../ui/icons.ui";
+import { useFavorites } from "@/shared/hooks/use-favorites";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;
@@ -61,6 +63,8 @@ export function BookDetailsPanelWidget({
   book,
   isLoading = false,
 }: BookDetailsPanelWidgetProps) {
+  const { toggleFavorite, isFavorited, isLoading: isFavLoading } = useFavorites();
+
   if (isLoading) {
     return <BookDetailsSkeleton />;
   }
@@ -68,6 +72,8 @@ export function BookDetailsPanelWidget({
   if (!book) {
     return <EmptyState />;
   }
+
+  const favorited = isFavorited(book.id);
 
   return (
     <motion.div
@@ -81,7 +87,7 @@ export function BookDetailsPanelWidget({
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex-shrink-0"
+          className="flex-shrink-0 relative"
         >
           <BookCover
             title={book.title}
@@ -89,6 +95,12 @@ export function BookDetailsPanelWidget({
             coverColor={book.coverColor}
             size="md"
             className="w-28 h-40 sm:w-32 sm:h-44"
+          />
+          <FavoriteButton
+            isFavorited={favorited}
+            isLoading={isFavLoading}
+            onClick={() => toggleFavorite(book)}
+            className="absolute -top-2 -right-2"
           />
         </motion.div>
 

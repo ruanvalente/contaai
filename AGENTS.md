@@ -317,6 +317,187 @@ const [loading, setLoading] = useState(false)
 
 ---
 
+## 5.1 Padrão de Refatoração: Separação de Responsabilidades
+
+Ao refatorar componentes existentes, siga o padrão de separação de responsabilidades para melhorar manutenibilidade e testabilidade.
+
+### Estrutura de Arquivos
+
+```
+src/shared/hooks/          # Lógica de estado eside effects
+src/shared/ui/             # Componentes visuais puros (presentational)
+src/shared/widgets/        # Componentes com lógica (containers)
+```
+
+### Exemplo: Refatorando `library-content.widget.tsx`
+
+**1. Extrair Hooks** (`src/shared/hooks/use-*.ts`):
+
+```typescript
+// use-library-state.ts - Estado local
+'use client'
+import { create } from 'zustand'
+
+interface LibraryState {
+  activeTab: 'all' | 'reading' | 'completed'
+  setActiveTab: (tab: 'all' | 'reading' | 'completed') => void
+}
+
+export const useLibraryState = create<LibraryState>((set) => ({
+  activeTab: 'all',
+  setActiveTab: (tab) => set({ activeTab: tab })
+}))
+
+// use-library-tabs.ts - Lógica de tabs
+'use client'
+import { useLibraryState } from './use-library-state'
+import { useMemo } from 'react'
+
+export function useLibraryTabs() {
+  const { activeTab, setActiveTab } = useLibraryState()
+  
+  const tabs = useMemo(() => [
+    { id: 'all', label: 'All Books' },
+    { id: 'reading', label: 'Reading' },
+    { id: 'completed', label: 'Completed' }
+  ], [])
+  
+  return { tabs, activeTab, setActiveTab }
+}
+```
+
+**2. Extrair UI Components** (`src/shared/ui/*.ui.tsx`):
+
+```typescript
+// library-header.ui.tsx - Componente visual puro
+import { cn } from '@/utils/cn'
+
+interface LibraryHeaderProps {
+  title: string
+  className?: string
+}
+
+export function LibraryHeader({ title, className }: LibraryHeaderProps) {
+  return (
+    <header className={cn('flex items-center justify-between', className)}>
+      <h1 className="text-2xl font-bold">{title}</h1>
+    </header>
+  )
+}
+
+// empty-library-state.ui.tsx - Estado vazio
+export function EmptyLibraryState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <p className="text-muted-foreground">No books found</p>
+    </div>
+  )
+}
+```
+
+**3. Criar Widgets** (`src/shared/widgets/*.widget.tsx`):
+
+```typescript
+// library-tab-bar.widget.tsx - Componente com lógica
+'use client'
+import { useLibraryTabs } from '@/shared/hooks/use-library-tabs'
+import { cn } from '@/utils/cn'
+
+export function LibraryTabBar() {
+  const { tabs, activeTab, setActiveTab } = useLibraryTabs()
+  
+  return (
+    <div className="flex gap-2">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id as any)}
+          className={cn(
+            'px-4 py-2 rounded-lg transition-colors',
+            activeTab === tab.id ? 'bg-primary text-white' : 'bg-muted'
+          )}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// book-card.widget.tsx - Card de livro
+'use client'
+import { useState } from 'react'
+
+interface Book {
+  id: string
+  title: string
+  coverUrl?: string
+}
+
+export function BookCard({ book }: { book: Book }) {
+  const [loading, setLoading] = useState(true)
+  
+  return (
+    <div className="relative">
+      {loading && <div className="skeleton" />}
+      <img 
+        src={book.coverUrl} 
+        alt={book.title}
+        onLoad={() => setLoading(false)}
+        className={cn('transition-opacity', loading ? 'opacity-0' : 'opacity-100')}
+      />
+    </div>
+  )
+}
+```
+
+**4. Componente Original Refatorado**:
+
+```typescript
+// library-content.widget.tsx - Agora apenas orquestra
+'use client'
+import { LibraryHeader } from '@/shared/ui/library-header.ui'
+import { LibraryTabBar } from '@/shared/widgets/library-tab-bar.widget'
+import { BookCard } from '@/shared/widgets/book-card.widget'
+import { EmptyLibraryState } from '@/shared/ui/empty-library-state.ui'
+import { useLibraryState } from '@/shared/hooks/use-library-state'
+import { useFavorites } from '@/shared/hooks/use-favorites'
+
+export function LibraryContent() {
+  const { activeTab } = useLibraryState()
+  const { favorites, isLoading } = useFavorites()
+  
+  const filteredBooks = useMemo(() => {
+    // Lógica de filtragem
+  }, [favorites, activeTab])
+  
+  return (
+    <div className="space-y-6">
+      <LibraryHeader title="My Library" />
+      <LibraryTabBar />
+      {filteredBooks.length === 0 ? (
+        <EmptyLibraryState />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {filteredBooks.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Benefícios
+
+1. **Testabilidade**: UI components podem ser testados sem renderização completa
+2. **Reutilização**: Hooks e UI podem ser usados em diferentes contextos
+3. **Manutenibilidade**: Mudanças de lógica não afetam componentes visuais
+4. **Performance**: Possibilidade de usar `memo()` seletivamente
+
+---
+
 ## 6. Setup e Execução
 
 ### Scripts Disponíveis

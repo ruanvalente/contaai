@@ -101,12 +101,12 @@ type PaginationProps = {
 };
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
-  if (totalPages <= 1) return null;
-
   const { pageNumbers, canGoPrevious, canGoNext } = usePagination({
     currentPage,
     totalPages,
   });
+
+  if (totalPages <= 1) return null;
 
   return (
     <nav className="flex items-center justify-center gap-1 mt-8" aria-label="Navegação de páginas">

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Book } from "@/features/book-dashboard/types/book.types";
-import { addToFavorites, removeFromFavorites } from "@/features/book-dashboard/actions/user-favorites.actions";
+import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/book-dashboard/actions/user-favorites.actions";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];
@@ -11,6 +11,7 @@ type UseFavoritesOptions = {
 type UseFavoritesReturn = {
   favoritedIds: string[];
   isLoading: boolean;
+  isLoaded: boolean;
   addFavorite: (book: Book) => Promise<void>;
   removeFavorite: (bookId: string) => Promise<void>;
   toggleFavorite: (book: Book) => Promise<void>;
@@ -20,6 +21,17 @@ type UseFavoritesReturn = {
 export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions = {}): UseFavoritesReturn {
   const [favoritedIds, setFavoritedIds] = useState<string[]>(initialFavoritedIds);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFavorites() {
+      const favorites = await getUserFavorites();
+      const ids = favorites.map((f) => f.bookId);
+      setFavoritedIds(ids);
+      setIsLoaded(true);
+    }
+    loadFavorites();
+  }, []);
 
   const addFavorite = useCallback(async (book: Book) => {
     setIsLoading(true);
@@ -69,6 +81,7 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
   return {
     favoritedIds,
     isLoading,
+    isLoaded,
     addFavorite,
     removeFavorite,
     toggleFavorite,

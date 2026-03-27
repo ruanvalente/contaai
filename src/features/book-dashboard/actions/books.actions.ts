@@ -19,6 +19,11 @@ type SupabaseBook = {
 };
 
 function formatBook(book: SupabaseBook): Book {
+  const validCategories: Book["category"][] = ["Drama", "Fantasy", "Sci-Fi", "Business", "Education", "Geography"];
+  const category = validCategories.includes(book.category as Book["category"]) 
+    ? book.category as Book["category"] 
+    : "Drama" as Book["category"];
+
   return {
     id: book.id,
     title: book.title,
@@ -26,7 +31,7 @@ function formatBook(book: SupabaseBook): Book {
     coverUrl: book.cover_url || undefined,
     coverColor: book.cover_color || "#8B4513",
     description: book.description || "",
-    category: book.category as Book["category"],
+    category,
     pages: book.pages || 0,
     rating: typeof book.rating === "string" ? parseFloat(book.rating) : (book.rating || 0),
     ratingCount: book.rating_count || 0,
@@ -155,4 +160,9 @@ export async function getBooksByCategoryAction(category: string): Promise<Book[]
 
 export async function revalidateBooksCache(path: string = "/dashboard"): Promise<void> {
   revalidatePath(path);
+}
+
+export async function invalidateBooks(): Promise<void> {
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/category");
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Category, CATEGORIES } from "../types/book.types";
 
 type UseCategoriesReturn = {
@@ -24,5 +24,3 @@ export function useCategories(
     setActiveCategory,
   };
 }
-
-import { useState } from "react";

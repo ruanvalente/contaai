@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 import { Book } from "@/features/book-dashboard/types/book.types";
 
 export type BooksFilters = {
@@ -25,6 +26,11 @@ type SupabaseBook = {
 }
 
 function formatBook(book: SupabaseBook): Book {
+  const validCategories: Book["category"][] = ["Drama", "Fantasy", "Sci-Fi", "Business", "Education", "Geography"];
+  const category = validCategories.includes(book.category as Book["category"]) 
+    ? book.category as Book["category"] 
+    : "Drama" as Book["category"];
+
   return {
     id: book.id,
     title: book.title,
@@ -32,7 +38,7 @@ function formatBook(book: SupabaseBook): Book {
     coverUrl: book.cover_url || undefined,
     coverColor: book.cover_color || "#8B4513",
     description: book.description || "",
-    category: book.category as Book["category"],
+    category,
     pages: book.pages || 0,
     rating: book.rating || 0,
     ratingCount: book.rating_count || 0,
@@ -41,7 +47,7 @@ function formatBook(book: SupabaseBook): Book {
   };
 }
 
-export async function getBooks(filters?: BooksFilters): Promise<Book[]> {
+async function fetchBooksFromSupabase(filters?: BooksFilters): Promise<Book[]> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -77,6 +83,14 @@ export async function getBooks(filters?: BooksFilters): Promise<Book[]> {
   return (data || []).map(formatBook);
 }
 
+export const getBooks = cache(async (filters?: BooksFilters): Promise<Book[]> => {
+  return fetchBooksFromSupabase(filters);
+});
+
+export const getBooksCached = cache(async (): Promise<Book[]> => {
+  return fetchBooksFromSupabase();
+});
+
 export async function getBookById(id: string): Promise<Book | null> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
@@ -95,7 +109,7 @@ export async function getBookById(id: string): Promise<Book | null> {
   return formatBook(data);
 }
 
-export async function getCategories(): Promise<string[]> {
+async function fetchCategoriesFromSupabase(): Promise<string[]> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -110,3 +124,74 @@ export async function getCategories(): Promise<string[]> {
 
   return [...new Set(data.map((item) => item.category))];
 }
+
+export const getCategories = cache(async (): Promise<string[]> => {
+  return fetchCategoriesFromSupabase();
+});
+
+export type BooksResponse = {
+  books: Book[];
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
+export const getBooksPaginated = cache(async (
+  page: number = 1, 
+  limit: number = 10,
+  category?: string,
+  search?: string
+): Promise<BooksResponse> => {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const offset = (page - 1) * limit;
+
+  let query = supabase
+    .from("books")
+    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (category && category !== "All") {
+    query = query.eq("category", category);
+  }
+
+  if (search) {
+    const searchTerm = search.trim();
+    query = query.or(`title.ilike.*${searchTerm}*,author.ilike.*${searchTerm}*,category.ilike.*${searchTerm}*`);
+  }
+
+  const [data, countResult] = await Promise.all([
+    query,
+    (async () => {
+      let countQuery = supabase.from("books").select("*", { count: "exact", head: true });
+      
+      if (category && category !== "All") {
+        countQuery = countQuery.eq("category", category);
+      }
+
+      if (search) {
+        const searchTerm = search.trim();
+        countQuery = countQuery.or(`title.ilike.*${searchTerm}*,author.ilike.*${searchTerm}*,category.ilike.*${searchTerm}*`);
+      }
+
+      return countQuery;
+    })()
+  ]);
+
+  if (data.error) {
+    console.error("Error fetching books:", data.error);
+    return { books: [], total: 0, page, totalPages: 0 };
+  }
+
+  const total = countResult.count || 0;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    books: (data.data || []).map(formatBook),
+    total,
+    page,
+    totalPages,
+  };
+});

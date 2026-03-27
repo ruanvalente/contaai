@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Book, Category } from "../types/book.types";
-import { mockBooks, filterBooksByCategory, searchBooks } from "../data/books";
+import { filterBooksByCategory, searchBooks } from "../data/books";
 
 type UseBooksReturn = {
   books: Book[];
@@ -13,12 +13,40 @@ type UseBooksReturn = {
 }
 
 export function useBooks(initialBooks?: Book[]): UseBooksReturn {
-  const [books] = useState<Book[]>(initialBooks ?? mockBooks);
-  const [isLoading] = useState(false);
-  const [error] = useState<Error | null>(null);
+  const [books, setBooks] = useState<Book[]>(initialBooks ?? []);
+  const [isLoading, setIsLoading] = useState(!initialBooks);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchBooks = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/books");
+      if (!response.ok) {
+        throw new Error("Failed to fetch books");
+      }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      setBooks(data);
+    } catch (err) {
+      console.error("Error fetching books:", err);
+      setError(err instanceof Error ? err : new Error("Unknown error"));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const refetch = useCallback(async () => {
-  }, []);
+    await fetchBooks();
+  }, [fetchBooks]);
+
+  useEffect(() => {
+    if (!initialBooks) {
+      fetchBooks();
+    }
+  }, [initialBooks, fetchBooks]);
 
   const filteredBooks = useCallback(
     (category: Category, searchQuery?: string): Book[] => {

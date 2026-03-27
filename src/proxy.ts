@@ -13,6 +13,8 @@ export async function proxy(request: NextRequest) {
     "/terms",
     "/privacy",
     "/api/health",
+    "/api/books",
+    "/api/user-books",
   ];
   const isPublicPath = publicPaths.some(
     (path) => pathname === path || pathname.startsWith("/auth/"),

@@ -13,34 +13,31 @@ const supabaseAdmin = supabaseUrl && supabaseServiceKey
     })
   : null;
 
-type SupabaseBook = {
+type UserBookRow = {
   id: string;
   title: string;
   author: string;
   cover_url: string | null;
   cover_color: string | null;
-  description: string | null;
   category: string;
-  pages: number | null;
-  rating: number | null;
-  rating_count: number | null;
-  review_count: number | null;
+  word_count: number;
   created_at: string;
+  published_at: string | null;
 };
 
-function formatBook(book: SupabaseBook): Book {
+function formatUserBookToBook(book: UserBookRow): Book {
   return {
     id: book.id,
     title: book.title,
     author: book.author,
     coverUrl: book.cover_url || undefined,
     coverColor: book.cover_color || "#8B4513",
-    description: book.description || "",
+    description: "",
     category: book.category as Book["category"],
-    pages: book.pages || 0,
-    rating: book.rating || 0,
-    ratingCount: book.rating_count || 0,
-    reviewCount: book.review_count || 0,
+    pages: Math.ceil(book.word_count / 500),
+    rating: 0,
+    ratingCount: 0,
+    reviewCount: 0,
     createdAt: new Date(book.created_at),
   };
 }
@@ -56,16 +53,17 @@ export async function getCachedBooks(): Promise<Book[]> {
   }
 
   const { data, error } = await supabaseAdmin
-    .from("books")
-    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
-    .order("created_at", { ascending: false });
+    .from("user_books")
+    .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching cached books:", error);
     return [];
   }
 
-  return (data || []).map(formatBook);
+  return (data || []).map(formatUserBookToBook);
 }
 
 export async function getCachedBookById(id: string): Promise<Book | null> {
@@ -79,9 +77,10 @@ export async function getCachedBookById(id: string): Promise<Book | null> {
   }
 
   const { data, error } = await supabaseAdmin
-    .from("books")
-    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+    .from("user_books")
+    .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
     .eq("id", id)
+    .eq("status", "published")
     .single();
 
   if (error) {
@@ -89,7 +88,7 @@ export async function getCachedBookById(id: string): Promise<Book | null> {
     return null;
   }
 
-  return formatBook(data);
+  return formatUserBookToBook(data);
 }
 
 export async function getCachedCategories(): Promise<string[]> {
@@ -103,8 +102,9 @@ export async function getCachedCategories(): Promise<string[]> {
   }
 
   const { data, error } = await supabaseAdmin
-    .from("books")
-    .select("category");
+    .from("user_books")
+    .select("category")
+    .eq("status", "published");
 
   if (error) {
     console.error("Error fetching cached categories:", error);
@@ -125,17 +125,18 @@ export async function getCachedBooksByCategory(category: string): Promise<Book[]
   }
 
   const { data, error } = await supabaseAdmin
-    .from("books")
-    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+    .from("user_books")
+    .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
     .eq("category", category)
-    .order("created_at", { ascending: false });
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching cached books by category:", error);
     return [];
   }
 
-  return (data || []).map(formatBook);
+  return (data || []).map(formatUserBookToBook);
 }
 
 export async function searchCachedBooks(query: string): Promise<Book[]> {
@@ -149,15 +150,16 @@ export async function searchCachedBooks(query: string): Promise<Book[]> {
   }
 
   const { data, error } = await supabaseAdmin
-    .from("books")
-    .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+    .from("user_books")
+    .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
+    .eq("status", "published")
     .or(`title.ilike.*${query}*,author.ilike.*${query}*,category.ilike.*${query}*`)
-    .order("created_at", { ascending: false });
+    .order("published_at", { ascending: false });
 
   if (error) {
     console.error("Error searching cached books:", error);
     return [];
   }
 
-  return (data || []).map(formatBook);
+  return (data || []).map(formatUserBookToBook);
 }

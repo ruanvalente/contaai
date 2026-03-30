@@ -75,6 +75,7 @@ import {
 } from "../actions/user-books.actions";
 import { useBookEditorStore } from "../store/book-editor.store";
 import { Button } from "@/shared/ui/button";
+import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar";
 
 const theme = {
   paragraph: "mb-4 leading-7 text-gray-700",
@@ -296,41 +297,6 @@ function ToolbarPlugin() {
   const formatAlignJustify = () => {
     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
   };
-
-  const ToolbarButton = ({
-    onClick,
-    isActive,
-    icon: Icon,
-    label,
-    title,
-  }: {
-    onClick: () => void;
-    isActive?: boolean;
-    icon: any;
-    label?: string;
-    title: string;
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`p-1.5 sm:p-2 rounded hover:bg-primary-200 transition-colors ${
-        isActive ? "bg-accent-100 text-accent-600" : "text-gray-600"
-      }`}
-      title={title}
-      aria-label={title}
-      aria-pressed={isActive}
-    >
-      {Icon ? (
-        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-      ) : (
-        <span className="text-xs sm:text-sm font-medium">{label}</span>
-      )}
-    </button>
-  );
-
-  const ToolbarDivider = () => (
-    <div className="w-px h-5 sm:h-6 bg-primary-200 mx-0.5 sm:mx-1" />
-  );
 
   return (
     <div className="flex flex-wrap gap-1 p-2 border-b border-primary-200 bg-primary-50">

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/book-dashboard/actions/user-favorites.actions";
+import { useFavoritesStore } from "@/shared/store/favorites.store";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];
@@ -19,24 +20,47 @@ type UseFavoritesReturn = {
 };
 
 export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions = {}): UseFavoritesReturn {
-  const [favoritedIds, setFavoritedIds] = useState<string[]>(initialFavoritedIds);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const favoritedIds = useFavoritesStore((state) => state.favoritedIds);
+  const isLoading = useFavoritesStore((state) => state.isLoading);
+  const isLoaded = useFavoritesStore((state) => state.isLoaded);
+  const addFavoriteToStore = useFavoritesStore((state) => state.addFavorite);
+  const removeFavoriteFromStore = useFavoritesStore((state) => state.removeFavorite);
+  const isFavoritedFn = useFavoritesStore((state) => state.isFavorited);
+  const setInitialFavorites = useFavoritesStore((state) => state.setInitialFavorites);
+  const setLoading = useFavoritesStore((state) => state.setLoading);
+
+  const initialFavoritedIdsRef = useRef(initialFavoritedIds);
+  
+  useEffect(() => {
+    initialFavoritedIdsRef.current = initialFavoritedIds;
+  }, [initialFavoritedIds]);
+
+  useEffect(() => {
+    if (!isLoaded && initialFavoritedIdsRef.current.length > 0) {
+      setInitialFavorites(initialFavoritedIdsRef.current);
+    }
+  }, [isLoaded, setInitialFavorites]);
 
   useEffect(() => {
     async function loadFavorites() {
-      const favorites = await getUserFavorites();
-      const ids = favorites.map((f) => f.bookId);
-      setFavoritedIds(ids);
-      setIsLoaded(true);
+      if (isLoaded) return;
+      
+      setLoading(true);
+      try {
+        const favorites = await getUserFavorites();
+        const ids = favorites.map((f) => f.bookId);
+        setInitialFavorites(ids);
+      } finally {
+        setLoading(false);
+      }
     }
     loadFavorites();
-  }, []);
+  }, [isLoaded, setInitialFavorites, setLoading]);
 
   const addFavorite = useCallback(async (book: Book) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
-      await addToFavorites(
+      const result = await addToFavorites(
         book.id,
         book.title,
         book.author,
@@ -44,42 +68,41 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
         book.coverUrl,
         book.category
       );
-      setFavoritedIds((prev) => {
-        if (!prev.includes(book.id)) {
-          return [...prev, book.id];
-        }
-        return prev;
-      });
+      if (result.success) {
+        addFavoriteToStore(book.id);
+      }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, []);
+  }, [addFavoriteToStore, setLoading]);
 
   const removeFavorite = useCallback(async (bookId: string) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
-      await removeFromFavorites(bookId);
-      setFavoritedIds((prev) => prev.filter((id) => id !== bookId));
+      const result = await removeFromFavorites(bookId);
+      if (result.success) {
+        removeFavoriteFromStore(bookId);
+      }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, []);
+  }, [removeFavoriteFromStore, setLoading]);
 
   const toggleFavorite = useCallback(async (book: Book) => {
-    if (favoritedIds.includes(book.id)) {
+    if (isFavoritedFn(book.id)) {
       await removeFavorite(book.id);
     } else {
       await addFavorite(book);
     }
-  }, [favoritedIds, addFavorite, removeFavorite]);
+  }, [isFavoritedFn, addFavorite, removeFavorite]);
 
   const isFavorited = useCallback(
-    (bookId: string) => favoritedIds.includes(bookId),
-    [favoritedIds]
+    (bookId: string) => isFavoritedFn(bookId),
+    [isFavoritedFn]
   );
 
   return {
-    favoritedIds,
+    favoritedIds: Array.from(favoritedIds),
     isLoading,
     isLoaded,
     addFavorite,

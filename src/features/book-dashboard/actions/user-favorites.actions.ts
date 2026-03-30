@@ -84,6 +84,7 @@ export async function addToFavorites(
     }
 
     revalidatePath("/dashboard/favorites");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err) {
     console.error("Error in addToFavorites:", err);
@@ -114,6 +115,7 @@ export async function removeFromFavorites(
     }
 
     revalidatePath("/dashboard/favorites");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err) {
     console.error("Error in removeFromFavorites:", err);

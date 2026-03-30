@@ -1,33 +1,28 @@
 import { Suspense } from "react";
-import { getBooksPaginated } from "@/features/book-dashboard/data/server-books";
+import { getUserFavorites, UserFavorite } from "@/features/book-dashboard/actions/user-favorites.actions";
 import { FavoritesContent } from "@/features/book-dashboard/widgets/favorites-content.widget";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
-type PageProps = {
-  searchParams: Promise<{
-    page?: string;
-    search?: string;
-  }>;
-}
-
-async function FavoritesData({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const page = parseInt(params.page || "1", 10);
-
-  const { books, total, totalPages } = await getBooksPaginated(page, 10);
+async function FavoritesData() {
+  let favorites: UserFavorite[] = [];
+  
+  try {
+    favorites = await getUserFavorites();
+  } catch (error) {
+    console.error("Error loading favorites:", error);
+  }
 
   return (
     <FavoritesContent
-      books={books}
-      pagination={{ currentPage: page, totalPages, total }}
+      favorites={favorites}
     />
   );
 }
 
-export default async function FavoritesPage({ searchParams }: PageProps) {
+export default function FavoritesPage() {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <FavoritesData searchParams={searchParams} />
+      <FavoritesData />
     </Suspense>
   );
 }

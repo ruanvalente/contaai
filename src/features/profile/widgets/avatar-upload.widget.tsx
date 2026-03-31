@@ -9,7 +9,6 @@ type AvatarUploadProps = {
   name?: string;
   src?: string | null;
   size?: "sm" | "md" | "lg" | "xl";
-  userId: string;
   onUploadComplete?: (file: File, previewUrl: string) => void;
   isUploading?: boolean;
 };
@@ -18,7 +17,6 @@ export function AvatarUpload({
   name,
   src,
   size = "lg",
-  userId,
   onUploadComplete,
   isUploading = false,
 }: AvatarUploadProps) {

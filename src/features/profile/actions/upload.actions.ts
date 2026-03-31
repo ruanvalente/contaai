@@ -72,7 +72,7 @@ export async function uploadAvatar(
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("contaai")
       .upload(filePath, buffer, {
         contentType: file.type,

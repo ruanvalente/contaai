@@ -27,7 +27,7 @@ export function useFavoritesSearch({ initialBooks = [] }: UseFavoritesSearchOpti
   const [searchQuery, setSearchQueryState] = useState(searchParams.get("search") || "");
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
 
-  const handleSearch = useCallback(async (query: string, page: number) => {
+  const handleSearch = useCallback(async (query: string) => {
     setIsLoading(true);
     try {
       if (query.trim()) {
@@ -45,11 +45,11 @@ export function useFavoritesSearch({ initialBooks = [] }: UseFavoritesSearchOpti
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      handleSearch(searchQuery, currentPage);
+      handleSearch(searchQuery);
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, currentPage, handleSearch]);
+  }, [searchQuery, handleSearch]);
 
   const setSearchQuery = useCallback((query: string) => {
     setSearchQueryState(query);

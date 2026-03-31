@@ -2,74 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { Book } from "@/features/book-dashboard/types/book.types";
-
-type SupabaseBook = {
-  id: string;
-  title: string;
-  author: string;
-  cover_url: string | null;
-  cover_color: string | null;
-  description: string | null;
-  category: string;
-  pages: number | null;
-  rating: number | string | null;
-  rating_count: number | null;
-  review_count: number | null;
-  created_at: string;
-};
-
-function formatBook(book: SupabaseBook): Book {
-  const validCategories: Book["category"][] = ["Drama", "Fantasy", "Sci-Fi", "Business", "Education", "Geography"];
-  const category = validCategories.includes(book.category as Book["category"]) 
-    ? book.category as Book["category"] 
-    : "Drama" as Book["category"];
-
-  return {
-    id: book.id,
-    title: book.title,
-    author: book.author,
-    coverUrl: book.cover_url || undefined,
-    coverColor: book.cover_color || "#8B4513",
-    description: book.description || "",
-    category,
-    pages: book.pages || 0,
-    rating: typeof book.rating === "string" ? parseFloat(book.rating) : (book.rating || 0),
-    ratingCount: book.rating_count || 0,
-    reviewCount: book.review_count || 0,
-    createdAt: new Date(book.created_at),
-  };
-}
-
-async function getSupabaseAdmin() {
-  const { createServerClient } = await import("@supabase/ssr");
-  const { cookies } = await import("next/headers");
-  
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing");
-  }
-  
-  const cookieStore = await cookies();
-  
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Ignore errors from Server Components
-        }
-      },
-    },
-  });
-}
+import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
+import { formatBook } from "@/lib/books/format-book";
 
 export async function getBooksAction(): Promise<Book[]> {
   try {

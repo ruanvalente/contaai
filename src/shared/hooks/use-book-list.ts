@@ -3,10 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Book } from "@/features/book-dashboard/types/book.types";
-import {
-  searchBooksAction,
-  getBooksByCategoryAction,
-} from "@/features/book-dashboard/actions/books.actions";
+import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
 
 type UseBookListOptions = {
   initialBooks: Book[];
@@ -55,7 +52,6 @@ export function useBookList({
           results = initialBooks;
         }
 
-        const totalPages = Math.ceil(results.length / pageSize);
         const startIndex = (page - 1) * pageSize;
         const paginatedResults = results.slice(
           startIndex,

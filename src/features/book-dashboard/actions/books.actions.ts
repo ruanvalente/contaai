@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
-import { formatBook } from "@/lib/books/format-book";
+import { formatBook, formatUserBook } from "@/lib/books/format-book";
 
 export async function getBooksAction(): Promise<Book[]> {
   try {
@@ -53,17 +53,18 @@ export async function searchBooksAction(query: string): Promise<Book[]> {
     const supabase = await getSupabaseAdmin();
     
     const { data, error } = await supabase
-      .from("books")
-      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+      .from("user_books")
+      .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
+      .eq("status", "published")
       .or(`title.ilike.*${query}*,author.ilike.*${query}*,category.ilike.*${query}*`)
-      .order("created_at", { ascending: false });
+      .order("published_at", { ascending: false });
 
     if (error) {
       console.error("Error searching books:", error);
       return [];
     }
 
-    return (data || []).map(formatBook);
+    return (data || []).map(formatUserBook);
   } catch (err) {
     console.error("Error in searchBooksAction:", err);
     return [];

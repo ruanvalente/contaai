@@ -546,6 +546,37 @@ npx skills list
 
 ---
 
+## 7. .opencode Specs
+
+O diretório `.opencode/specs` contém especificações padronizadas para manter consistência no desenvolvimento.
+
+### Specs Disponíveis
+
+| Spec | Descrição |
+|------|-----------|
+| `bug-analysis-spec.md` | Template para análise e documentação de bugs |
+| `pull-request-spec.md` | Padrões para criação de PRs e commits semânticos |
+| `accessibility-spec.md` | Diretrizes de acessibilidade WCAG 2.2 |
+| `database-spec.md` | Padrões de banco de dados PostgreSQL |
+| `hooks-spec.md` | Convenções para hooks customizados |
+| `nextjs-best-practices-spec.md` | Melhores práticas Next.js |
+| `page-routing-spec.md` | Padrões de roteamento |
+| `project-structure-spec.md` | Estrutura do projeto |
+| `react-testing-spec.md` | Padrões de testes React |
+| `server-actions-spec.md` | Convenções de Server Actions |
+| `stores-spec.md` | Padrões para Zustand stores |
+| `testing-spec.md` | Guia de testes |
+| `ui-component-spec.md` | Padrões de componentes UI |
+| `widget-component-spec.md` | Padrões de widgets |
+
+### Como Usar as Specs
+
+1. **Bug Analysis**: Ao identificar um bug, use `bug-analysis-spec.md` para documentar
+2. **Pull Requests**: Siga `pull-request-spec.md` para criar PRs
+3. **Demais specs**: Consulte conforme necessidade
+
+---
+
 ## Referências
 
 - [Next.js Docs](https://nextjs.org/docs)

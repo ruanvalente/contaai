@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -16,14 +16,12 @@ import { CodeNode, CodeHighlightNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import {
   $getRoot,
-  EditorState,
   FORMAT_TEXT_COMMAND,
   UNDO_COMMAND,
   REDO_COMMAND,
   $createParagraphNode,
   $getSelection,
   $isRangeSelection,
-  LexicalEditor,
   $createTextNode,
   FORMAT_ELEMENT_COMMAND,
 } from "lexical";
@@ -39,7 +37,6 @@ import {
 } from "@lexical/list";
 import { motion } from "framer-motion";
 import {
-  Save,
   Eye,
   Send,
   ArrowLeft,
@@ -63,9 +60,7 @@ import {
   Heading2,
   Heading3,
   Type,
-  Link,
   Minus,
-  Image,
   AlignJustify,
 } from "lucide-react";
 import {
@@ -129,10 +124,11 @@ function AutoSavePlugin() {
 
 function InitialContentPlugin({ content }: { content: string }) {
   const [editor] = useLexicalComposerContext();
-  const [initialized, setInitialized] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!initialized && content) {
+    if (!initializedRef.current && content) {
+      initializedRef.current = true;
       editor.update(() => {
         const root = $getRoot();
         if (root.getFirstChild() === null) {
@@ -141,9 +137,8 @@ function InitialContentPlugin({ content }: { content: string }) {
           root.append(paragraph);
         }
       });
-      setInitialized(true);
     }
-  }, [editor, content, initialized]);
+  }, [editor, content]);
 
   return null;
 }
@@ -155,8 +150,6 @@ function ToolbarPlugin() {
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isCode, setIsCode] = useState(false);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState<string>("paragraph");
 
   useEffect(() => {
@@ -184,7 +177,7 @@ function ToolbarPlugin() {
         if (firstChild) {
           const type = firstChild.getType();
           if (type === "heading") {
-            const headingNode = firstChild as any;
+            const headingNode = firstChild as HeadingNode;
             setBlockType("h" + headingNode.getTag());
           } else if (type === "list") {
             setBlockType("list");
@@ -443,9 +436,6 @@ export function BookEditor({ bookId }: BookEditorProps) {
   const {
     content,
     setContent,
-    setBookId,
-    setTitle,
-    setAuthor,
     initialize,
     isSaving,
     lastSaved,

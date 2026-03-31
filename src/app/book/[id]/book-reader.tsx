@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -43,10 +44,11 @@ function BookCover({ coverUrl, coverColor, title }: { coverUrl?: string; coverCo
   if (coverUrl) {
     return (
       <div className="relative w-40 h-56 md:w-48 md:h-72 flex-shrink-0 rounded-lg overflow-hidden shadow-xl">
-        <img
+        <Image
           src={coverUrl}
           alt={title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
       </div>
     );

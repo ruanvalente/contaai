@@ -171,7 +171,7 @@ export async function isBookFavorited(bookId: string): Promise<boolean> {
     }
 
     return !!data;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Container } from "@/shared/ui/container";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { Book } from "@/features/book-dashboard/types/book.types";
@@ -15,7 +14,6 @@ interface BookGridProps {
     total: number;
   };
   emptyMessage?: string;
-  searchPlaceholder?: string;
   showFavoriteButton?: boolean;
   onRemoveFavorite?: (bookId: string) => void;
   isLoading?: boolean;
@@ -25,14 +23,12 @@ export function BookGrid({
   books,
   pagination,
   emptyMessage = "Nenhum livro encontrado",
-  searchPlaceholder = "Buscar...",
   showFavoriteButton = false,
   onRemoveFavorite,
   isLoading = false,
 }: BookGridProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
 
   const currentPage = pagination?.currentPage || 1;
   const totalPages = pagination?.totalPages || 1;

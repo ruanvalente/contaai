@@ -246,7 +246,7 @@ export async function updateUserBook(
 
     revalidatePath("/dashboard/library");
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -286,7 +286,7 @@ export async function saveBookContent(
     }
 
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -330,7 +330,7 @@ export async function publishBook(
 
     revalidatePath("/dashboard/library");
     return { success: true, book: book ? formatUserBook(book) : undefined };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -367,7 +367,7 @@ export async function markAsReading(
 
     revalidatePath("/dashboard/library");
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -404,7 +404,7 @@ export async function markAsCompleted(
 
     revalidatePath("/dashboard/library");
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -448,7 +448,7 @@ export async function updateReadingProgress(
     }
 
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }
@@ -482,7 +482,7 @@ export async function deleteUserBook(
 
     revalidatePath("/dashboard/library");
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, error: "Erro interno" };
   }
 }

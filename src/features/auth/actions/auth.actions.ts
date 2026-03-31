@@ -1,7 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 async function getSupabaseServerClient() {
   const { createServerClient } = await import("@supabase/ssr");
   const { cookies } = await import("next/headers");

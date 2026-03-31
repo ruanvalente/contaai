@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -129,10 +129,11 @@ function AutoSavePlugin() {
 
 function InitialContentPlugin({ content }: { content: string }) {
   const [editor] = useLexicalComposerContext();
-  const [initialized, setInitialized] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!initialized && content) {
+    if (!initializedRef.current && content) {
+      initializedRef.current = true;
       editor.update(() => {
         const root = $getRoot();
         if (root.getFirstChild() === null) {
@@ -141,9 +142,8 @@ function InitialContentPlugin({ content }: { content: string }) {
           root.append(paragraph);
         }
       });
-      setInitialized(true);
     }
-  }, [editor, content, initialized]);
+  }, [editor, content]);
 
   return null;
 }
@@ -184,7 +184,7 @@ function ToolbarPlugin() {
         if (firstChild) {
           const type = firstChild.getType();
           if (type === "heading") {
-            const headingNode = firstChild as any;
+            const headingNode = firstChild as HeadingNode;
             setBlockType("h" + headingNode.getTag());
           } else if (type === "list") {
             setBlockType("list");

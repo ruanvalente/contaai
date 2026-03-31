@@ -48,5 +48,6 @@ supabase/snippets/
 
 # agents / skills
 .opencode/
+!.opencode/specs/
 .agents/
 skills-lock.json

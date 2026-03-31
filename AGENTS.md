@@ -558,6 +558,7 @@ O diretório `.opencode/specs` contém especificações padronizadas para manter
 | `pull-request-spec.md` | Padrões para criação de PRs e commits semânticos |
 | `accessibility-spec.md` | Diretrizes de acessibilidade WCAG 2.2 |
 | `database-spec.md` | Padrões de banco de dados PostgreSQL |
+| `documentation-spec.md` | Padrões para criação e manutenção de documentação |
 | `hooks-spec.md` | Convenções para hooks customizados |
 | `nextjs-best-practices-spec.md` | Melhores práticas Next.js |
 | `page-routing-spec.md` | Padrões de roteamento |

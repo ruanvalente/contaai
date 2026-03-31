@@ -47,5 +47,6 @@ supabase/snippets/
 *.sql.bak
 
 # agents / skills
+.opencode/
 .agents/
 skills-lock.json

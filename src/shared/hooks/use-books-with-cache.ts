@@ -51,13 +51,17 @@ export function useBooksWithCache({
   }, [hasCache, hasServerPagination, cacheKey, initialBooks, serverPagination, addPage]);
 
   const books = hasCache ? cached.books : initialBooks;
-  const pagination = hasCache
-    ? cached.pagination
-    : serverPagination || initialPagination || {
-        currentPage: 1,
-        totalPages: 1,
-        total: 0,
-      };
+  const pagination = useMemo(
+    () =>
+      hasCache && cached
+        ? cached.pagination
+        : serverPagination || initialPagination || {
+            currentPage: 1,
+            totalPages: 1,
+            total: 0,
+          },
+    [hasCache, cached, serverPagination, initialPagination],
+  );
 
   return useMemo(
     () => ({

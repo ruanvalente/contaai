@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X, Image as ImageIcon, Palette, Loader2 } from "lucide-react";
@@ -109,7 +110,7 @@ export function CreateBookModal({
       } else {
         setError(result.error || "Erro ao criar livro");
       }
-    } catch (err) {
+    } catch {
       setError("Erro interno");
     } finally {
       setIsCreating(false);
@@ -172,10 +173,11 @@ export function CreateBookModal({
                     style={{ backgroundColor: coverColor }}
                   >
                     {coverUrl ? (
-                      <img
+                      <Image
                         src={coverUrl}
                         alt="Capa do livro"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

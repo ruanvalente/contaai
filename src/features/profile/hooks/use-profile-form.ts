@@ -18,7 +18,6 @@ type UseProfileFormReturn = {
   setSelectedFile: (file: File | null) => void;
   isLoading: boolean;
   isPending: boolean;
-  isUploading: boolean;
   error: string | null;
   success: string | null;
   hasChanges: boolean;
@@ -30,7 +29,6 @@ type UseProfileFormReturn = {
 
 export function useProfileForm(userId?: string): UseProfileFormReturn {
   const [isPending, startTransition] = useTransition();
-  const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -138,7 +136,6 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
     setSelectedFile,
     isLoading,
     isPending,
-    isUploading,
     error,
     success,
     hasChanges: hasChanges(),

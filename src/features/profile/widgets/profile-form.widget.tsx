@@ -16,7 +16,6 @@ export function ProfileFormWidget() {
     setBio,
     email,
     avatarUrl,
-    selectedFile,
     isLoading,
     isPending,
     error,
@@ -25,7 +24,6 @@ export function ProfileFormWidget() {
     handleSubmit,
     handleCancel,
     handleAvatarChange,
-    userId,
   } = useProfileForm(user?.id);
 
   if (isLoading) {
@@ -51,7 +49,6 @@ export function ProfileFormWidget() {
           name={name}
           src={avatarUrl}
           size="xl"
-          userId={userId || ""}
           onUploadComplete={handleAvatarChange}
         />
       </div>

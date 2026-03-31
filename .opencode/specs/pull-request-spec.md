@@ -1,41 +1,41 @@
 # Pull Request Spec
 
-## Purpose
+## Propósito
 
-This spec defines the standards for creating and reviewing pull requests in the project. It ensures consistency, quality, and effective communication across the team.
+Este documento define os padrões para criação e revisão de pull requests no projeto. Garante consistência, qualidade e comunicação efetiva entre a equipe.
 
-## When to Use This Spec
+## Quando Usar Esta Spec
 
-- Creating new pull requests
-- Reviewing pull requests
-- Setting up PR templates
+- Criar novos pull requests
+- Revisar pull requests
+- Configurar templates de PR
 
 ---
 
-## PR Title Convention
+## Convenção de Título do PR
 
-Use semantic commits format in title:
+Use o formato de commits semânticos no título:
 
 ```
-<type>(<scope>): <description>
+<tipo>(<escopo>): <descrição>
 ```
 
-### Types
+### Tipos
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Code style changes (formatting, no logic) |
-| `refactor` | Code change that neither fixes nor adds |
-| `perf` | Performance improvement |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance, dependencies, build changes |
+| Tipo | Descrição |
+|------|------------|
+| `feat` | Nova funcionalidade |
+| `fix` | Correção de bug |
+| `docs` | Apenas documentação |
+| `style` | Mudanças de estilo (formatação, sem lógica) |
+| `refactor` | Mudança de código que não corrige nem adiciona |
+| `perf` | Melhoria de performance |
+| `test` | Adicionar ou atualizar testes |
+| `chore` | Manutenção, dependências, mudanças de build |
 
-### Scope
+### Escopo
 
-Optional. Indicates the area affected:
+Opcional. Indica a área afetada:
 
 - `dashboard`
 - `auth`
@@ -45,103 +45,103 @@ Optional. Indicates the area affected:
 - `api`
 - `config`
 
-### Examples
+### Exemplos
 
 ```
-feat(dashboard): add book search functionality
-fix(auth): resolve login redirect issue
-docs(readme): update installation instructions
-refactor(books): simplify formatBook function
+feat(dashboard): adicionar funcionalidade de busca de livros
+fix(auth): resolver problema de redirecionamento no login
+docs(readme): atualizar instruções de instalação
+refactor(books): simplificar função formatBook
 ```
 
 ---
 
-## PR Description Template
+## Template de Descrição do PR
 
 ```markdown
-## Summary
-[Brief description of what this PR does]
+## Resumo
+[Breve descrição do que este PR faz]
 
-## Changes
-- [Change 1]
-- [Change 2]
-- [Change 3]
+## Mudanças
+- [Mudança 1]
+- [Mudança 2]
+- [Mudança 3]
 
-## Testing
-- [ ] Unit tests pass
-- [ ] Manual testing performed
-- [ ] No console errors
+## Testes
+- [ ] Testes unitários passam
+- [ ] Teste manual realizado
+- [ ] Sem erros no console
 
 ## Screenshots
-[If UI changes, add screenshots]
+[Se houver mudanças na UI, adicionar screenshots]
 
-## Related Issues
-Closes #[issue number]
+## Issues Relacionadas
+Closes #[número da issue]
 ```
 
 ---
 
-## PR Guidelines
+## Diretrizes de PR
 
-### Before Creating PR
+### Antes de Criar PR
 
-- [ ] All tests pass locally
-- [ ] Code follows project conventions
-- [ ] No linting errors
-- [ ] PR title follows semantic convention
-- [ ] Description is complete
+- [ ] Todos os testes passam localmente
+- [ ] Código segue as convenções do projeto
+- [ ] Sem erros de lint
+- [ ] Título do PR segue convenção semântica
+- [ ] Descrição está completa
 
-### Review Requirements
+### Requisitos de Revisão
 
-- At least 1 approval required
-- All comments addressed
-- CI checks passing
+- Pelo menos 1 aprovação necessária
+- Todos os comentários resolvidos
+- Checks de CI passando
 
-### After Merge
+### Após o Merge
 
-- Branch deleted (optional)
-- Related issue closed
+- Branch deletada (opcional)
+- Issue relacionada fechada
 
 ---
 
-## Quick Reference
+## Referência Rápida
 
-| Scenario | Type |
-|----------|------|
-| New feature | `feat` |
-| Bug fix | `fix` |
+| Cenário | Tipo |
+|---------|------|
+| Nova funcionalidade | `feat` |
+| Correção de bug | `fix` |
 | Performance | `perf` |
-| Refactoring | `refactor` |
-| Documentation | `docs` |
-| Tests | `test` |
-| Dependencies | `chore` |
+| Refatoração | `refactor` |
+| Documentação | `docs` |
+| Testes | `test` |
+| Dependências | `chore` |
 
 ---
 
-## Example: Search Books Bug Fix PR
+## Exemplo: PR de Correção do Bug de Busca
 
-### Title
+### Título
 
 ```
-fix(books): align searchBooksAction with dashboard data source
+fix(books): alinhar searchBooksAction com fonte de dados do dashboard
 ```
 
-### Description
+### Descrição
 
 ```markdown
-## Summary
-Fixed the search functionality to use the same data source (`user_books` table) as the dashboard, ensuring published books appear in search results.
+## Resumo
+Corrigida a funcionalidade de busca para usar a mesma fonte de dados (tabela `user_books`) que o dashboard, garantindo que livros publicados apareçam nos resultados de busca.
 
-## Changes
-- Changed table from `books` to `user_books` in searchBooksAction
-- Added `status = 'published'` filter to search query
-- Updated formatter from `formatBook` to `formatUserBook`
+## Mudanças
+- Alterada tabela de `books` para `user_books` em searchBooksAction
+- Adicionado filtro `status = 'published'` na query de busca
+- Atualizado formatador de `formatBook` para `formatUserBook`
 
-## Testing
-- [x] Lint passes
-- [x] Manual testing in dev environment
-- [x] Verified search returns published books from user_books
+## Testes
+- [x] Lint passa
+- [x] Teste manual em ambiente dev
+- [x] Verificado que busca retorna livros publicados de user_books
 
-## Related Issues
+## Issues Relacionadas
 Closes #21
 ```

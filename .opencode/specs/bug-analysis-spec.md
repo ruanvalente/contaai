@@ -1,64 +1,64 @@
 # Bug Analysis Spec
 
-## Purpose
+## Propósito
 
-This spec provides a standardized template for documenting and investigating bugs in the application. It helps systematize the debugging process, ensuring no critical steps are missed and facilitating knowledge sharing across the team.
+Este documento fornece um template padronizado para documentar e investigar bugs na aplicação. Ele ajuda a sistematizar o processo de debugging, garantindo que nenhum passo crítico seja perdido e facilitando o compartilhamento de conhecimento entre a equipe.
 
-## When to Use This Spec
+## Quando Usar Esta Spec
 
-- Reporting new bugs
-- Investigating existing issues
-- Performing root cause analysis
-- Documenting bug fixes
+- Reportar novos bugs
+- Investigar problemas existentes
+- Realizar análise de causa raiz
+- Documentar correções de bugs
 
 ---
 
-## Bug Report Section
+## Seção de Reporte de Bug
 
-### Basic Information
+### Informações Básicas
 
-| Field | Description |
+| Campo | Descrição |
 |-------|-------------|
-| **Bug ID** | Unique identifier (auto-generated or ticket number) |
-| **Date Reported** | Date when the bug was first reported |
-| **Reporter** | Person who reported the bug |
-| **Priority** | Critical / High / Medium / Low |
-| **Status** | Open / In Progress / Resolved / Closed |
+| **Bug ID** | Identificador único (gerado automaticamente ou número do ticket) |
+| **Data do Reporte** | Data quando o bug foi reportado |
+| **Reporter** | Pessoa que reportou o bug |
+| **Prioridade** | Crítica / Alta / Média / Baixa |
+| **Status** | Aberto / Em Progresso / Resolvido / Fechado |
 
-### Environment
+### Ambiente
 
-| Field | Description |
+| Campo | Descrição |
 |-------|-------------|
-| **Endpoint/Location** | URL or file path where the bug occurs |
-| **Environment** | Production / Staging / Development |
-| **Browser/Device** | Browser name, version, OS |
-| **User Role** | Authenticated user / Guest / Admin |
+| **Endpoint/Local** | URL ou caminho do arquivo onde o bug ocorre |
+| **Ambiente** | Produção / Staging / Desenvolvimento |
+| **Browser/Dispositivo** | Nome do browser, versão, SO |
+| **Papel do Usuário** | Usuário autenticado / Convidado / Admin |
 
-### Description
+### Descrição
 
 ```
-**Sintoma**: [What the user sees - be specific]
-**Comportamento esperado**: [What should happen]
-**Comportamento atual**: [What actually happens]
-**Impacto**: [How this affects users]
+**Sintoma**: [O que o usuário vê - seja específico]
+**Comportamento esperado**: [O que deveria acontecer]
+**Comportamento atual**: [O que realmente acontece]
+**Impacto**: [Como isso afeta os usuários]
 ```
 
-### Evidence
+### Evidência
 
 ```markdown
-- Stack trace: [paste relevant log]
-- Screenshots: [attach or describe]
-- Reproduction steps: [numbered list]
-- Error messages: [exact text]
+- Stack trace: [colar log relevante]
+- Screenshots: [anexar ou descrever]
+- Passos de reprodução: [lista numerada]
+- Mensagens de erro: [texto exato]
 ```
 
 ---
 
-## Investigation Section
+## Seção de Investigação
 
-### Root Cause Hypothesis
+### Hipótese de Causa Raiz
 
-Check all that apply and explain:
+Marque todas que se aplicam e explique:
 
 - [ ] Inconsistência entre fontes de dados (different tables/queries)
 - [ ] Problema de cache/renderização
@@ -68,10 +68,10 @@ Check all that apply and explain:
 - [ ] Missing/null value handling
 - [ ] Outro: _____________
 
-### Investigation Steps
+### Passos de Investigação
 
-| Step | Action | Result | Notes |
-|------|--------|--------|-------|
+| Passo | Ação | Resultado | Observações |
+|------|------|-----------|-------------|
 | 1 | Identificar as fontes de dados utilizadas | [ ] | |
 | 2 | Comparar tabelas/queries entre componentes | [ ] | |
 | 3 | Verificar se há filtro diferente entre operações | [ ] | |
@@ -80,78 +80,78 @@ Check all that apply and explain:
 | 6 | Verificar dependências e versões | [ ] | |
 | 7 | Testar em ambiente limpo | [ ] | |
 
-### Code Analysis
+### Análise de Código
 
 ```typescript
-// Relevant code snippets
+// Trechos de código relevantes
 
-// File: [path]
-// Function: [name]
-// Lines: [X-Y]
+// Arquivo: [caminho]
+// Função: [nome]
+// Linhas: [X-Y]
 ```
 
-### Database Queries
+### Queries de Banco
 
 ```sql
--- Test queries executed
+-- Queries de teste executadas
 ```
 
 ---
 
-## Resolution Section
+## Seção de Resolução
 
-### Fix Description
+### Descrição da Correção
 
 ```
-[Describe the solution implemented]
+[Descreva a solução implementada]
 ```
 
-### Files Changed
+### Arquivos Alterados
 
-| File | Change Type |
-|------|-------------|
+| Arquivo | Tipo de Mudança |
+|---------|----------------|
 | | |
 
-### Testing Performed
+### Testes Realizados
 
-- [ ] Unit tests added/updated
-- [ ] Integration tests pass
-- [ ] Manual testing in dev environment
-- [ ] Verified fix resolves original issue
+- [ ] Testes unitários adicionados/atualizados
+- [ ] Testes de integração passam
+- [ ] Teste manual em ambiente dev
+- [ ] Verificado que a correção resolve o problema original
 
-### Rollback Plan
+### Plano de Rollback
 
 ```
-[Steps to revert if needed]
+[Passos para reverter se necessário]
 ```
 
 ---
 
-## Prevention Section
+## Seção de Prevenção
 
-### Lessons Learned
+### Lições Aprendidas
 
 ```
-[What could have caught this bug earlier]
+[O que poderia ter detectado este bug mais cedo]
 ```
 
-### Improvements Suggested
+### Melhorias Sugeridas
 
-- [ ] Add automated tests
-- [ ] Improve logging
-- [ ] Add type validation
-- [ ] Add error boundaries
-- [ ] Other: _____________
+- [ ] Adicionar testes automatizados
+- [ ] Melhorar logging
+- [ ] Adicionar validação de tipos
+- [ ] Adicionar error boundaries
+- [ ] Outro: _____________
 
 ---
 
-## Quick Checklist
+## Checklist Rápido
 
-When investigating a bug, always verify:
+Ao investigar um bug, sempre verifique:
 
-- [ ] Spelling errors (typos in variable names)
+- [ ] Erros de digitação (typos em nomes de variáveis)
 - [ ] Case sensitivity
-- [ ] Null/undefined values
+- [ ] Valores null/undefined
 - [ ] Array index off-by-one
 - [ ] Async timing (race conditions)
 - [ ] Scope issues
@@ -164,34 +164,34 @@ When investigating a bug, always verify:
 
 ---
 
-## Example: Search Books Bug
+## Exemplo: Bug de Busca de Livros
 
-### Bug Report
+### Reporte do Bug
 
-- **Endpoint/Location**: POST /dashboard → searchBooksAction
+- **Endpoint/Local**: POST /dashboard → searchBooksAction
 - **Sintoma**: Pesquisa não retorna itens que deveriam aparecer no dashboard
 - **Comportamento esperado**: Todos os livros publicados aparecem na pesquisa
 - **Comportamento atual**: Livros da tabela user_books não aparecem na pesquisa
 
-### Root Cause
+### Causa Raiz
 
 Inconsistência entre fontes de dados: O dashboard exibe livros da tabela `user_books` (com filtro `status = 'published'`), mas a pesquisa (`searchBooksAction`) busca na tabela `books` sem esse filtro. Um livro pode existir em uma tabela e não na outra.
 
-### Investigation Steps
+### Passos de Investigação
 
-| Step | Action | Result |
-|------|--------|--------|
-| 1 | Identificar fonte de dados do dashboard | `user_books` table |
-| 2 | Identificar fonte de dados da pesquisa | `books` table |
+| Passo | Ação | Resultado |
+|------|------|-----------|
+| 1 | Identificar fonte de dados do dashboard | tabela `user_books` |
+| 2 | Identificar fonte de dados da pesquisa | tabela `books` |
 | 3 | Comparar as queries | Diferentes tabelas |
 | 4 | Verificar se livros existem em ambas tabelas | Não existem |
 
-### Fix
+### Correção
 
 Alterar `searchBooksAction` para buscar em `user_books` com filtro `status = 'published'` em vez de `books`.
 
-### Files Changed
+### Arquivos Alterados
 
-| File | Change Type |
-|------|-------------|
-| `src/features/book-dashboard/actions/books.actions.ts` | Modified |
+| Arquivo | Tipo de Mudança |
+|---------|----------------|
+| `src/features/book-dashboard/actions/books.actions.ts` | Modificado |

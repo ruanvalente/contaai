@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { extractScrollPosition, scrollToTop, scrollToPosition } from "@/features/reading/utils";
 
 type UseScrollProgressOptions = {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -15,39 +16,6 @@ type UseScrollProgressReturn = {
   scrollToTop: () => void;
   scrollToPercent: (percent: number) => void;
 };
-
-function calculateProgress(containerRef?: React.RefObject<HTMLElement | null>) {
-  if (containerRef?.current) {
-    const el = containerRef.current;
-    const scrollTop = el.scrollTop;
-    const scrollHeight = el.scrollHeight;
-    const clientHeight = el.clientHeight;
-    const maxScroll = scrollHeight - clientHeight;
-    const percent = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
-
-    return {
-      percent: Math.min(100, Math.max(0, percent)),
-      isAtTop: scrollTop < 10,
-      isAtBottom: scrollTop >= maxScroll - 10,
-    };
-  }
-
-  if (typeof window === "undefined") {
-    return { percent: 0, isAtTop: true, isAtBottom: false };
-  }
-
-  const scrollTop = window.scrollY;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const clientHeight = window.innerHeight;
-  const maxScroll = scrollHeight - clientHeight;
-  const percent = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
-
-  return {
-    percent: Math.min(100, Math.max(0, percent)),
-    isAtTop: scrollTop < 10,
-    isAtBottom: scrollTop >= maxScroll - 10,
-  };
-}
 
 export function useScrollProgress({
   containerRef,
@@ -64,7 +32,7 @@ export function useScrollProgress({
     if (now - lastUpdateRef.current < throttleMs) return;
     lastUpdateRef.current = now;
 
-    const result = calculateProgress(containerRef);
+    const result = extractScrollPosition(containerRef);
     setScrollPercent(result.percent);
     setIsAtTop(result.isAtTop);
     setIsAtBottom(result.isAtBottom);
@@ -75,7 +43,7 @@ export function useScrollProgress({
     const target = containerRef?.current ?? window;
     target.addEventListener("scroll", handleScroll, { passive: true });
 
-    const initial = calculateProgress(containerRef);
+    const initial = extractScrollPosition(containerRef);
     setScrollPercent(initial.percent);
     setIsAtTop(initial.isAtTop);
     setIsAtBottom(initial.isAtBottom);
@@ -85,30 +53,13 @@ export function useScrollProgress({
     };
   }, [containerRef, handleScroll]);
 
-  const scrollToTop = useCallback(() => {
-    if (containerRef?.current) {
-      containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  const scrollToTopHandler = useCallback(() => {
+    scrollToTop(containerRef);
   }, [containerRef]);
 
   const scrollToPercent = useCallback(
     (percent: number) => {
-      if (containerRef?.current) {
-        const el = containerRef.current;
-        const scrollHeight = el.scrollHeight;
-        const clientHeight = el.clientHeight;
-        const maxScroll = scrollHeight - clientHeight;
-        const targetScroll = (percent / 100) * maxScroll;
-        el.scrollTo({ top: targetScroll, behavior: "smooth" });
-      } else {
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = window.innerHeight;
-        const maxScroll = scrollHeight - clientHeight;
-        const targetScroll = (percent / 100) * maxScroll;
-        window.scrollTo({ top: targetScroll, behavior: "smooth" });
-      }
+      scrollToPosition(containerRef, percent);
     },
     [containerRef]
   );
@@ -117,7 +68,7 @@ export function useScrollProgress({
     scrollPercent,
     isAtTop,
     isAtBottom,
-    scrollToTop,
+    scrollToTop: scrollToTopHandler,
     scrollToPercent,
   };
 }

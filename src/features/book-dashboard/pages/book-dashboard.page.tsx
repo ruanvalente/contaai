@@ -8,8 +8,11 @@ import { SearchResultsWidget } from "../widgets/search-results.widget";
 import { useBookDashboard } from "../hooks/use-book-dashboard.hook";
 
 const BookDetailsModalWidget = dynamic(
-  () => import("../widgets/book-details-modal.widget").then((mod) => mod.BookDetailsModalWidget),
-  { ssr: false }
+  () =>
+    import("../widgets/book-details-modal.widget").then(
+      (mod) => mod.BookDetailsModalWidget,
+    ),
+  { ssr: false },
 );
 
 export function BookDashboardPage() {

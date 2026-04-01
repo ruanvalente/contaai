@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { BookReader } from "./book-reader";
+import { ReadingPage } from "@/features/reading/widgets/reading-page.widget";
 
 type BookData = {
   id: string;
@@ -62,7 +63,7 @@ export function BookPageClient({ bookId }: { bookId: string }) {
         setIsUserBook(true);
       } else if (regularBookRes.data) {
         const data = regularBookRes.data;
-        const validCategories = ["Drama", "Fantasy", "Sci-Fi", "Business", "Education", "Geography"];
+        const validCategories = ["Drama", "Fantasia", "Ficção", "Romance", "Suspense", "Terror", "Aventura", "Comédia", "Drama", "Ficção Científica", "Fantasia", "Mistério", "Não Ficção", "Poesia", "Conto", "Biografia", "História", "Filosofia", "Autoajuda", "Negócios"];
         const category = validCategories.includes(data.category) 
           ? data.category 
           : "Drama";
@@ -98,6 +99,24 @@ export function BookPageClient({ bookId }: { bookId: string }) {
 
   if (!book) {
     notFound();
+  }
+
+  if (isUserBook && book.content) {
+    return (
+      <ReadingPage
+        bookId={book.id}
+        book={{
+          title: book.title,
+          author: book.author,
+          coverUrl: book.coverUrl,
+          coverColor: book.coverColor,
+          content: book.content,
+          wordCount: book.wordCount || 0,
+          publishedAt: book.publishedAt,
+          createdAt: book.createdAt,
+        }}
+      />
+    );
   }
 
   return <BookReader book={book} isUserBook={isUserBook} />;

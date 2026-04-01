@@ -1,3 +1,5 @@
+import { cn } from "@/utils/cn";
+
 type UsePaginationProps = {
   currentPage: number;
   totalPages: number;
@@ -81,11 +83,12 @@ function PaginationButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      className={cn(
+        "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
         isActive
           ? "bg-accent-500 text-white"
           : "bg-white border border-primary-300 text-gray-700 hover:bg-primary-100 disabled:opacity-50 disabled:cursor-not-allowed"
-      }`}
+      )}
       aria-label={ariaLabel}
       aria-current={ariaCurrent ? "page" : undefined}
     >

@@ -40,16 +40,19 @@ const viewerTheme = {
   link: "text-accent-500 underline hover:text-accent-600",
 };
 
-function BookCover({ coverUrl, coverColor, title }: { coverUrl?: string; coverColor: string; title: string }) {
+function BookCover({
+  coverUrl,
+  coverColor,
+  title,
+}: {
+  coverUrl?: string;
+  coverColor: string;
+  title: string;
+}) {
   if (coverUrl) {
     return (
       <div className="relative w-40 h-56 md:w-48 md:h-72 flex-shrink-0 rounded-lg overflow-hidden shadow-xl">
-        <Image
-          src={coverUrl}
-          alt={title}
-          fill
-          className="object-cover"
-        />
+        <Image src={coverUrl} alt={title} fill className="object-cover" />
       </div>
     );
   }
@@ -71,20 +74,47 @@ function ContentViewer({ content }: { content: string }) {
       if (parsed && parsed.root) {
         return content;
       }
-      return JSON.stringify({ root: { children: [{ type: "paragraph", children: [{ type: "text", text: content }] }], type: "root", version: 1 } });
+      return JSON.stringify({
+        root: {
+          children: [
+            { type: "paragraph", children: [{ type: "text", text: content }] },
+          ],
+          type: "root",
+          version: 1,
+        },
+      });
     } catch {
-      return JSON.stringify({ root: { children: [{ type: "paragraph", children: [{ type: "text", text: content }] }], type: "root", version: 1 } });
+      return JSON.stringify({
+        root: {
+          children: [
+            { type: "paragraph", children: [{ type: "text", text: content }] },
+          ],
+          type: "root",
+          version: 1,
+        },
+      });
     }
   }, [content]);
 
-  const initialConfig = useMemo(() => ({
-    namespace: "BookViewer",
-    theme: viewerTheme,
-    onError: (error: Error) => console.error(error),
-    editable: false,
-    editorState,
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, LinkNode],
-  }), [editorState]);
+  const initialConfig = useMemo(
+    () => ({
+      namespace: "BookViewer",
+      theme: viewerTheme,
+      onError: (error: Error) => console.error(error),
+      editable: false,
+      editorState,
+      nodes: [
+        HeadingNode,
+        QuoteNode,
+        ListNode,
+        ListItemNode,
+        CodeNode,
+        CodeHighlightNode,
+        LinkNode,
+      ],
+    }),
+    [editorState],
+  );
 
   return (
     <div className="prose prose-lg max-w-none">
@@ -171,7 +201,7 @@ export function BookReader({ book, isUserBook }: BookReaderProps) {
             </div>
 
             <div className="flex-1 p-6 md:p-10 pt-0 md:pt-10">
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                 {book.title}
               </h1>
               <p className="text-xl text-gray-600 mb-4">por {book.author}</p>
@@ -192,7 +222,9 @@ export function BookReader({ book, isUserBook }: BookReaderProps) {
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                     <span>{book.rating.toFixed(1)}</span>
-                    <span className="text-gray-400">({book.ratingCount} avaliações)</span>
+                    <span className="text-gray-400">
+                      ({book.ratingCount} avaliações)
+                    </span>
                   </div>
                 )}
                 {book.pages !== undefined && book.pages > 0 && (
@@ -204,7 +236,9 @@ export function BookReader({ book, isUserBook }: BookReaderProps) {
                 {book.wordCount !== undefined && book.wordCount > 0 && (
                   <div className="flex items-center gap-1">
                     <FileText className="w-4 h-4" />
-                    <span>{book.wordCount.toLocaleString("pt-BR")} palavras</span>
+                    <span>
+                      {book.wordCount.toLocaleString("pt-BR")} palavras
+                    </span>
                   </div>
                 )}
                 <div className="flex items-center gap-1">
@@ -231,7 +265,9 @@ export function BookReader({ book, isUserBook }: BookReaderProps) {
                   <ContentViewer content={book.content} />
                 </div>
               ) : (
-                <p className="text-gray-500 italic">Este livro ainda não possui conteúdo.</p>
+                <p className="text-gray-500 italic">
+                  Este livro ainda não possui conteúdo.
+                </p>
               )}
             </div>
           )}

@@ -27,10 +27,10 @@ src/shared/ui/
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 import { cn } from "@/utils/cn";
 
-interface ButtonUiProps extends ComponentPropsWithoutRef<"button"> {
+type ButtonUiProps = ComponentPropsWithoutRef<"button"> & {
   variant?: "primary" | "secondary" | "ghost";
   size?: "sm" | "md" | "lg";
-}
+};
 
 export const ButtonUi = forwardRef<HTMLButtonElement, ButtonUiProps>(
   ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
@@ -66,29 +66,29 @@ ButtonUi.displayName = "ButtonUi";
 
 ```tsx
 // src/shared/ui/avatar.tsx
-interface AvatarProps {
+type AvatarProps = {
   src?: string;
   alt?: string;
   fallback?: string;
   size?: "sm" | "md" | "lg";
-}
+};
 ```
 
 ### 2.2 Badge
 
 ```tsx
 // src/shared/ui/badge.tsx
-interface BadgeProps {
+type BadgeProps = {
   variant?: "default" | "secondary" | "outline" | "success" | "warning" | "error";
   children: React.ReactNode;
-}
+};
 ```
 
 ### 2.3 Book Card
 
 ```tsx
 // src/shared/ui/book-card.tsx
-interface BookCardProps {
+type BookCardProps = {
   id: string;
   title: string;
   author: string;
@@ -96,182 +96,182 @@ interface BookCardProps {
   coverColor?: string;
   category?: string;
   rating?: number;
-}
+};
 ```
 
 ### 2.4 Book Cover
 
 ```tsx
 // src/shared/ui/book-cover.tsx
-interface BookCoverProps {
+type BookCoverProps = {
   coverUrl?: string;
   coverColor?: string;
   title: string;
   size?: "sm" | "md" | "lg";
-}
+};
 ```
 
 ### 2.5 Button
 
 ```tsx
 // src/shared/ui/button.tsx
-interface ButtonProps {
+type ButtonProps = {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   children: React.ReactNode;
-}
+};
 ```
 
 ### 2.6 Category Header
 
 ```tsx
 // src/shared/ui/category-header.ui.tsx
-interface CategoryHeaderProps {
+type CategoryHeaderProps = {
   title: string;
   description?: string;
-}
+};
 ```
 
 ### 2.7 Container
 
 ```tsx
 // src/shared/ui/container.tsx
-interface ContainerProps {
+type ContainerProps = {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
-}
+};
 ```
 
 ### 2.8 Empty Library State
 
 ```tsx
 // src/shared/ui/empty-library-state.ui.tsx
-interface EmptyLibraryStateProps {
+type EmptyLibraryStateProps = {
   title?: string;
   description?: string;
-}
+};
 ```
 
 ### 2.9 Empty Favorites State
 
 ```tsx
 // src/shared/ui/empty-favorites-state.ui.tsx
-interface EmptyFavoritesStateProps {
+type EmptyFavoritesStateProps = {
   onAction?: () => void;
-}
+};
 ```
 
 ### 2.10 Header
 
 ```tsx
 // src/shared/ui/header.ui.tsx
-interface HeaderProps {
+type HeaderProps = {
   title: string;
   subtitle?: string;
-}
+};
 ```
 
 ### 2.11 Library Header
 
 ```tsx
 // src/shared/ui/library-header.ui.tsx
-interface LibraryHeaderProps {
+type LibraryHeaderProps = {
   title: string;
   className?: string;
-}
+};
 ```
 
 ### 2.12 Pagination
 
 ```tsx
 // src/shared/ui/pagination.ui.tsx
-interface PaginationProps {
+type PaginationProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-}
+};
 ```
 
 ### 2.13 Published Notification
 
 ```tsx
 // src/shared/ui/published-notification.ui.tsx
-interface PublishedNotificationProps {
+type PublishedNotificationProps = {
   title: string;
   bookId: string;
-}
+};
 ```
 
 ### 2.14 Search Input
 
 ```tsx
 // src/shared/ui/search-input.tsx
-interface SearchInputProps {
+type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-}
+};
 ```
 
 ### 2.15 Sidebar
 
 ```tsx
 // src/shared/ui/sidebar.tsx
-interface SidebarProps {
+type SidebarProps = {
   items: SidebarItem[];
   activeItem?: string;
-}
+};
 
-interface SidebarItem {
+type SidebarItem = {
   id: string;
   label: string;
   href: string;
   icon?: React.ReactNode;
-}
+};
 ```
 
 ### 2.16 Skeleton
 
 ```tsx
 // src/shared/ui/skeleton.ui.tsx
-interface SkeletonProps {
+type SkeletonProps = {
   className?: string;
-}
+};
 ```
 
 ### 2.17 Stats Card
 
 ```tsx
 // src/shared/ui/stats-card.tsx
-interface StatsCardProps {
+type StatsCardProps = {
   title: string;
   value: string | number;
   icon?: React.ReactNode;
   trend?: "up" | "down" | "neutral";
-}
+};
 ```
 
 ### 2.18 Tabs
 
 ```tsx
 // src/shared/ui/tabs.tsx
-interface TabsProps {
+type TabsProps = {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
-}
+};
 ```
 
 ### 2.19 Topbar
 
 ```tsx
 // src/shared/ui/topbar.tsx
-interface TopbarProps {
+type TopbarProps = {
   user?: {
     name: string;
     avatar?: string;
   };
-}
+};
 ```
 
 ---
@@ -282,18 +282,18 @@ interface TopbarProps {
 
 ```tsx
 // Estender props nativas do elemento HTML
-interface ComponentProps extends ComponentPropsWithoutRef<"element"> {
+type ComponentProps = ComponentPropsWithoutRef<"element"> & {
   // Props customizadas
   variant?: "default" | "variant1" | "variant2";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   isDisabled?: boolean;
-}
+};
 
 // Prop drilling prevention - usar generic se necessário
-interface WithClassName {
+type WithClassName = {
   className?: string;
-}
+};
 ```
 
 ### 3.2 Naming Conventions
@@ -406,19 +406,19 @@ function BookCardUi({ book }: { book: Book }) {
 
 ```tsx
 // ✅ Sempre tipar props explicitamente
-interface BookCardProps {
+type BookCardProps = {
   book: {
     id: string;
     title: string;
     author: string;
   };
-}
+};
 
 // ✅ Usar tipos existentes quando possível
 import { Book } from "@/features/book-dashboard/types/book.types";
-interface BookCardProps {
+type BookCardProps = {
   book: Book;
-}
+};
 ```
 
 ---

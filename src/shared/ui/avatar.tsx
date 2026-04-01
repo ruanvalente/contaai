@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/utils/cn";
 
 type AvatarProps = {
   name?: string;
@@ -34,7 +35,7 @@ export function Avatar({
   if (src) {
     return (
       <div
-        className={`${sizes[size]} rounded-full overflow-hidden ${className}`}
+        className={cn(sizes[size], "rounded-full overflow-hidden", className)}
       >
         <Image
           priority
@@ -50,7 +51,7 @@ export function Avatar({
 
   return (
     <div
-      className={`${sizes[size]} rounded-full bg-accent-500 flex items-center justify-center text-white font-medium ${className}`}
+      className={cn(sizes[size], "rounded-full bg-accent-500 flex items-center justify-center text-white font-medium", className)}
     >
       {initials}
     </div>

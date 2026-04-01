@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { cn } from "@/utils/cn";
 import { Avatar } from "@/shared/ui/avatar";
 import { Camera } from "lucide-react";
 
@@ -55,7 +56,7 @@ export function AvatarUpload({
       <div className="relative group">
         {displaySrc ? (
           <div
-            className={`${sizeClasses[size]} rounded-full overflow-hidden ring-2 ring-primary-200`}
+            className={cn(sizeClasses[size], "rounded-full overflow-hidden ring-2 ring-primary-200")}
           >
             {preview ? (
               <Image

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useHydrated } from "@/shared/hooks/use-hydrated";
 
 export type ReadingMode = "default" | "night";
 
@@ -19,29 +18,40 @@ const DEFAULT_PREFERENCES: ReadingPreferences = {
   autoScroll: false,
 };
 
-export function useReadingPreferences() {
-  const isHydrated = useHydrated();
+function loadFromStorage(): ReadingPreferences {
+  if (typeof window === "undefined") {
+    return DEFAULT_PREFERENCES;
+  }
   
-  const [preferences, setPreferences] = useState<ReadingPreferences>(DEFAULT_PREFERENCES);
-  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    
+  try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
-      } catch {
-        setPreferences(DEFAULT_PREFERENCES);
-      }
+      const parsed = JSON.parse(stored);
+      return { ...DEFAULT_PREFERENCES, ...parsed };
     }
-  }, [isHydrated]);
+  } catch {
+    // ignore parse errors
+  }
+  return DEFAULT_PREFERENCES;
+}
+
+export function useReadingPreferences() {
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const [preferences, setPreferences] = useState<ReadingPreferences>(loadFromStorage);
+  const [isLoaded, setIsLoaded] = useState(typeof window !== "undefined");
 
   useEffect(() => {
-    if (!isHydrated) return;
+    const timeoutId = setTimeout(() => {
+      setIsLoaded(true);
+    }, 0);
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    
     localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
     
     document.documentElement.style.setProperty(
@@ -54,7 +64,7 @@ export function useReadingPreferences() {
     } else {
       document.documentElement.classList.remove("reading-mode-night");
     }
-  }, [preferences, isHydrated]);
+  }, [preferences, isLoaded]);
 
   const setFontSize = useCallback((fontSize: number) => {
     setPreferences((prev) => ({ ...prev, fontSize }));
@@ -84,7 +94,7 @@ export function useReadingPreferences() {
   }, []);
 
   useEffect(() => {
-    if (!isHydrated) return;
+    if (!isLoaded) return;
     
     if (preferences.autoScroll) {
       startAutoScroll();
@@ -97,11 +107,11 @@ export function useReadingPreferences() {
         clearInterval(scrollIntervalRef.current);
       }
     };
-  }, [preferences.autoScroll, isHydrated, startAutoScroll, stopAutoScroll]);
+  }, [preferences.autoScroll, isLoaded, startAutoScroll, stopAutoScroll]);
 
   return {
     preferences,
-    isLoaded: isHydrated,
+    isLoaded,
     setFontSize,
     setReadingMode,
     toggleAutoScroll,

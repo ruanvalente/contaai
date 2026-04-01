@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { cn } from "@/utils/cn";
 
 type BookCoverProps = {
   title: string;
@@ -28,7 +29,7 @@ export function BookCover({
 
   if (coverUrl) {
     return (
-      <div className={`${container} rounded-lg overflow-hidden shadow-md ${className}`}>
+      <div className={cn(container, "rounded-lg overflow-hidden shadow-md", className)}>
         <Image
           src={coverUrl}
           alt={title}
@@ -42,12 +43,12 @@ export function BookCover({
 
   return (
     <div
-      className={`${container} rounded-lg shadow-md flex flex-col items-center justify-center p-2 sm:p-3 ${className}`}
+      className={cn(container, "rounded-lg shadow-md flex flex-col items-center justify-center p-2 sm:p-3", className)}
       style={{ backgroundColor: coverColor }}
     >
       <div className="flex-1 flex items-center justify-center w-full">
         <span
-          className={`text-white/90 font-display ${text} leading-tight text-center line-clamp-3 sm:line-clamp-4`}
+          className={cn("text-white/90 font-display leading-tight text-center line-clamp-3 sm:line-clamp-4", text)}
         >
           {title}
         </span>

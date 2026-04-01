@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import {
   UserBook,
   UserBookStatus,
@@ -52,12 +53,6 @@ function formatUserBook(book: SupabaseUserBook): UserBook {
   };
 }
 
-async function getCurrentUserId(): Promise<string | undefined> {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user?.id;
-}
-
 export async function createUserBook(
   input: CreateUserBookInput,
   userId?: string
@@ -68,7 +63,7 @@ export async function createUserBook(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -220,7 +215,7 @@ export async function updateUserBook(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -262,7 +257,7 @@ export async function saveBookContent(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -301,7 +296,7 @@ export async function publishBook(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -345,7 +340,7 @@ export async function markAsReading(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -382,7 +377,7 @@ export async function markAsCompleted(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -420,7 +415,7 @@ export async function updateReadingProgress(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -463,7 +458,7 @@ export async function deleteUserBook(
     let currentUserId = userId;
     
     if (!currentUserId) {
-      currentUserId = await getCurrentUserId();
+      currentUserId = await getCurrentUserIdOptional();
     }
 
     if (!currentUserId) {
@@ -495,7 +490,7 @@ export async function getCurrentUserBooks(userId?: string): Promise<{
   let currentUserId = userId;
   
   if (!currentUserId) {
-    currentUserId = await getCurrentUserId();
+    currentUserId = await getCurrentUserIdOptional();
   }
 
   if (!currentUserId) {

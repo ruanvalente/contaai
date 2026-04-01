@@ -29,15 +29,15 @@ src/shared/widgets/
 import { useState, useCallback } from "react";
 import { BookGridUi } from "@/shared/ui/book-grid.ui";
 
-interface Book {
+type Book = {
   id: string;
   title: string;
-}
+};
 
-interface BookGridWidgetProps {
+type BookGridWidgetProps = {
   initialBooks?: Book[];
   onBookSelect?: (book: Book) => void;
-}
+};
 
 export function BookGridWidget({ 
   initialBooks = [], 
@@ -71,75 +71,75 @@ export function BookGridWidget({
 
 ```tsx
 // src/shared/widgets/book-grid.widget.tsx
-interface BookGridWidgetProps {
+type BookGridWidgetProps = {
   books: Book[];
   columns?: number;
   onBookClick?: (book: Book) => void;
   onFavoriteClick?: (book: Book) => void;
-}
+};
 ```
 
 ### 2.2 Category Filter Bar Widget
 
 ```tsx
 // src/shared/widgets/category-filter-bar.widget.tsx
-interface CategoryFilterBarWidgetProps {
+type CategoryFilterBarWidgetProps = {
   categories: Category[];
   activeCategory: Category | "All";
   onCategoryChange: (category: Category | "All") => void;
-}
+};
 ```
 
 ### 2.3 Dashboard Shell Widget
 
 ```tsx
 // src/shared/widgets/dashboard-shell.widget.tsx
-interface DashboardShellWidgetProps {
+type DashboardShellWidgetProps = {
   children: React.ReactNode;
   sidebar?: React.ReactNode;
-}
+};
 ```
 
 ### 2.4 Favorite Book Card Widget
 
 ```tsx
 // src/shared/widgets/favorite-book-card.widget.tsx
-interface FavoriteBookCardWidgetProps {
+type FavoriteBookCardWidgetProps = {
   id: string;
   title: string;
   author: string;
   coverUrl?: string;
   coverColor?: string;
   onRemove?: () => void;
-}
+};
 ```
 
 ### 2.5 Favorites Book List Widget
 
 ```tsx
 // src/shared/widgets/favorites-book-list.widget.tsx
-interface FavoritesBookListWidgetProps {
+type FavoritesBookListWidgetProps = {
   favorites: UserFavorite[];
   onRemove?: (bookId: string) => void;
-}
+};
 ```
 
 ### 2.6 Library Tab Bar Widget
 
 ```tsx
 // src/shared/widgets/library-tab-bar.widget.tsx
-interface LibraryTabBarWidgetProps {
+type LibraryTabBarWidgetProps = {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
-}
+};
 ```
 
 ### 2.7 User Dropdown Widget
 
 ```tsx
 // src/shared/widgets/user-dropdown.widget.tsx
-interface UserDropdownWidgetProps {
+type UserDropdownWidgetProps = {
   user: {
     name: string;
     email: string;
@@ -147,7 +147,7 @@ interface UserDropdownWidgetProps {
   };
   onSignOut?: () => void;
   onProfileClick?: () => void;
-}
+};
 ```
 
 ---
@@ -234,11 +234,11 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
 
 ```tsx
 // Callbacks para ações
-interface WidgetProps {
+type WidgetProps = {
   onSubmit?: (data: FormData) => void;
   onCancel?: () => void;
   onError?: (error: Error) => void;
-}
+};
 ```
 
 ### 4.3 Loading States

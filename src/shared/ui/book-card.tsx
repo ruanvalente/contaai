@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { cn } from "@/utils/cn";
 import { BookCover } from "./book-cover";
 import { StarRating } from "./star-rating";
 
@@ -37,7 +38,11 @@ export function BookCard({
   return (
     <motion.button
       type="button"
-      className={`relative cursor-pointer text-left bg-transparent border-none p-0 ${isFeatured ? "sm:scale-105 z-10" : ""} ${className}`}
+      className={cn(
+        "relative cursor-pointer text-left bg-transparent border-none p-0",
+        isFeatured && "sm:scale-105 z-10",
+        className
+      )}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
       onClick={() => onClick?.(id)}

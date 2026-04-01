@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/utils/cn";
 
 type ButtonProps = {
   children: ReactNode;
@@ -32,7 +33,12 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseStyles} ${variants[variant]} ${className} disabled:opacity-50 disabled:cursor-not-allowed`}
+      className={cn(
+        baseStyles,
+        variants[variant],
+        className,
+        "disabled:opacity-50 disabled:cursor-not-allowed"
+      )}
       whileHover={{ scale: disabled ? 1 : 1.02 }}
       whileTap={{ scale: disabled ? 1 : 0.98 }}
     >

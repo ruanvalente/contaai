@@ -1,4 +1,5 @@
 import { Heart, Star } from "lucide-react";
+import { cn } from "@/utils/cn";
 import { Book } from "@/features/book-dashboard/types/book.types";
 
 type FavoriteBookCardProps = {
@@ -15,7 +16,10 @@ export function FavoriteBookCard({ book, isFavorited, onToggleFavorite }: Favori
         className="absolute top-2 right-2 z-10 p-2 bg-white/90 rounded-full shadow-sm hover:bg-error hover:text-white transition-colors"
         aria-label={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
       >
-        <Heart className={`w-4 h-4 ${isFavorited ? "text-accent-500 fill-accent-500" : "text-gray-400"}`} />
+        <Heart className={cn(
+          "w-4 h-4",
+          isFavorited ? "text-accent-500 fill-accent-500" : "text-gray-400"
+        )} />
       </button>
 
       <div className="p-3">

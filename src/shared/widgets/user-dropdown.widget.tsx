@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { cn } from "@/utils/cn";
 import { Avatar } from "../ui/avatar";
 import {
   ChevronDown,
@@ -85,9 +86,7 @@ export function UserDropdown({
       >
         <Avatar name={userName} src={userAvatar} size="md" />
         <ChevronDown
-          className={`w-4 h-4 text-gray-500 transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={cn("w-4 h-4 text-gray-500 transition-transform", isOpen && "rotate-180")}
           aria-hidden="true"
         />
       </button>

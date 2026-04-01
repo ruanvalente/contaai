@@ -2,6 +2,7 @@
 
 import { useId, useState, KeyboardEvent, ReactNode } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/utils/cn";
 
 type Tab = {
   id: string;
@@ -78,27 +79,32 @@ export function Tabs({
 
     switch (variant) {
       case "underline":
-        return `px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 ${
+        return cn(
+          "px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2",
+          baseFocus,
           isActive
             ? "border-accent-500 text-accent-600"
             : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-        } ${baseFocus}`;
+        );
       case "pills":
       default:
-        return `px-4 py-2 rounded-full font-medium whitespace-nowrap transition-colors ${
+        return cn(
+          "px-4 py-2 rounded-full font-medium whitespace-nowrap transition-colors",
+          baseFocus,
           isActive
             ? "bg-accent-500 text-white"
             : "bg-surface text-gray-700 hover:bg-gray-100 border border-border"
-        } ${baseFocus}`;
+        );
     }
   };
 
   return (
     <div className={className}>
       <div
-        className={`flex gap-2 ${
+        className={cn(
+          "flex gap-2",
           variant === "underline" ? "border-b border-primary-200" : "overflow-x-auto pb-2 scrollbar-hide"
-        }`}
+        )}
         style={variant !== "underline" ? { scrollbarWidth: "none", msOverflowStyle: "none" } : undefined}
         role="tablist"
         aria-label="Categorias"
@@ -119,9 +125,10 @@ export function Tabs({
               onClick={() => !tab.disabled && onTabChange(tab.id)}
               onKeyDown={(e) => !tab.disabled && handleKeyDown(e, index)}
               disabled={tab.disabled}
-              className={`${getVariantClasses(isActive)} ${
+              className={cn(
+                getVariantClasses(isActive),
                 tab.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-              }`}
+              )}
               role="tab"
               aria-selected={isActive}
               aria-controls={panelId}
@@ -132,9 +139,10 @@ export function Tabs({
                 {tab.label}
                 {tab.count !== undefined && (
                   <span
-                    className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs rounded-full ${
+                    className={cn(
+                      "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs rounded-full",
                       isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}
+                    )}
                     aria-label={`${tab.count} itens`}
                   >
                     {tab.count}

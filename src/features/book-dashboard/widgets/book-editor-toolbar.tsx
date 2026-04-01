@@ -1,6 +1,7 @@
 "use client";
 
 import { LucideIcon } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 export type ToolbarButtonProps = {
   onClick: () => void;
@@ -21,9 +22,10 @@ export function ToolbarButton({
     <button
       type="button"
       onClick={onClick}
-      className={`p-1.5 sm:p-2 rounded hover:bg-primary-200 transition-colors ${
+      className={cn(
+        "p-1.5 sm:p-2 rounded hover:bg-primary-200 transition-colors",
         isActive ? "bg-accent-100 text-accent-600" : "text-gray-600"
-      }`}
+      )}
       title={title}
       aria-label={title}
       aria-pressed={isActive}

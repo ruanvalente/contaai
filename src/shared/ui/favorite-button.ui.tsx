@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 type FavoriteButtonProps = {
   isFavorited: boolean;
@@ -33,22 +34,22 @@ export function FavoriteButton({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className={`
-        rounded-full shadow-md hover:bg-error hover:text-white transition-all duration-200
-        flex items-center justify-center
-        disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-accent-500/20
-        ${sizeClasses[size]}
-        ${className}
-      `}
+      className={cn(
+        "rounded-full shadow-md hover:bg-error hover:text-white transition-all duration-200",
+        "flex items-center justify-center",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        "focus:outline-none focus:ring-2 focus:ring-accent-500/20",
+        sizeClasses[size],
+        className
+      )}
       aria-label={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
     >
       <Heart
-        className={`
-          transition-colors duration-200
-          ${iconSizes[size]}
-          ${isFavorited ? "fill-accent-500 text-accent-500" : "text-gray-500 hover:text-white"}
-        `}
+        className={cn(
+          "transition-colors duration-200",
+          iconSizes[size],
+          isFavorited ? "fill-accent-500 text-accent-500" : "text-gray-500 hover:text-white"
+        )}
       />
     </button>
   );

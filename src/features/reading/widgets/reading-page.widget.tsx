@@ -62,7 +62,7 @@ export function ReadingPage({ bookId, book }: ReadingPageProps) {
       <ReadingHeader title={book.title} onBack={() => router.back()} />
 
       {hasScrolled && (
-        <div className="sticky top-[57px] z-40 bg-white/95 backdrop-blur-sm border-b border-primary-100 px-4 py-2">
+        <div className="sticky top-14.25 z-40 bg-white/95 backdrop-blur-sm border-b border-primary-100 px-4 py-2">
           <ProgressBar progress={scrollPercent} visible={hasScrolled} />
         </div>
       )}

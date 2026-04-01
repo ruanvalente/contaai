@@ -2,13 +2,40 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+type UseDebouncedSaveReturn<T> = {
+  debouncedSave: (value: T) => void;
+  isSaving: boolean;
+  cancel: () => void;
+  saveNow: () => Promise<void>;
+};
+
 export function useDebouncedSave<T>(
   saveFn: (value: T) => Promise<void>,
   delay: number = 2000
-) {
+): UseDebouncedSaveReturn<T> {
   const [isSaving, setIsSaving] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingRef = useRef<T | null>(null);
+  const isSavingRef = useRef(false);
+
+  const executeSave = useCallback(async () => {
+    if (pendingRef.current === null || isSavingRef.current) {
+      return;
+    }
+
+    isSavingRef.current = true;
+    setIsSaving(true);
+
+    const valueToSave = pendingRef.current;
+    pendingRef.current = null;
+
+    try {
+      await saveFn(valueToSave);
+    } finally {
+      isSavingRef.current = false;
+      setIsSaving(false);
+    }
+  }, [saveFn]);
 
   const debouncedSave = useCallback(
     (value: T) => {
@@ -18,19 +45,11 @@ export function useDebouncedSave<T>(
         clearTimeout(timeoutRef.current);
       }
 
-      timeoutRef.current = setTimeout(async () => {
-        if (pendingRef.current !== null) {
-          setIsSaving(true);
-          try {
-            await saveFn(pendingRef.current);
-          } finally {
-            setIsSaving(false);
-            pendingRef.current = null;
-          }
-        }
+      timeoutRef.current = setTimeout(() => {
+        executeSave();
       }, delay);
     },
-    [saveFn, delay]
+    [delay, executeSave]
   );
 
   const cancel = useCallback(() => {
@@ -47,22 +66,15 @@ export function useDebouncedSave<T>(
       timeoutRef.current = null;
     }
 
-    if (pendingRef.current !== null) {
-      setIsSaving(true);
-      try {
-        await saveFn(pendingRef.current);
-      } finally {
-        setIsSaving(false);
-        pendingRef.current = null;
-      }
-    }
-  }, [saveFn]);
+    await executeSave();
+  }, [executeSave]);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      pendingRef.current = null;
     };
   }, []);
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 
 export type UserFavorite = {
   id: string;
@@ -41,12 +42,6 @@ function formatFavorite(row: FavoriteRow): UserFavorite {
   };
 }
 
-async function getCurrentUserId(): Promise<string | undefined> {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user?.id;
-}
-
 export async function addToFavorites(
   bookId: string,
   bookTitle: string,
@@ -57,7 +52,7 @@ export async function addToFavorites(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await getSupabaseServerClient();
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOptional();
 
     if (!userId) {
       return { success: false, error: "Usuário não autenticado" };
@@ -97,7 +92,7 @@ export async function removeFromFavorites(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await getSupabaseServerClient();
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOptional();
 
     if (!userId) {
       return { success: false, error: "Usuário não autenticado" };
@@ -126,7 +121,7 @@ export async function removeFromFavorites(
 export async function getUserFavorites(): Promise<UserFavorite[]> {
   try {
     const supabase = await getSupabaseServerClient();
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOptional();
 
     if (!userId) {
       return [];
@@ -153,7 +148,7 @@ export async function getUserFavorites(): Promise<UserFavorite[]> {
 export async function isBookFavorited(bookId: string): Promise<boolean> {
   try {
     const supabase = await getSupabaseServerClient();
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOptional();
 
     if (!userId) {
       return false;

@@ -280,6 +280,7 @@ export async function saveBookContent(
       return { success: false, error: "Erro ao salvar conteúdo" };
     }
 
+    revalidatePath(`/book/${id}`);
     return { success: true };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -324,6 +325,7 @@ export async function publishBook(
       .single();
 
     revalidatePath("/dashboard/library");
+    revalidatePath(`/book/${id}`);
     return { success: true, book: book ? formatUserBook(book) : undefined };
   } catch {
     return { success: false, error: "Erro interno" };

@@ -1,11 +1,12 @@
 "use server";
 
-import { cache } from "react";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 import { ReadingProgress } from "@/features/reading/types/reading.types";
 
-export const getReadingProgress = cache(
-  async (bookId: string, userId: string): Promise<ReadingProgress | null> => {
+export async function getReadingProgress(
+  bookId: string,
+  userId: string
+): Promise<ReadingProgress | null> {
     try {
       const supabase = await getSupabaseServerClient();
 
@@ -33,4 +34,3 @@ export const getReadingProgress = cache(
       return null;
     }
   }
-);

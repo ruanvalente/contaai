@@ -7,7 +7,7 @@ import { publishBook } from "@/features/book-dashboard/actions/user-books.action
 type UseEditorPublishReturn = {
   isPublishing: boolean;
   publishError: string | null;
-  handlePublish: () => Promise<void>;
+  handlePublish: (isRepublish?: boolean) => Promise<void>;
 }
 
 export function useEditorPublish(
@@ -17,12 +17,12 @@ export function useEditorPublish(
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
 
-  const handlePublish = useCallback(async () => {
-    if (
-      !confirm(
-        "Tem certeza que deseja publicar sua história? Após a publicação, ela ficará disponível para outros leitores."
-      )
-    ) {
+  const handlePublish = useCallback(async (isRepublish: boolean = false) => {
+    const message = isRepublish
+      ? "Tem certeza que deseja republicar sua história? As alterações ficarão disponíveis para os leitores."
+      : "Tem certeza que deseja publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
+    
+    if (!confirm(message)) {
       return;
     }
 

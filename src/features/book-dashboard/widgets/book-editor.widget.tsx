@@ -118,7 +118,7 @@ export const BookEditor = memo(({ bookId }: BookEditorProps) => {
         publishError={publishError}
         onBack={handleBack}
         onPreview={() => setShowPreview(true)}
-        onPublish={handlePublish}
+        onPublish={() => handlePublish(book.status === "published")}
       />
 
       <div className="flex-1 p-2 sm:p-4 md:p-6">

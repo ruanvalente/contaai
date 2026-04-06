@@ -82,7 +82,7 @@ export function BookEditorHeader({
               <span className="hidden sm:inline">Preview</span>
             </Button>
 
-            {status === "draft" && (
+            {(status === "draft" || (status === "published" && isDirty)) && (
               <Button
                 variant="primary"
                 onClick={onPublish}
@@ -92,12 +92,16 @@ export function BookEditorHeader({
                 {isPublishing ? (
                   <>
                     <Loader2 className="w-3 h-3 sm:w-4 animate-spin" />
-                    <span className="hidden sm:inline">Publicando...</span>
+                    <span className="hidden sm:inline">
+                      {status === "published" ? "Republicando..." : "Publicando..."}
+                    </span>
                   </>
                 ) : (
                   <>
                     <Send className="w-3 h-3 sm:w-4" />
-                    <span className="hidden sm:inline">Publicar</span>
+                    <span className="hidden sm:inline">
+                      {status === "published" ? "Republicar" : "Publicar"}
+                    </span>
                   </>
                 )}
               </Button>

@@ -71,6 +71,8 @@ import {
 import { useBookEditorStore } from "../store/book-editor.store";
 import { Button } from "@/shared/ui/button";
 import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar";
+import { ContentRecoveryModal } from "./content-recovery-modal.widget";
+import { useEditorBackup } from "@/shared/hooks/use-editor-backup";
 
 const theme = {
   paragraph: "mb-4 leading-7 text-gray-700",
@@ -122,23 +124,36 @@ function AutoSavePlugin() {
   return null;
 }
 
-function InitialContentPlugin({ content }: { content: string }) {
+interface InitialContentPluginProps {
+  content: string;
+  onInitialized?: () => void;
+}
+
+function InitialContentPlugin({
+  content,
+  onInitialized,
+}: InitialContentPluginProps) {
   const [editor] = useLexicalComposerContext();
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!initializedRef.current && content) {
+    if (initializedRef.current) return;
+    if (!content) {
       initializedRef.current = true;
-      editor.update(() => {
-        const root = $getRoot();
-        if (root.getFirstChild() === null) {
-          const paragraph = $createParagraphNode();
-          paragraph.append($createTextNode(content));
-          root.append(paragraph);
-        }
-      });
+      onInitialized?.();
+      return;
     }
-  }, [editor, content]);
+
+    initializedRef.current = true;
+    editor.update(() => {
+      const root = $getRoot();
+      root.clear();
+      const paragraph = $createParagraphNode();
+      paragraph.append($createTextNode(content));
+      root.append(paragraph);
+    });
+    onInitialized?.();
+  }, [editor, content, onInitialized]);
 
   return null;
 }
@@ -433,6 +448,9 @@ export function BookEditor({ bookId }: BookEditorProps) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [recoveredContent, setRecoveredContent] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const {
     content,
     setContent,
@@ -442,27 +460,109 @@ export function BookEditor({ bookId }: BookEditorProps) {
     isDirty,
   } = useBookEditorStore();
 
+  const { hasBackup, backupData, saveBackup, clearBackup } = useEditorBackup({
+    bookId,
+    enabled: !!bookId,
+  });
+
+  const {
+    content: storeContent,
+    isDirty: storeIsDirty,
+    markSaved,
+  } = useBookEditorStore((state) => ({
+    content: state.content,
+    isDirty: state.isDirty,
+    markSaved: state.markSaved,
+  }));
+
   useEffect(() => {
     async function loadBook() {
       try {
         const bookData = await getBookById(bookId);
         if (bookData) {
-          setBook({
-            title: bookData.title,
-            author: bookData.author,
-            content: bookData.content || "",
-            status: bookData.status,
-          });
-          initialize({
-            bookId: bookData.id,
-            title: bookData.title,
-            author: bookData.author,
-            content: bookData.content,
-            coverUrl: bookData.coverUrl,
-            coverColor: bookData.coverColor,
-            category: bookData.category,
-            status: bookData.status,
-          });
+          const dbContent = bookData.content || "";
+
+          if (hasBackup && backupData) {
+            const dbHasMoreContent = dbContent.trim().length > 0;
+            const backupIsNewer =
+              backupData.timestamp >
+              (bookData.updatedAt?.getTime() || 0);
+
+            if (dbHasMoreContent && backupIsNewer) {
+              setBook({
+                title: bookData.title,
+                author: bookData.author,
+                content: dbContent,
+                status: bookData.status,
+              });
+              initialize({
+                bookId: bookData.id,
+                title: bookData.title,
+                author: bookData.author,
+                content: dbContent,
+                coverUrl: bookData.coverUrl,
+                coverColor: bookData.coverColor,
+                category: bookData.category,
+                status: bookData.status,
+              });
+              setShowRecoveryModal(true);
+              setRecoveredContent(backupData.content);
+            } else if (!dbHasMoreContent) {
+              setBook({
+                title: bookData.title,
+                author: bookData.author,
+                content: backupData.content,
+                status: bookData.status,
+              });
+              initialize({
+                bookId: bookData.id,
+                title: bookData.title,
+                author: bookData.author,
+                content: backupData.content,
+                coverUrl: bookData.coverUrl,
+                coverColor: bookData.coverColor,
+                category: bookData.category,
+                status: bookData.status,
+              });
+              setIsInitialized(true);
+              clearBackup();
+            } else {
+              setBook({
+                title: bookData.title,
+                author: bookData.author,
+                content: dbContent,
+                status: bookData.status,
+              });
+              initialize({
+                bookId: bookData.id,
+                title: bookData.title,
+                author: bookData.author,
+                content: dbContent,
+                coverUrl: bookData.coverUrl,
+                coverColor: bookData.coverColor,
+                category: bookData.category,
+                status: bookData.status,
+              });
+              clearBackup();
+            }
+          } else {
+            setBook({
+              title: bookData.title,
+              author: bookData.author,
+              content: dbContent,
+              status: bookData.status,
+            });
+            initialize({
+              bookId: bookData.id,
+              title: bookData.title,
+              author: bookData.author,
+              content: dbContent,
+              coverUrl: bookData.coverUrl,
+              coverColor: bookData.coverColor,
+              category: bookData.category,
+              status: bookData.status,
+            });
+          }
         } else {
           router.push("/dashboard/library");
         }
@@ -474,7 +574,56 @@ export function BookEditor({ bookId }: BookEditorProps) {
     }
 
     loadBook();
-  }, [bookId, router, initialize]);
+  }, [bookId, router, initialize, hasBackup, backupData, clearBackup]);
+
+  useEffect(() => {
+    if (!bookId || !isInitialized) return;
+
+    const interval = setInterval(() => {
+      if (storeContent && storeContent.length > 0) {
+        saveBackup(storeContent, book?.title);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [bookId, isInitialized, storeContent, saveBackup, book?.title]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (storeIsDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+        if (storeContent && storeContent.length > 0) {
+          saveBackup(storeContent, book?.title);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [storeIsDirty, storeContent, saveBackup, book?.title]);
+
+  const handleRecoverContent = useCallback(async () => {
+    if (recoveredContent) {
+      if (book) {
+        setBook({ ...book, content: recoveredContent });
+      }
+      setContent(recoveredContent);
+      if (bookId) {
+        await saveBookContent(bookId, recoveredContent);
+        markSaved();
+      }
+      clearBackup();
+      setShowRecoveryModal(false);
+      setRecoveredContent(null);
+    }
+  }, [recoveredContent, book, setContent, bookId, markSaved, clearBackup]);
+
+  const handleDiscardRecovery = useCallback(() => {
+    clearBackup();
+    setShowRecoveryModal(false);
+    setRecoveredContent(null);
+  }, [clearBackup]);
 
   const handlePublish = useCallback(async () => {
     if (
@@ -541,7 +690,8 @@ export function BookEditor({ bookId }: BookEditorProps) {
   };
 
   return (
-    <div className="min-h-screen bg-primary-50 flex flex-col">
+    <>
+      <div className="min-h-screen bg-primary-50 flex flex-col">
       <div className="sticky top-0 z-10 bg-white border-b border-primary-200 shadow-sm">
         <div className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 gap-2">
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
@@ -651,7 +801,10 @@ export function BookEditor({ bookId }: BookEditorProps) {
               }}
             />
             <AutoSavePlugin />
-            <InitialContentPlugin content={book.content} />
+            <InitialContentPlugin
+              content={book.content}
+              onInitialized={() => setIsInitialized(true)}
+            />
           </div>
         </LexicalComposer>
       </div>
@@ -711,5 +864,14 @@ export function BookEditor({ bookId }: BookEditorProps) {
         </motion.div>
       )}
     </div>
+
+    <ContentRecoveryModal
+      isOpen={showRecoveryModal}
+      onRecover={handleRecoverContent}
+      onDiscard={handleDiscardRecovery}
+      backupTimestamp={backupData?.timestamp}
+      backupTitle={backupData?.title}
+    />
+    </>
   );
 }

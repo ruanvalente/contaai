@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 type StarRatingProps = {
   rating: number;
@@ -29,17 +30,17 @@ export function StarRating({
 
   return (
     <div
-      className={`flex items-center gap-1 ${className}`}
+      className={cn("flex items-center gap-1", className)}
       role="img"
       aria-label={ariaLabel}
     >
       <div className="flex items-center" aria-hidden="true">
         {[...Array(fullStars)].map((_, i) => (
-          <Star key={`full-${i}`} className={`${sizes[size]} text-warning fill-warning`} />
+          <Star key={`full-${i}`} className={cn(sizes[size], "text-warning fill-warning")} />
         ))}
-        {hasHalfStar && <Star className={`${sizes[size]} text-gray-300`} />}
+        {hasHalfStar && <Star className={cn(sizes[size], "text-gray-300")} />}
         {[...Array(emptyStars)].map((_, i) => (
-          <Star key={`empty-${i}`} className={`${sizes[size]} text-gray-300`} />
+          <Star key={`empty-${i}`} className={cn(sizes[size], "text-gray-300")} />
         ))}
       </div>
       {showValue && (

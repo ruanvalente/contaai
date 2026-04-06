@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X, Image as ImageIcon, Palette, Loader2 } from "lucide-react";
+import { cn } from "@/utils/cn";
 import { createUserBook } from "../actions/user-books.actions";
 import {
   USER_BOOK_CATEGORIES,
@@ -231,11 +232,12 @@ export function CreateBookModal({
                             setCoverColor(color);
                             setCoverUrl(null);
                           }}
-                          className={`w-8 h-8 rounded-full transition-transform ${
+                          className={cn(
+                            "w-8 h-8 rounded-full transition-transform",
                             coverColor === color
                               ? "ring-2 ring-offset-2 ring-accent-500 scale-110"
-                              : "hover:scale-105"
-                          }`}
+                              : "hover:scale-105",
+                          )}
                           style={{ backgroundColor: color }}
                           aria-label={`Selecionar cor ${color}`}
                           aria-pressed={coverColor === color}

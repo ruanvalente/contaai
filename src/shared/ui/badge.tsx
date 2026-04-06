@@ -1,3 +1,5 @@
+import { cn } from "@/utils/cn";
+
 type BadgeProps = {
   children: React.ReactNode;
   variant?: "default" | "primary" | "secondary" | "outline";
@@ -28,7 +30,7 @@ export function Badge({
 
   return (
     <span
-      className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      className={cn(baseStyles, sizeStyles[size], variantStyles[variant], className)}
     >
       {children}
     </span>

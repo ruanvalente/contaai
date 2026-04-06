@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { BookCover } from "@/shared/ui/book-cover";
@@ -8,17 +9,13 @@ import { Button } from "@/shared/ui/button";
 import { FavoriteButton } from "@/shared/ui/favorite-button.ui";
 import { RatingStars } from "../ui/rating-stars.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";
-import {
-  BookOpenIcon,
-  UsersIcon,
-  MessageIcon,
-} from "../ui/icons.ui";
+import { BookOpenIcon, UsersIcon, MessageIcon } from "../ui/icons.ui";
 import { useFavorites } from "@/shared/hooks/use-favorites";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;
   isLoading?: boolean;
-}
+};
 
 function BookDetailsSkeleton() {
   return (
@@ -63,7 +60,18 @@ export function BookDetailsPanelWidget({
   book,
   isLoading = false,
 }: BookDetailsPanelWidgetProps) {
-  const { toggleFavorite, isFavorited, isLoading: isFavLoading } = useFavorites();
+  const router = useRouter();
+  const {
+    toggleFavorite,
+    isFavorited,
+    isLoading: isFavLoading,
+  } = useFavorites();
+
+  const handleReadNow = () => {
+    if (book) {
+      router.push(`/book/${book.id}`);
+    }
+  };
 
   if (isLoading) {
     return <BookDetailsSkeleton />;
@@ -87,7 +95,7 @@ export function BookDetailsPanelWidget({
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex-shrink-0 relative"
+          className="shrink-0 relative"
         >
           <BookCover
             title={book.title}
@@ -105,7 +113,10 @@ export function BookDetailsPanelWidget({
         </motion.div>
 
         <div className="flex-1 min-w-0 flex flex-col">
-          <Badge variant="primary" className="text-[10px] px-2 py-0.5 self-start mb-1.5">
+          <Badge
+            variant="primary"
+            className="text-[10px] px-2 py-0.5 self-start mb-1.5"
+          >
             {book.category}
           </Badge>
 
@@ -113,9 +124,7 @@ export function BookDetailsPanelWidget({
             {book.title}
           </h2>
 
-          <p className="text-xs text-gray-500 mb-1.5">
-            {book.author}
-          </p>
+          <p className="text-xs text-gray-500 mb-1.5">{book.author}</p>
 
           <RatingStars rating={book.rating} size="sm" showValue={true} />
 
@@ -152,6 +161,7 @@ export function BookDetailsPanelWidget({
         <Button
           variant="primary"
           className="w-full py-2.5 text-sm"
+          onClick={handleReadNow}
         >
           Ler Agora
         </Button>

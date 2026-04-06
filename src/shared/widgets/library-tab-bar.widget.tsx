@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { LibraryTab } from "@/shared/hooks/use-library-tabs";
 
 type LibraryTabBarProps = {
@@ -18,11 +19,12 @@ export function LibraryTabBar({ activeTab, onTabChange }: LibraryTabBarProps) {
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`px-4 py-2 rounded-full font-medium whitespace-nowrap transition-colors ${
+          className={cn(
+            "px-4 py-2 rounded-full font-medium whitespace-nowrap transition-colors",
             activeTab === tab.id
               ? "bg-accent-500 text-white"
               : "bg-white text-gray-700 border border-primary-300 hover:bg-primary-200"
-          }`}
+          )}
         >
           {tab.label}
         </button>

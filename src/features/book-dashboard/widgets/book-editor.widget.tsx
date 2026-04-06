@@ -73,6 +73,7 @@ import { Button } from "@/shared/ui/button";
 import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar";
 import { ContentRecoveryModal } from "./content-recovery-modal.widget";
 import { useEditorBackup } from "@/shared/hooks/use-editor-backup";
+import { useShallow } from "zustand/shallow";
 
 const theme = {
   paragraph: "mb-4 leading-7 text-gray-700",
@@ -100,8 +101,15 @@ const theme = {
 };
 
 function AutoSavePlugin() {
-  const { content, bookId, isDirty, setSaving, markSaved } =
-    useBookEditorStore();
+  const { content, bookId, isDirty, setSaving, markSaved } = useBookEditorStore(
+    useShallow((state) => ({
+      content: state.content,
+      bookId: state.bookId,
+      isDirty: state.isDirty,
+      setSaving: state.setSaving,
+      markSaved: state.markSaved,
+    }))
+  );
   const [lastContent, setLastContent] = useState(content);
 
   useEffect(() => {
@@ -469,11 +477,13 @@ export function BookEditor({ bookId }: BookEditorProps) {
     content: storeContent,
     isDirty: storeIsDirty,
     markSaved,
-  } = useBookEditorStore((state) => ({
-    content: state.content,
-    isDirty: state.isDirty,
-    markSaved: state.markSaved,
-  }));
+  } = useBookEditorStore(
+    useShallow((state) => ({
+      content: state.content,
+      isDirty: state.isDirty,
+      markSaved: state.markSaved,
+    }))
+  );
 
   useEffect(() => {
     async function loadBook() {

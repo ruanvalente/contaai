@@ -81,5 +81,3 @@ export default async function BookPage(props: PageProps) {
     </Suspense>
   );
 }
-
-export const dynamic = "force-dynamic";

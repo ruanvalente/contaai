@@ -9,18 +9,18 @@ function getNow(): number {
   return Date.now();
 }
 
-interface BackupData {
+type BackupData = {
   content: string;
   timestamp: number;
   title: string;
 }
 
-interface UseEditorBackupOptions {
+type UseEditorBackupOptions = {
   bookId: string;
   enabled?: boolean;
 }
 
-interface UseEditorBackupReturn {
+type UseEditorBackupReturn = {
   backupData: BackupData | null;
   hasBackup: boolean;
   saveBackup: (content: string, title?: string) => void;

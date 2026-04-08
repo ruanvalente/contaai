@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "@/shared/ui/container";
-import { BookCard } from "@/shared/ui/book-card";
+import { BookCard } from "@/shared/ui/book-card.ui";
 import { motion } from "framer-motion";
 
 const books = [

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/book-dashboard/actions/user-favorites.actions";
-import { useFavoritesStore } from "@/shared/store/favorites.store";
+import { useFavoritesStore } from "@/features/discovery/stores/favorites.store";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];

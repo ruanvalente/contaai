@@ -8,7 +8,7 @@ import {
   Heading1, Heading2, Heading3, Type, Minus,
 } from "lucide-react";
 import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar";
-import { useEditorToolbar } from "@/shared/hooks/use-editor-toolbar";
+import { useEditorToolbar } from "@/features/book-dashboard/hooks/use-editor-toolbar";
 
 export const EditorToolbar = memo(() => {
   const {

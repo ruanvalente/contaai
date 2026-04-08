@@ -5,7 +5,7 @@ import { Book } from "@/features/book-dashboard/types/book.types";
 import {
   usePaginationCache,
   generatePaginationKey,
-} from "@/shared/store/pagination-cache.store";
+} from "@/features/discovery/stores/pagination-cache.store";
 
 type PaginationState = {
   currentPage: number;

@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import { LibraryTab } from "@/shared/hooks/use-library-tabs";
+import { LibraryTab } from "@/features/library/hooks/use-library-tabs";
 
 type LibraryTabBarProps = {
   activeTab: LibraryTab;

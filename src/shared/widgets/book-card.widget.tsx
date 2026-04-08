@@ -3,7 +3,7 @@ import { UserBook } from "@/features/book-dashboard/types/user-book.types";
 import { Badge } from "@/shared/ui/badge.ui";
 import { Button } from "@/shared/ui/button";
 import { Pencil, Eye, Trash2 } from "lucide-react";
-import { LibraryTab } from "@/shared/hooks/use-library-tabs";
+import { LibraryTab } from "@/features/library/hooks/use-library-tabs";
 
 type BookCardProps = {
   book: UserBook;

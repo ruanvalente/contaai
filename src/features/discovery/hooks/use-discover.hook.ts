@@ -3,7 +3,7 @@
 import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBooks } from "@/features/book-dashboard/hooks/use-books";
-import { useSearch } from "@/shared/hooks/use-search";
+import { useSearch } from "@/features/discovery/hooks/use-search";
 import { Book } from "@/features/book-dashboard/types/book.types";
 import { DiscoverHookReturn } from "../types/discover.types";
 

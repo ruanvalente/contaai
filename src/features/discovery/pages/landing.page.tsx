@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { Header } from "@/landing/widgets/header.widget";
-import { Hero } from "@/landing/widgets/hero.widget";
-import { BookCarousel } from "@/landing/widgets/book-carousel.widget";
+import { Header as LandingHeader } from "@/features/discovery/widgets/landing-header.widget";
+import { Hero as LandingHero } from "@/features/discovery/widgets/landing-hero.widget";
+import { BookCarousel as LandingBookCarousel } from "@/features/discovery/widgets/landing-book-carousel.widget";
 import { Container } from "@/shared/ui/container";
 
-export function LandingPageScreen() {
+export default function LandingPage() {
   return (
     <main className="min-h-screen bg-primary-100">
-      <Header />
-      <Hero />
+      <LandingHeader />
+      <LandingHero />
 
       <section id="my-authors" className="py-20 bg-primary-200">
         <Container>
@@ -47,7 +47,7 @@ export function LandingPageScreen() {
         </Container>
       </section>
 
-      <BookCarousel />
+      <LandingBookCarousel />
 
       <section id="community" className="py-20 bg-primary-100">
         <Container>

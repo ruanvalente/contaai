@@ -1,6 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { LibraryTab } from "@/shared/hooks/use-library-tabs";
+import { LibraryTab } from "@/features/library/hooks/use-library-tabs";
 
 type EmptyLibraryStateProps = {
   tab: LibraryTab;

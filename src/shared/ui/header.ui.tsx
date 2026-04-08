@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
-import { useSearchStore } from "@/shared/store/search.store";
+import { useSearchStore } from "@/features/discovery/stores/search.store";
 import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
 import { signOutAction } from "@/features/auth/actions/auth.actions";
 import { Avatar } from "@/shared/ui/avatar";

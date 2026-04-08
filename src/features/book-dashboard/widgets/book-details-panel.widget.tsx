@@ -10,7 +10,7 @@ import { FavoriteButton } from "@/shared/ui/favorite-button.ui";
 import { RatingStars } from "../ui/rating-stars.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";
 import { BookOpenIcon, UsersIcon, MessageIcon } from "../ui/icons.ui";
-import { useFavorites } from "@/shared/hooks/use-favorites";
+import { useFavorites } from "@/features/discovery/hooks/use-favorites";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;

@@ -7,10 +7,10 @@ import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { UserFavorite } from "@/features/book-dashboard/actions/user-favorites.actions";
 import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
-import { useFavorites } from "@/shared/hooks/use-favorites";
+import { useFavorites } from "@/features/discovery/hooks/use-favorites";
 import { Search, Heart } from "lucide-react";
 
-interface FavoritesContentProps {
+type FavoritesContentProps = {
   favorites: UserFavorite[];
   pagination?: {
     currentPage: number;

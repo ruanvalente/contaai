@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { Book } from "@/features/book-dashboard/types/book.types";
-import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/book-dashboard/actions/user-favorites.actions";
+import { Book } from "@/domain/entities/book.entity";
+import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/infrastructure/api/favorites.actions";
 import { useFavoritesStore } from "@/features/discovery/stores/favorites.store";
 
 type UseFavoritesOptions = {

@@ -6,8 +6,8 @@ import { Container } from "@/shared/ui/container";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { useCategoryCache, generateCacheKey } from "@/features/discovery/stores/category-cache.store";
-import { Book } from "@/features/book-dashboard/types/book.types";
-import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
+import { Book } from "@/domain/entities/book.entity";
+import { searchBooksAction } from "@/infrastructure/api/books.actions";
 import { HardDrive, Download, Trash2 } from "lucide-react";
 
 type DownloadsContentProps = {

@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { cacheLife, cacheTag } from "next/cache";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
+import { UserBookRow, mapToBookFromUserBook } from "@/infrastructure/mappers/book.mapper";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -13,18 +14,6 @@ const supabaseAdmin = supabaseUrl && supabaseServiceKey
     })
   : null;
 
-type UserBookRow = {
-  id: string;
-  title: string;
-  author: string;
-  cover_url: string | null;
-  cover_color: string | null;
-  category: string;
-  word_count: number;
-  created_at: string;
-  published_at: string | null;
-};
-
 function formatUserBookToBook(book: UserBookRow): Book {
   return {
     id: book.id,
@@ -34,7 +23,7 @@ function formatUserBookToBook(book: UserBookRow): Book {
     coverColor: book.cover_color || "#8B4513",
     description: "",
     category: book.category as Book["category"],
-    pages: Math.ceil(book.word_count / 500),
+    pages: Math.ceil((book.word_count || 0) / 500),
     rating: 0,
     ratingCount: 0,
     reviewCount: 0,

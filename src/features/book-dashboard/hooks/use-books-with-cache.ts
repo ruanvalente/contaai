@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useEffect } from "react";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 import {
   usePaginationCache,
   generatePaginationKey,

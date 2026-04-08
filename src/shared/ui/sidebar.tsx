@@ -8,7 +8,6 @@ import {
   LayoutGrid, 
   Library, 
   Download, 
-  Headphones, 
   Heart, 
   Settings, 
   LogOut 
@@ -24,7 +23,6 @@ const menuItems = [
   { href: "/dashboard/category", label: "Categorias", icon: LayoutGrid },
   { href: "/dashboard/library", label: "Minha Biblioteca", icon: Library },
   { href: "/dashboard/downloads", label: "Downloads", icon: Download },
-  { href: "/dashboard/audio", label: "Audio Books", icon: Headphones },
   { href: "/dashboard/favorites", label: "Favoritos", icon: Heart },
 ];
 

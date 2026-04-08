@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Book, Category, CATEGORIES } from "@/features/book-dashboard/types/book.types";
+import { Book, Category, CATEGORIES } from "@/domain/entities/book.entity";
 import { BookCard } from "../ui/book-card.ui";
 import { Tabs } from "@/shared/ui/tabs";
 

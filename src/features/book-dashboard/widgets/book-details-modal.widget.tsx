@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 import { BookDetailsPanelWidget } from "./book-details-panel.widget";
 
 type BookDetailsModalWidgetProps = {

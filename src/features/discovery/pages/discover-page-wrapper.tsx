@@ -1,6 +1,6 @@
 "use client";
 
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 import { DiscoverPage } from "./discover.page";
 
 type DiscoverPageWrapperProps = {

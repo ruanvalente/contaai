@@ -1,8 +1,25 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Book, Category } from "../types/book.types";
-import { filterBooksByCategory, searchBooks } from "../data/books";
+import { Book, Category } from "@/domain/entities/book.entity";
+import { getBooksAction } from "@/infrastructure/api/books.actions";
+
+function filterBooksByCategory(books: Book[], category: string): Book[] {
+  if (category === "All") return books;
+  return books.filter((book) => book.category === category);
+}
+
+function searchBooks(books: Book[], query: string): Book[] {
+  const normalizedQuery = query.toLowerCase().trim();
+  if (!normalizedQuery) return books;
+
+  return books.filter(
+    (book) =>
+      book.title.toLowerCase().includes(normalizedQuery) ||
+      book.author.toLowerCase().includes(normalizedQuery) ||
+      book.category.toLowerCase().includes(normalizedQuery)
+  );
+}
 
 type UseBooksReturn = {
   books: Book[];
@@ -21,14 +38,7 @@ export function useBooks(initialBooks?: Book[]): UseBooksReturn {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/books");
-      if (!response.ok) {
-        throw new Error("Failed to fetch books");
-      }
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      const data = await getBooksAction();
       setBooks(data);
     } catch (err) {
       console.error("Error fetching books:", err);

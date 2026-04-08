@@ -10,7 +10,7 @@ import {
   USER_BOOK_CATEGORIES,
   COVER_COLORS,
   generateRandomCoverColor,
-} from "../types/user-book.types";
+} from "../config/book-config";
 import { Button } from "@/shared/ui/button";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 

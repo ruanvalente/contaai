@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Container } from "@/shared/ui/container";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
-import { UserFavorite } from "@/features/book-dashboard/actions/user-favorites.actions";
-import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
+import { UserFavorite } from "@/infrastructure/api/favorites.actions";
+import { searchBooksAction } from "@/infrastructure/api/books.actions";
 import { useFavorites } from "@/features/discovery/hooks/use-favorites";
 import { Search, Heart } from "lucide-react";
 

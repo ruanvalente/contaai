@@ -1,4 +1,4 @@
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 
 export type DiscoverState = {
   books: Book[];

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { UserBook } from "@/features/book-dashboard/types/user-book.types";
+import { UserBook } from "@/domain/entities/user-book.entity";
 import { LibraryTab } from "./use-library-tabs";
+import { getUserBooksAction, UserBookFilter } from "@/infrastructure/api/user-books.actions";
 
 type UseUserBooksOptions = {
   activeTab: LibraryTab;
@@ -25,28 +26,15 @@ export function useUserBooks({
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     try {
-      const type =
+      const type: UserBookFilter = 
         activeTab === "my-stories"
           ? "my-stories"
           : activeTab === "reading"
             ? "reading"
             : "completed";
 
-      const response = await fetch(`/api/user-books?type=${type}`);
-
-      if (!response.ok) {
-        console.error("API error:", response.status);
-        setBooks([]);
-        return;
-      }
-
-      const data = await response.json();
-
-      if (Array.isArray(data)) {
-        setBooks(data);
-      } else {
-        setBooks([]);
-      }
+      const data = await getUserBooksAction(type);
+      setBooks(data);
     } catch (err) {
       console.error("Error fetching books:", err);
       setBooks([]);

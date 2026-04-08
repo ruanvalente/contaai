@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 
 type SearchCache = {
   [query: string]: Book[];

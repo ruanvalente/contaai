@@ -5,10 +5,10 @@ import { useState, useEffect, useRef } from "react";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 import { useSearchStore } from "@/features/discovery/stores/search.store";
-import { searchBooksAction } from "@/features/book-dashboard/actions/books.actions";
+import { searchBooksAction } from "@/infrastructure/api/books.actions";
 import { signOutAction } from "@/features/auth/actions/auth.actions";
 import { Avatar } from "@/shared/ui/avatar";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 import {
   Menu,
   Search,

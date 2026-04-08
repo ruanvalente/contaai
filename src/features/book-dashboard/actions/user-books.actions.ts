@@ -9,8 +9,8 @@ import {
   ReadingStatus,
   CreateUserBookInput,
   UpdateUserBookInput,
-  generateRandomCoverColor,
-} from "../types/user-book.types";
+} from "@/domain/entities/user-book.entity";
+import { COVER_COLORS, generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";
 
 type SupabaseUserBook = {

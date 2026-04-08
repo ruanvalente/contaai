@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 import { BookDetailsPanelWidget } from "@/features/book-dashboard/widgets/book-details-panel.widget";
 
 type BookDetailsModalProps = {

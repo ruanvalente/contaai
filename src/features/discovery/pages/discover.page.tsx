@@ -5,7 +5,7 @@ import { Container } from "@/shared/ui/container";
 import { DiscoverContent } from "../widgets/discover-content.widget";
 import { SearchResults } from "../widgets/search-results.widget";
 import { useDiscover } from "../hooks/use-discover.hook";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { Book } from "@/domain/entities/book.entity";
 
 const BookDetailsModal = dynamic(
   () => import("../widgets/book-details-modal.widget").then((mod) => mod.BookDetailsModal),

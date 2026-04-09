@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, use } from "react";
-import { BookEditor } from "@/features/book-dashboard/widgets/book-editor.widget";
+import { BookEditor } from "@/features/book-dashboard";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
 type PageProps = {

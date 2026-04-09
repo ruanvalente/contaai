@@ -1,100 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { Book } from "@/domain/entities/book.entity";
-import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/infrastructure/api/favorites.actions";
-import { useFavoritesStore } from "@/features/discovery/stores/favorites.store";
-
-type UseFavoritesOptions = {
-  initialFavoritedIds?: string[];
-};
+import { useCallback } from "react";
+import { useFavoritesStore } from "@/features/discovery";
 
 type UseFavoritesReturn = {
-  favoritedIds: string[];
+  favoritedIds: Set<string>;
   isLoading: boolean;
-  isLoaded: boolean;
-  addFavorite: (book: Book) => Promise<void>;
-  removeFavorite: (bookId: string) => Promise<void>;
-  toggleFavorite: (book: Book) => Promise<void>;
+  addFavorite: (bookId: string) => void;
+  removeFavorite: (bookId: string) => void;
+  toggleFavorite: (bookId: string) => void;
   isFavorited: (bookId: string) => boolean;
 };
 
-export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions = {}): UseFavoritesReturn {
+export function useFavorites(): UseFavoritesReturn {
   const favoritedIds = useFavoritesStore((state) => state.favoritedIds);
   const isLoading = useFavoritesStore((state) => state.isLoading);
-  const isLoaded = useFavoritesStore((state) => state.isLoaded);
   const addFavoriteToStore = useFavoritesStore((state) => state.addFavorite);
   const removeFavoriteFromStore = useFavoritesStore((state) => state.removeFavorite);
   const isFavoritedFn = useFavoritesStore((state) => state.isFavorited);
-  const setInitialFavorites = useFavoritesStore((state) => state.setInitialFavorites);
-  const setLoading = useFavoritesStore((state) => state.setLoading);
 
-  const initialFavoritedIdsRef = useRef(initialFavoritedIds);
-  
-  useEffect(() => {
-    initialFavoritedIdsRef.current = initialFavoritedIds;
-  }, [initialFavoritedIds]);
+  const addFavorite = useCallback((bookId: string) => {
+    addFavoriteToStore(bookId);
+  }, [addFavoriteToStore]);
 
-  useEffect(() => {
-    if (!isLoaded && initialFavoritedIdsRef.current.length > 0) {
-      setInitialFavorites(initialFavoritedIdsRef.current);
-    }
-  }, [isLoaded, setInitialFavorites]);
+  const removeFavorite = useCallback((bookId: string) => {
+    removeFavoriteFromStore(bookId);
+  }, [removeFavoriteFromStore]);
 
-  useEffect(() => {
-    async function loadFavorites() {
-      if (isLoaded) return;
-      
-      setLoading(true);
-      try {
-        const favorites = await getUserFavorites();
-        const ids = favorites.map((f) => f.bookId);
-        setInitialFavorites(ids);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadFavorites();
-  }, [isLoaded, setInitialFavorites, setLoading]);
-
-  const addFavorite = useCallback(async (book: Book) => {
-    setLoading(true);
-    try {
-      const result = await addToFavorites(
-        book.id,
-        book.title,
-        book.author,
-        book.coverColor,
-        book.coverUrl,
-        book.category
-      );
-      if (result.success) {
-        addFavoriteToStore(book.id);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [addFavoriteToStore, setLoading]);
-
-  const removeFavorite = useCallback(async (bookId: string) => {
-    setLoading(true);
-    try {
-      const result = await removeFromFavorites(bookId);
-      if (result.success) {
-        removeFavoriteFromStore(bookId);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [removeFavoriteFromStore, setLoading]);
-
-  const toggleFavorite = useCallback(async (book: Book) => {
-    if (isFavoritedFn(book.id)) {
-      await removeFavorite(book.id);
+  const toggleFavorite = useCallback((bookId: string) => {
+    if (isFavoritedFn(bookId)) {
+      removeFavoriteFromStore(bookId);
     } else {
-      await addFavorite(book);
+      addFavoriteToStore(bookId);
     }
-  }, [isFavoritedFn, addFavorite, removeFavorite]);
+  }, [isFavoritedFn, addFavoriteToStore, removeFavoriteFromStore]);
 
   const isFavorited = useCallback(
     (bookId: string) => isFavoritedFn(bookId),
@@ -102,9 +41,8 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
   );
 
   return {
-    favoritedIds: Array.from(favoritedIds),
+    favoritedIds,
     isLoading,
-    isLoaded,
     addFavorite,
     removeFavorite,
     toggleFavorite,

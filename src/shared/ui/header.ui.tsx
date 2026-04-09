@@ -4,8 +4,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
-import { useSearchStore } from "@/features/discovery/stores/search.store";
-import { searchBooksAction } from "@/infrastructure/api/books.actions";
+import { useSearchStore } from "@/features/discovery";
+import { searchBooks } from '@/features/discovery/application/queries/search-books.query';
 import { signOutAction } from "@/features/auth/actions/auth.actions";
 import { Avatar } from "@/shared/ui/avatar";
 import { Book } from "@/domain/entities/book.entity";
@@ -108,7 +108,7 @@ export function Header() {
     setIsSearching(true);
     searchTimeoutRef.current = setTimeout(async () => {
       try {
-        const searchResults = await searchBooksAction(query);
+        const searchResults = await searchBooks({ query });
         setResults(searchResults);
         addToCache(query, searchResults);
       } catch (error) {

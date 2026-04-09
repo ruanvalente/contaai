@@ -2,22 +2,26 @@
 
 import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useBooks } from "@/features/book-dashboard/hooks/use-books";
-import { useSearch } from "@/features/discovery/hooks/use-search";
 import { Book } from "@/domain/entities/book.entity";
-import { DiscoverHookReturn } from "../types/discover.types";
 
-type UseDiscoverProps = {
-  initialBooks?: Book[];
-}
-
-export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): DiscoverHookReturn {
-  const { books: fetchedBooks, isLoading } = useBooks();
-  const { query, setQuery, hasQuery } = useSearch();
+export function useDiscover(initialBooks: Book[] = []): {
+  books: Book[];
+  recommendedBooks: Book[];
+  filteredBooks: Book[];
+  selectedBook: Book | null;
+  isSearchActive: boolean;
+  query: string;
+  setQuery: (query: string) => void;
+  handleBookSelect: (book: Book) => void;
+  handleClearSelection: () => void;
+  handleLogin: () => void;
+} {
   const router = useRouter();
-
-  const books = initialBooks.length > 0 ? initialBooks : fetchedBooks;
+  const [query, setQuery] = useState("");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+
+  const books = initialBooks;
+  const hasQuery = query.trim().length > 0;
 
   const recommendedBooks = useMemo(() => {
     return books.slice(0, 6);
@@ -30,7 +34,7 @@ export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): Disco
       (book) =>
         book.title.toLowerCase().includes(lowerQuery) ||
         book.author.toLowerCase().includes(lowerQuery) ||
-        book.category.toLowerCase().includes(lowerQuery),
+        book.category.toLowerCase().includes(lowerQuery)
     );
   }, [books, query, hasQuery]);
 
@@ -52,11 +56,10 @@ export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): Disco
     filteredBooks,
     selectedBook,
     isSearchActive: hasQuery,
-    isLoading: initialBooks.length > 0 ? false : isLoading,
     query,
+    setQuery,
     handleBookSelect,
     handleClearSelection,
     handleLogin,
-    setQuery,
   };
 }

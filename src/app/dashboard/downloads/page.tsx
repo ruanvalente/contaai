@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { getBooksPaginated } from "@/features/book-dashboard/data/server-books";
-import { DownloadsContent } from "@/features/book-dashboard/widgets/downloads-content.widget";
+import { getBooksPaginated } from "@/features/book-dashboard";
+import { DownloadsContent } from "@/features/book-dashboard";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
 type PageProps = {

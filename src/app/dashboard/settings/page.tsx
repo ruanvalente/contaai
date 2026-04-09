@@ -1,4 +1,4 @@
-import { SettingsPage } from "@/features/profile/pages/settings.page";
+import { SettingsPage } from "@/features/profile/presentation/pages/settings.page";
 
 export default function Page() {
   return <SettingsPage />;

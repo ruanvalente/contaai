@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { LibraryContent } from "@/features/book-dashboard/widgets/library-content.widget";
+import { LibraryContent } from "@/features/book-dashboard";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
 async function LibraryData() {

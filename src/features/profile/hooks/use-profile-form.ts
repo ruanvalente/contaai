@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTransition } from "react";
 import { Profile } from "@/features/profile/types/profile.types";
-import { getProfileAction } from "@/features/profile/actions/get-profile.action";
-import { updateProfileAction } from "@/features/profile/actions/update-profile.action";
+import { getProfileAction, updateProfileAction } from "@/features/profile";
 
 type UseProfileFormReturn = {
   name: string;

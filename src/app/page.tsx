@@ -1,4 +1,4 @@
-import LandingPage from "@/features/discovery/pages/landing.page";
+import LandingPage from "@/features/discovery/presentation/pages/landing.page";
 
 export default function Home() {
   return <LandingPage />;

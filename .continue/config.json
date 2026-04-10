@@ -1,0 +1,9 @@
+{
+  "models": [
+    {
+      "title": "Ollama Qwen",
+      "provider": "ollama",
+      "model": "minimax-m2.7:cloud"
+    }
+  ]
+}

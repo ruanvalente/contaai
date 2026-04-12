@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Book } from "lucide-react";

@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar } from "lucide-react";
-import { Avatar } from "@/shared/ui/avatar";
+import { Avatar } from "@/shared/ui/avatar.ui";
 import { cn } from "@/utils/cn";
 
 type AuthorInfoProps = {

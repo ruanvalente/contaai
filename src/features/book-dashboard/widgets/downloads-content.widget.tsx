@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { useCategoryCache, generateCacheKey } from "@/features/discovery/stores/category-cache.store";

@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
-import { BookCover } from "./book-cover";
-import { StarRating } from "./star-rating";
+import { BookCover } from "./book-cover.ui";
+import { StarRating } from "./star-rating.ui";
 
 type BookCardProps = {
   id: string;

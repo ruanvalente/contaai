@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, Eye, Send, Loader2, Check } from "lucide-react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 
 type BookEditorHeaderProps = {
   title: string;

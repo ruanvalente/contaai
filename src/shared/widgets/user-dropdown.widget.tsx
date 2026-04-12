@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
-import { Avatar } from "../ui/avatar";
+import { Avatar } from "@/shared/ui/avatar.ui";
 import {
   ChevronDown,
   User,

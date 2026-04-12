@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { LibraryHeader } from "@/shared/ui/library-header.ui";
 import { PublishedNotification } from "@/shared/ui/published-notification.ui";

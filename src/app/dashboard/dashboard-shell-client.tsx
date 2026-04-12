@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
-import { Sidebar } from "@/shared/ui/sidebar";
+import { Sidebar } from "@/shared/ui/sidebar.ui";
 import { Header } from "@/shared/ui/header.ui";
 
 type DashboardShellProps = {

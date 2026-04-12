@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, RotateCcw, X, Clock } from "lucide-react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 import { cn } from "@/utils/cn";
 
 interface ContentRecoveryModalProps {

@@ -7,7 +7,7 @@ import { useAuthStore } from "@/shared/storage/use-auth-store";
 import { useSearchStore } from "@/features/discovery/stores/search.store";
 import { searchBooksAction } from "@/infrastructure/api/books.actions";
 import { signOutAction } from "@/features/auth/actions/auth.actions";
-import { Avatar } from "@/shared/ui/avatar";
+import { Avatar } from "@/shared/ui/avatar.ui";
 import { Book } from "@/domain/entities/book.entity";
 import {
   Menu,

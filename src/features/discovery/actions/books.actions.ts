@@ -1,10 +1,10 @@
 'use server'
 
-import { GetBooksUseCase } from "@/domain/usecases/get-books.usecase";
-import { SupabaseBookRepository } from "@/infrastructure/database/supabase-book.repository";
-import { Book, BookCategory } from "@/domain/entities/book.entity";
+import { GetBooksUseCase } from "@/server/domain/usecases/get-books.usecase";
+import { SupabaseBookRepository } from "@/server/infrastructure/database/supabase-book.repository";
+import { Book, BookCategory } from "@/server/domain/entities/book.entity";
 import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
-import { mapToBookFromUserBook } from "@/infrastructure/mappers/book.mapper";
+import { mapToBookFromUserBook } from "@/server/infrastructure/mappers/book.mapper";
 
 const bookRepository = new SupabaseBookRepository();
 const getBooksUseCase = new GetBooksUseCase(bookRepository);

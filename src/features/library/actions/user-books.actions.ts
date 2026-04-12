@@ -1,6 +1,6 @@
 'use server'
 
-import { UserBook } from "@/domain/entities/user-book.entity";
+import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 type UserBookRow = {

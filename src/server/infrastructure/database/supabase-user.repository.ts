@@ -1,5 +1,5 @@
-import { IUserRepository } from "@/domain/repositories/user.repository";
-import { User, UpdateUserInput } from "@/domain/entities/user.entity";
+import { IUserRepository } from "@/server/domain/repositories/user.repository";
+import { User, UpdateUserInput } from "@/server/domain/entities/user.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 import { mapToUserEntity } from "../mappers/user.mapper";
 

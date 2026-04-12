@@ -1,5 +1,5 @@
-import { IReadingRepository } from "@/domain/repositories/reading.repository";
-import { ReadingProgress, SaveReadingProgressInput } from "@/domain/entities/reading-progress.entity";
+import { IReadingRepository } from "@/server/domain/repositories/reading.repository";
+import { ReadingProgress, SaveReadingProgressInput } from "@/server/domain/entities/reading-progress.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 export type ReadingProgressRow = {

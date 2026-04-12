@@ -1,4 +1,4 @@
-import { User } from "@/domain/entities/user.entity";
+import { User } from "@/server/domain/entities/user.entity";
 
 export type ProfileRow = {
   id: string;

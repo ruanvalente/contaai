@@ -1,5 +1,5 @@
-import { IBookRepository } from "@/domain/repositories/book.repository";
-import { Book, BookCategory } from "@/domain/entities/book.entity";
+import { IBookRepository } from "@/server/domain/repositories/book.repository";
+import { Book, BookCategory } from "@/server/domain/entities/book.entity";
 import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
 import { mapToBookEntity, mapToBookFromUserBook } from "../mappers/book.mapper";
 

@@ -1,4 +1,4 @@
-import { Book, BOOK_CATEGORIES, BookCategory } from "@/domain/entities/book.entity";
+import { Book, BOOK_CATEGORIES, BookCategory } from "@/server/domain/entities/book.entity";
 
 export type SupabaseBook = {
   id: string;

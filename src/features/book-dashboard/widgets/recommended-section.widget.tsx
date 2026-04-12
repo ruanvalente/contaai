@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { ChevronLeftIcon, ChevronRightIcon, StarIcon } from "../ui/icons.ui";
 
 type RecommendedSectionWidgetProps = {

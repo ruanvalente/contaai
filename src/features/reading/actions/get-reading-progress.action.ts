@@ -1,7 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/utils/supabase/server";
-import { ReadingProgress } from "@/domain/entities/reading-progress.entity";
+import { ReadingProgress } from "@/server/domain/entities/reading-progress.entity";
 
 export async function getReadingProgress(
   bookId: string,

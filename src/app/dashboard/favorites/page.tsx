@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { getUserFavorites } from "@/infrastructure/api/favorites.actions";
-import type { UserFavorite } from "@/infrastructure/api/favorites.actions";
+import { getUserFavorites } from "@/features/discovery/actions/favorites.actions";
+import type { UserFavorite } from "@/features/discovery/actions/favorites.actions";
 import { FavoritesContent } from "@/features/book-dashboard/widgets/favorites-content.widget";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 

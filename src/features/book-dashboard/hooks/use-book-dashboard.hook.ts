@@ -4,7 +4,7 @@ import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBooks } from "@/features/book-dashboard/hooks/use-books";
 import { useSearch } from "@/features/discovery/hooks/use-search";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type UseBookDashboardReturn = {
   books: Book[];

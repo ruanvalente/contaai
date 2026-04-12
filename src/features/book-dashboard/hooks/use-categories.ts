@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CATEGORIES, Category } from "@/domain/entities/book.entity";
+import { CATEGORIES, Category } from "@/server/domain/entities/book.entity";
 
 type UseCategoriesReturn = {
   categories: Category[];

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTransition } from "react";
-import { User } from "@/domain/entities/user.entity";
+import { User } from "@/server/domain/entities/user.entity";
 import { getProfileAction } from "@/features/profile/actions/get-profile.action";
 import { updateProfileAction } from "@/features/profile/actions/update-profile.action";
 

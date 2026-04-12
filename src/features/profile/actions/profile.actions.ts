@@ -1,6 +1,6 @@
 "use server";
 
-import { User, UpdateUserInput, UserResult } from "@/domain/entities/user.entity";
+import { User, UpdateUserInput, UserResult } from "@/server/domain/entities/user.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 export async function getUserProfile(): Promise<User | null> {

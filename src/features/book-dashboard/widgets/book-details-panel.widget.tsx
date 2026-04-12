@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { BookCover } from "@/shared/ui/book-cover.ui";
 import { Badge } from "@/shared/ui/badge.ui";
 import { Button } from "@/shared/ui/button.ui";

@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { UserBook } from "@/domain/entities/user-book.entity";
+import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { Badge } from "@/shared/ui/badge.ui";
 import { Button } from "@/shared/ui/button.ui";
 import { Pencil, Eye, Trash2 } from "lucide-react";

@@ -1,4 +1,4 @@
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { BookGrid } from "../ui/book-grid.ui";
 import { EmptyState, SearchEmptyIcon } from "../ui/empty-state.ui";
 

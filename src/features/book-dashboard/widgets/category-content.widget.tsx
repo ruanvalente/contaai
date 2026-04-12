@@ -10,7 +10,7 @@ import { BookGrid, EmptyState } from "@/shared/ui/book-grid.ui";
 import { CategoryFilterBar } from "@/shared/widgets/category-filter-bar.widget";
 import { useCategoryFilter } from "@/features/discovery/hooks/use-category-filter";
 import { useBooksWithCache } from "@/features/book-dashboard/hooks/use-books-with-cache";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type CategoryContentProps = {
   initialBooks: Book[];

@@ -1,0 +1,26 @@
+[
+  {
+    "key": "cmd+shift+a c",
+    "command": "workbench.action.tasks.runTask",
+    "args": "AI: Chat",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+shift+a e",
+    "command": "workbench.action.tasks.runTask",
+    "args": "AI: Explain Code",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+shift+a f",
+    "command": "workbench.action.tasks.runTask",
+    "args": "AI: Generate Commit",
+    "when": "!editorTextFocus"
+  },
+  {
+    "key": "cmd+shift+a b",
+    "command": "workbench.action.tasks.runTask",
+    "args": "AI: Fix Bug (Clipboard)",
+    "when": "editorTextFocus"
+  }
+]

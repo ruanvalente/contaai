@@ -6,7 +6,8 @@ import { useDebouncedSave } from "./use-debounced-save";
 import { useReadingTheme } from "./use-reading-theme";
 import { getReadingProgress, saveReadingProgress } from "@/features/reading/actions";
 import { useHydrated } from "@/shared/hooks/use-hydrated";
-import { ReadingProgress, ReadingPreferences } from "@/features/reading/types/reading.types";
+import { ReadingProgress } from "@/domain/entities/reading-progress.entity";
+import { ReadingPreferences } from "@/features/profile/reading/hooks/use-reading-preferences";
 import { scrollToPosition } from "@/features/reading/utils";
 import { getCurrentUserIdClient } from "@/utils/auth";
 
@@ -89,8 +90,8 @@ export function useReadingSession({
   }, [bookId, isHydrated, onProgressLoaded]);
 
   const restoreProgress = useCallback(() => {
-    if (progress && progress.scrollTop > 0) {
-      scrollToPosition(undefined, (progress.scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+    if (progress && progress.currentPosition.scrollTop && progress.currentPosition.scrollTop > 0) {
+      scrollToPosition(undefined, (progress.currentPosition.scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
     }
   }, [progress]);
 

@@ -1,9 +1,9 @@
 "use server";
 
-import { Profile, UpdateProfileInput, ProfileResult } from "@/features/profile/types/profile.types";
+import { User, UpdateUserInput, UserResult } from "@/domain/entities/user.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
-export async function getUserProfile(): Promise<Profile | null> {
+export async function getUserProfile(): Promise<User | null> {
   try {
     const supabase = await getSupabaseServerClient();
 
@@ -44,10 +44,10 @@ export async function getUserProfile(): Promise<Profile | null> {
       id: profileData.id,
       name: profileData.name,
       email: user.email || "",
-      avatar_url: profileData.avatar_url,
+      avatarUrl: profileData.avatar_url,
       bio: profileData.bio,
-      created_at: profileData.created_at,
-      updated_at: profileData.updated_at,
+      createdAt: profileData.created_at,
+      updatedAt: profileData.updated_at,
     };
   } catch (err) {
     console.error("Error in getUserProfile:", err);
@@ -56,8 +56,8 @@ export async function getUserProfile(): Promise<Profile | null> {
 }
 
 export async function updateUserProfile(
-  data: UpdateProfileInput
-): Promise<ProfileResult> {
+  data: UpdateUserInput
+): Promise<UserResult> {
   try {
     const supabase = await getSupabaseServerClient();
 
@@ -87,8 +87,8 @@ export async function updateUserProfile(
       updates.bio = data.bio || null;
     }
 
-    if (data.avatar_url !== undefined) {
-      updates.avatar_url = data.avatar_url || null;
+    if (data.avatarUrl !== undefined) {
+      updates.avatar_url = data.avatarUrl || null;
     }
 
     updates.updated_at = new Date().toISOString();
@@ -109,14 +109,14 @@ export async function updateUserProfile(
 
     return {
       success: true,
-      profile: {
+      user: {
         id: updatedProfile.id,
         name: updatedProfile.name,
         email: user.email || "",
-        avatar_url: updatedProfile.avatar_url,
+        avatarUrl: updatedProfile.avatar_url,
         bio: updatedProfile.bio,
-        created_at: updatedProfile.created_at,
-        updated_at: updatedProfile.updated_at,
+        createdAt: updatedProfile.created_at,
+        updatedAt: updatedProfile.updated_at,
       },
     };
   } catch (err) {

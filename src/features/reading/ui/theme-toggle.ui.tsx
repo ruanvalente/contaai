@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 
 type ThemeToggleProps = {
   readingMode: ReadingMode;

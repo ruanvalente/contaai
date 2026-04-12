@@ -1,6 +1,8 @@
 "use server";
 
-import { UploadResult } from "@/features/profile/types/profile.types";
+type UploadResult = 
+  | { success: true; url: string }
+  | { success: false; error: string };
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;

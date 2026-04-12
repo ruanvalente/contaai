@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 import { useReadingControls } from "@/features/reading/hooks/use-reading-controls";
 import { FontSizeControl } from "./font-size-control.ui";
 import { ThemeToggle } from "./theme-toggle.ui";

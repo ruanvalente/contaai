@@ -1,5 +1,5 @@
 import { Book } from "@/server/domain/entities/book.entity";
-import { RecommendedSectionWidget } from "@/features/book-dashboard/widgets/recommended-section.widget";
+import { RecommendedSectionWidget } from "@/features/book-details/widgets/recommended-section.widget";
 import { CategoriesSectionWidget } from "@/features/book-dashboard/widgets/categories-section.widget";
 
 type DiscoverContentProps = {

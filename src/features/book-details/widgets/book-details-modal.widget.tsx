@@ -1,45 +1,37 @@
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
-import { Book } from "@/server/domain/entities/book.entity";
-import { BookDetailsPanelWidget } from "@/features/book-details/widgets/book-details-panel.widget";
+"use client";
 
-type BookDetailsModalProps = {
+import { motion } from "framer-motion";
+import { Book } from "@/server/domain/entities/book.entity";
+import { BookDetailsPanelWidget } from "./book-details-panel.widget";
+
+type BookDetailsModalWidgetProps = {
   book: Book | null;
   onClose: () => void;
 }
 
-export function BookDetailsModal({
+function CloseIconComponent({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+export function BookDetailsModalWidget({
   book,
   onClose,
-}: BookDetailsModalProps) {
+}: BookDetailsModalWidgetProps) {
   if (!book) return null;
 
   return (
     <>
-      <motion.div
-        className="hidden xl:block fixed top-[73px] right-0 bottom-0 w-80 lg:w-96 z-40 bg-primary-100 border-l border-primary-300 shadow-xl overflow-y-auto"
-        initial={{ x: 20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: 20, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="p-4 lg:p-6">
-          <div className="flex items-center justify-between mb-4 lg:mb-6">
-            <h3 className="text-sm lg:text-base font-bold text-gray-900">
-              Detalhes do Livro
-            </h3>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-full hover:bg-primary-200 transition-colors"
-              aria-label="Fechar"
-            >
-              <X className="w-4 h-4 lg:w-5 lg:h-5 text-gray-500" />
-            </button>
-          </div>
-          <BookDetailsPanelWidget book={book} isLoading={false} />
-        </div>
-      </motion.div>
-
       <motion.div
         className="xl:hidden fixed inset-0 z-50 bg-black/50"
         onClick={onClose}
@@ -66,7 +58,7 @@ export function BookDetailsModal({
                 className="p-2 rounded-full hover:bg-primary-200 transition-colors"
                 aria-label="Fechar"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <CloseIconComponent className="w-5 h-5 text-gray-500" />
               </button>
             </div>
           </div>
@@ -74,6 +66,29 @@ export function BookDetailsModal({
             <BookDetailsPanelWidget book={book} isLoading={false} />
           </div>
         </motion.div>
+      </motion.div>
+
+      <motion.div
+        className="hidden xl:block fixed top-18.25 right-0 bottom-0 w-96 z-40 bg-primary-100 border-l border-primary-300 shadow-xl overflow-y-auto"
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 20, opacity: 0 }}
+      >
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-gray-900">
+              Detalhes do Livro
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-primary-200 transition-colors"
+              aria-label="Fechar"
+            >
+              <CloseIconComponent className="w-4 h-4 text-gray-500" />
+            </button>
+          </div>
+          <BookDetailsPanelWidget book={book} isLoading={false} />
+        </div>
       </motion.div>
     </>
   );

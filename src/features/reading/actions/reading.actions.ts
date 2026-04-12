@@ -1,7 +1,10 @@
 'use server'
 
-import { getSupabaseServerClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
+import { SupabaseReadingRepository } from "@/server/infrastructure/database";
+
+const readingRepository = new SupabaseReadingRepository();
 
 export async function saveReadingProgressAction(
   bookId: string,
@@ -11,38 +14,22 @@ export async function saveReadingProgressAction(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     if (!userId) {
-      const supabase = await getSupabaseServerClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        return { success: false, error: "Usuário não autenticado" };
-      }
-      
-      userId = user.id;
+      userId = await getCurrentUserIdOptional();
     }
 
-    const supabase = await getSupabaseServerClient();
-    const isCompleted = progress >= 95;
-
-    const { error } = await supabase
-      .from("book_reading_progress")
-      .upsert(
-        {
-          user_id: userId,
-          book_id: bookId,
-          current_position: { scrollTop: scrollPosition },
-          progress_percent: Math.min(100, Math.max(0, progress)),
-          finished_at: isCompleted ? new Date().toISOString() : null,
-        },
-        {
-          onConflict: "user_id,book_id",
-        }
-      );
-
-    if (error) {
-      console.error("Error saving reading progress:", error);
-      return { success: false, error: "Erro ao salvar progresso" };
+    if (!userId) {
+      return { success: false, error: "Usuário não autenticado" };
     }
+
+    const saveInput = {
+      userId,
+      bookId,
+      currentPosition: { scrollTop: scrollPosition },
+      progressPercent: Math.min(100, Math.max(0, progress)),
+      finishedAt: progress >= 95 ? new Date() : undefined,
+    };
+
+    await readingRepository.save(saveInput);
 
     revalidatePath(`/book/${bookId}`);
 

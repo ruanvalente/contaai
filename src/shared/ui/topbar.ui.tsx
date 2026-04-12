@@ -1,7 +1,7 @@
 "use client";
 
-import { SearchInput } from "./search-input";
-import { Avatar } from "./avatar";
+import { SearchInput } from "./search-input.ui";
+import { Avatar } from "./avatar.ui";
 import { Menu, Bell } from "lucide-react";
 
 type TopbarProps = {

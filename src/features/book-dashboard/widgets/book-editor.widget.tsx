@@ -15,7 +15,7 @@ import { CodeNode, CodeHighlightNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { AlertCircle, Loader2 } from "lucide-react";
 
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 import { BookEditorHeader } from "./book-editor-header.widget";
 import { EditorToolbar } from "./editor-toolbar.widget";
 import { EditorContentSync } from "./editor-content-sync.widget";

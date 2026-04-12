@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { CategoryHeader } from "@/shared/ui/category-header.ui";

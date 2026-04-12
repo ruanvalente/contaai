@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { ProfileFormWidget } from "@/features/profile/widgets/profile-form.widget";
 import { ReadingSectionWidget } from "@/features/profile/reading/widgets/reading-section.widget";
 import { User, BookOpen, Bell, Shield, Info } from "lucide-react";

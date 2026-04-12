@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
-import { Avatar } from "@/shared/ui/avatar";
+import { Avatar } from "@/shared/ui/avatar.ui";
 import { Camera } from "lucide-react";
 
 type AvatarUploadProps = {

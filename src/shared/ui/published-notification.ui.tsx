@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 import { Pencil } from "lucide-react";
 
 type PublishedNotificationProps = {

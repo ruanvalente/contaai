@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Book, Category, CATEGORIES } from "@/domain/entities/book.entity";
 import { BookCard } from "../ui/book-card.ui";
-import { Tabs } from "@/shared/ui/tabs";
+import { Tabs } from "@/shared/ui/tabs.ui";
 
 type CategoriesSectionWidgetProps = {
   books: Book[];

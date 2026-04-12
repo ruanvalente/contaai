@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { RecommendedSectionWidget } from "../widgets/recommended-section.widget";
 import { CategoriesSectionWidget } from "../widgets/categories-section.widget";
 import { SearchResultsWidget } from "../widgets/search-results.widget";

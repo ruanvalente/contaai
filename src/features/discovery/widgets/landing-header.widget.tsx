@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Container } from "@/shared/ui/container";
-import { Button } from "@/shared/ui/button";
+import { Container } from "@/shared/ui/container.ui";
+import { Button } from "@/shared/ui/button.ui";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [

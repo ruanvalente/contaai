@@ -1,4 +1,4 @@
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 
 type LibraryHeaderProps = {
   onCreateClick: () => void;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { BookCard } from "@/shared/ui/book-card.ui";
 import { motion } from "framer-motion";
 

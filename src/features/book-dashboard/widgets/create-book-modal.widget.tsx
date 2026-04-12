@@ -11,7 +11,7 @@ import {
   COVER_COLORS,
   generateRandomCoverColor,
 } from "../config/book-config";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/button.ui";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 
 interface CreateBookModalProps {

@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Book } from "@/domain/entities/book.entity";
-import { BookCover } from "@/shared/ui/book-cover";
-import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
+import { BookCover } from "@/shared/ui/book-cover.ui";
+import { Badge } from "@/shared/ui/badge.ui";
+import { Button } from "@/shared/ui/button.ui";
 import { FavoriteButton } from "@/shared/ui/favorite-button.ui";
 import { RatingStars } from "../ui/rating-stars.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTransition } from "react";
-import { Profile } from "@/features/profile/types/profile.types";
+import { User } from "@/domain/entities/user.entity";
 import { getProfileAction } from "@/features/profile/actions/get-profile.action";
 import { updateProfileAction } from "@/features/profile/actions/update-profile.action";
 
@@ -31,7 +31,7 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
 
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
 
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -50,7 +50,7 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
         setName(profileData.name || "");
         setBio(profileData.bio || "");
         setEmail(profileData.email);
-        setAvatarUrl(profileData.avatar_url);
+        setAvatarUrl(profileData.avatarUrl);
       }
       setIsLoading(false);
     };
@@ -76,7 +76,7 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
     if (profile) {
       setName(profile.name || "");
       setBio(profile.bio || "");
-      setAvatarUrl(profile.avatar_url);
+      setAvatarUrl(profile.avatarUrl);
       setSelectedFile(null);
       setError(null);
       setSuccess(null);
@@ -107,7 +107,7 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
         const result = await updateProfileAction({
           name,
           bio,
-          avatarUrl: profile?.avatar_url || undefined,
+          avatarUrl: profile?.avatarUrl || undefined,
           avatarFile: selectedFile || undefined,
         });
 
@@ -116,7 +116,7 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
           return;
         }
 
-        setProfile(result.profile);
+        setProfile(result.user);
         setSelectedFile(null);
         setSuccess("Perfil atualizado com sucesso!");
       });

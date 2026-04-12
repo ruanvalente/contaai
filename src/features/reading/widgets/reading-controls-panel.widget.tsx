@@ -10,7 +10,7 @@ import { PanelHeader, PanelFooterMobile } from "@/features/reading/ui/panel-layo
 import { usePanelToggle } from "@/features/reading/hooks/use-panel-toggle";
 import { useClickOutside } from "@/features/reading/hooks/use-click-outside";
 import { useEscapeKey } from "@/features/reading/hooks/use-escape-key";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 
 type ReadingControlsPanelProps = {
   fontSize: number;

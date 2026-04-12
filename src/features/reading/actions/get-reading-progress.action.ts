@@ -1,7 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/utils/supabase/server";
-import { ReadingProgress } from "@/features/reading/types/reading.types";
+import { ReadingProgress } from "@/domain/entities/reading-progress.entity";
 
 export async function getReadingProgress(
   bookId: string,
@@ -22,12 +22,16 @@ export async function getReadingProgress(
       }
 
       return {
+        id: "",
+        userId: "",
         bookId: data.book_id,
         progressPercent: data.progress_percent,
-        scrollTop: data.current_position?.scrollTop ?? 0,
-        elementId: data.current_position?.elementId,
-        startedAt: data.started_at ? new Date(data.started_at) : undefined,
-        finishedAt: data.finished_at ? new Date(data.finished_at) : undefined,
+        currentPosition: {
+          scrollTop: data.current_position?.scrollTop ?? 0,
+          elementId: data.current_position?.elementId,
+        },
+        startedAt: data.started_at,
+        finishedAt: data.finished_at || null,
       };
     } catch (err) {
       console.error("Error fetching reading progress:", err);

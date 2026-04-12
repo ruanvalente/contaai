@@ -45,7 +45,7 @@ export function ReadingPage({ bookId, book }: ReadingPageProps) {
   } = useReadingSession({ bookId });
 
   useEffect(() => {
-    if (isProgressLoaded && progress && progress.scrollTop > 0) {
+    if (isProgressLoaded && progress && progress.currentPosition.scrollTop && progress.currentPosition.scrollTop > 0) {
       restoreProgress();
     }
   }, [isProgressLoaded, progress, restoreProgress]);

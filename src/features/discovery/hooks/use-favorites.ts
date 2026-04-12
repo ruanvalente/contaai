@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Book } from "@/domain/entities/book.entity";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/infrastructure/api/favorites.actions";
-import { useFavoritesStore } from "@/features/discovery/stores/favorites.store";
+import { useFavoritesStore } from "@/shared/store/favorites.store";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];

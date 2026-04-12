@@ -5,7 +5,7 @@ import { Book } from "@/domain/entities/book.entity";
 import {
   usePaginationCache,
   generatePaginationKey,
-} from "@/features/discovery/stores/pagination-cache.store";
+} from "@/shared/store/pagination-cache.store";
 
 type PaginationState = {
   currentPage: number;

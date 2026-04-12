@@ -1,0 +1,43 @@
+{
+  // "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "opencode-agent-skills"
+  ],
+  "rules": [
+    "architecture",
+    "frontend", 
+    "naming",
+    "server-actions",
+    "database",
+    "design",
+    "state-management",
+    "performance",
+    "testing"
+  ],
+  "commands": [
+    "create-feature"
+  ],
+  "hooks": [
+    "analyze-feature",
+    "check-imports",
+    "find-component",
+    "audit-performance",
+    "validate-structure"
+  ],
+  "specs": {
+    "projectStructure": "specs/project-structure-spec.md",
+    "uiComponent": "specs/ui-component-spec.md",
+    "widgetComponent": "specs/widget-component-spec.md",
+    "hooks": "specs/hooks-spec.md",
+    "stores": "specs/stores-spec.md",
+    "serverActions": "specs/server-actions-spec.md"
+  },
+  "plans": {
+    "active": "plans/REFACTOR-NEW.md"
+  },
+  "project": {
+    "name": "contaai",
+    "type": "nextjs",
+    "database": "supabase"
+  }
+}

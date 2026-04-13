@@ -1,38 +1,8 @@
 import { IStorageRepository } from "@/server/domain/repositories/storage.repository";
+import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-async function getSupabaseServerClient() {
-  const { createServerClient } = await import("@supabase/ssr");
-  const { cookies } = await import("next/headers");
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing");
-  }
-
-  const cookieStore = await cookies();
-
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Ignore errors from Server Components
-        }
-      },
-    },
-  });
-}
 
 function getFileExtension(mimeType: string): string {
   const extensions: Record<string, string> = {
@@ -120,6 +90,86 @@ export class SupabaseStorageRepository implements IStorageRepository {
     } catch (err) {
       console.error("Error in deleteAvatar:", err);
       return { success: false, error: "Erro ao deletar avatar." };
+    }
+  }
+
+  async uploadBookCover(
+    file: File,
+    bookId: string
+  ): Promise<{ success: boolean; url?: string; error?: string }> {
+    try {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return {
+          success: false,
+          error: "Tipo não permitido. Use JPG, PNG ou WebP.",
+        };
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        return {
+          success: false,
+          error: "Arquivo muito grande. Máximo 2MB.",
+        };
+      }
+
+      const supabase = await getSupabaseServerClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { success: false, error: "Usuário não autenticado" };
+      }
+
+      const ext = getFileExtension(file.type);
+      const filePath = `covers/${user.id}/${bookId}/cover.${ext}`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const { error: uploadError } = await supabase.storage
+        .from("contaai")
+        .upload(filePath, buffer, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error("Upload error:", uploadError);
+        return { success: false, error: "Erro ao fazer upload" };
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("contaai")
+        .getPublicUrl(filePath);
+
+      return { success: true, url: urlData.publicUrl };
+    } catch (err) {
+      console.error("Error in uploadBookCover:", err);
+      return { success: false, error: "Erro interno" };
+    }
+  }
+
+  async deleteBookCover(
+    bookId: string
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const supabase = await getSupabaseServerClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return { success: false, error: "Usuário não autenticado" };
+      }
+
+      const extensions = ["jpg", "png", "webp"];
+
+      for (const ext of extensions) {
+        const filePath = `covers/${user.id}/${bookId}/cover.${ext}`;
+        await supabase.storage.from("contaai").remove([filePath]);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Error in deleteBookCover:", err);
+      return { success: false, error: "Erro ao deletar capa" };
     }
   }
 }

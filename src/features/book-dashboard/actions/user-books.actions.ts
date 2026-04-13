@@ -9,7 +9,7 @@ import {
   ReadingStatus,
   CreateUserBookInput,
   UpdateUserBookInput,
-} from "@/domain/entities/user-book.entity";
+} from "@/server/domain/entities/user-book.entity";
 import { COVER_COLORS, generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";
 

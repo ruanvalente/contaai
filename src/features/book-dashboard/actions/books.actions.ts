@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
 import { formatBook, formatUserBook } from "@/lib/books/format-book";
 

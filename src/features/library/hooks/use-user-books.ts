@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { UserBook } from "@/domain/entities/user-book.entity";
+import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { LibraryTab } from "./use-library-tabs";
-import { getUserBooksAction, UserBookFilter } from "@/infrastructure/api/user-books.actions";
+import { getUserBooksAction, UserBookFilter } from "@/features/library/actions/user-books.actions";
 
 type UseUserBooksOptions = {
   activeTab: LibraryTab;

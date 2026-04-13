@@ -1,6 +1,6 @@
 "use client";
 
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { BookCard } from "../ui/book-card.ui";
 
 type SearchResultsWidgetProps = {

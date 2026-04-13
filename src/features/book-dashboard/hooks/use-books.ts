@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Book, Category } from "@/domain/entities/book.entity";
-import { getBooksAction } from "@/infrastructure/api/books.actions";
+import { Book, Category } from "@/server/domain/entities/book.entity";
+import { getBooksAction } from "@/features/discovery/actions/books.actions";
 
 function filterBooksByCategory(books: Book[], category: string): Book[] {
   if (category === "All") return books;

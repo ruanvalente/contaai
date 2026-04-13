@@ -1,6 +1,6 @@
 "use server";
 
-import { UserResult } from "@/domain/entities/user.entity";
+import { UserResult } from "@/server/domain/entities/user.entity";
 
 export type UpdateProfileParams = {
   name?: string;

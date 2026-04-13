@@ -1,5 +1,5 @@
-import { mapToBookEntity, mapToBookFromUserBook, SupabaseBook, UserBookRow } from "@/infrastructure/mappers/book.mapper";
-import { Book } from "@/domain/entities/book.entity";
+import { mapToBookEntity, mapToBookFromUserBook, SupabaseBook, UserBookRow } from "@/server/infrastructure/mappers/book.mapper";
+import { Book } from "@/server/domain/entities/book.entity";
 
 export type { SupabaseBook, UserBookRow };
 

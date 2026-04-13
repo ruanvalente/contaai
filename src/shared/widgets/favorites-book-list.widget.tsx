@@ -1,5 +1,5 @@
 import { Pagination } from "@/shared/ui/pagination.ui";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { FavoriteBookCard } from "./favorite-book-card.widget";
 
 type FavoritesBookListProps = {

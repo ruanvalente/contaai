@@ -46,8 +46,9 @@ supabase/supabase/
 supabase/snippets/
 *.sql.bak
 
-# agents / skills
-.opencode/
+# agents / skills - note: repo local only (não commit github)
+# .opencode/    # descomentar para ignorar
+.opencode/node_modules/
 !.opencode/specs/
 .agents/
 skills-lock.json

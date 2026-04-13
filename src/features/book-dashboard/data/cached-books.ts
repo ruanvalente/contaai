@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { cacheLife, cacheTag } from "next/cache";
-import { Book } from "@/domain/entities/book.entity";
-import { UserBookRow, mapToBookFromUserBook } from "@/infrastructure/mappers/book.mapper";
+import { Book } from "@/server/domain/entities/book.entity";
+import { UserBookRow, mapToBookFromUserBook } from "@/server/infrastructure/mappers/book.mapper";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

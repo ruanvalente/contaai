@@ -1,6 +1,6 @@
 import { Heart, Star } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type FavoriteBookCardProps = {
   book: Book;

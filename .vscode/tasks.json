@@ -1,0 +1,60 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AI: Chat",
+      "type": "shell",
+      "command": "bun run ai chat",
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Explain Code",
+      "type": "shell",
+      "command": "${command:ai.explainFile}",
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Generate Commit",
+      "type": "shell",
+      "command": "bun run ai commit",
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Fix Bug (Clipboard)",
+      "type": "shell",
+      "command": "bun run ai bug \"$(pbpaste)\"",
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "AI: Edit Selection",
+      "type": "shell",
+      "command": "echo '${selectedText}' | bun run ai edit \"${selectedText}\"",
+      "problemMatcher": [],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}

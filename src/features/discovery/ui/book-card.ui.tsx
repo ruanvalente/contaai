@@ -1,4 +1,4 @@
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type BookCardProps = {
   book: Book;

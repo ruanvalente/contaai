@@ -14,7 +14,7 @@ import { useUserBooks } from "@/features/library/hooks/use-user-books";
 import { useLibraryState } from "@/features/library/hooks/use-library-state";
 import { CreateBookModal } from "./create-book-modal.widget";
 import { deleteUserBook } from "../actions/user-books.actions";
-import { UserBook } from "@/domain/entities/user-book.entity";
+import { UserBook } from "@/server/domain/entities/user-book.entity";
 
 export function LibraryContent() {
   const router = useRouter();

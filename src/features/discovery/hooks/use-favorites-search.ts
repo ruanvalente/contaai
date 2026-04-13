@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Book } from "@/domain/entities/book.entity";
-import { searchBooksAction } from "@/infrastructure/api/books.actions";
+import { Book } from "@/server/domain/entities/book.entity";
+import { searchBooksAction } from "@/features/discovery/actions/books.actions";
 
 type UseFavoritesSearchOptions = {
   initialBooks?: Book[];

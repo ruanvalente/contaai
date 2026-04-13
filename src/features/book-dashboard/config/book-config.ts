@@ -1,4 +1,4 @@
-import { BOOK_CATEGORIES } from "@/domain/entities/book.entity";
+import { BOOK_CATEGORIES } from "@/server/domain/entities/book.entity";
 
 export const COVER_COLORS = [
   "#8B4513", // Saddle Brown

@@ -5,9 +5,37 @@ import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, resolve } from 'path';
 import { cwd } from 'process';
 
-const MODEL = process.env.OLLAMA_MODEL || 'deepseek-coder:latest';
+const DEFAULT_MODEL = 'deepseek-coder:latest';
 const MAX_TOKENS = parseInt(process.env.OLLAMA_MAX_TOKENS || '4096');
 const TEMPERATURE = parseFloat(process.env.OLLAMA_TEMPERATURE || '0.7');
+
+const args = process.argv.slice(2);
+const cmd = args[0];
+
+if (!cmd || cmd === '-h' || cmd === '--help') {
+  showHelp();
+  process.exit(0);
+}
+
+const flags = {};
+let i = 1;
+while (i < args.length) {
+  if (args[i] === '-f' || args[i] === '--file') {
+    flags.file = args[i + 1];
+    i += 2;
+  } else if (args[i] === '-m' || args[i] === '--model') {
+    flags.model = args[i + 1];
+    i += 2;
+  } else if (args[i]?.startsWith('-')) {
+    i++;
+  } else {
+    break;
+  }
+}
+
+const remaining = args.slice(i);
+
+const MODEL = flags.model || process.env.OLLAMA_MODEL || DEFAULT_MODEL;
 
 const commands = {
   chat: 'Inicia sessão de chat interativo',
@@ -271,32 +299,6 @@ Exemplos:
   ai bug "Cannot read property 'id' of undefined"
 `);
 }
-
-const args = process.argv.slice(2);
-const cmd = args[0];
-
-if (!cmd || cmd === '-h' || cmd === '--help') {
-  showHelp();
-  process.exit(0);
-}
-
-const flags = {};
-let i = 1;
-while (i < args.length) {
-  if (args[i] === '-f' || args[i] === '--file') {
-    flags.file = args[i + 1];
-    i += 2;
-  } else if (args[i] === '-m' || args[i] === '--model') {
-    flags.model = args[i + 1];
-    i += 2;
-  } else if (args[i]?.startsWith('-')) {
-    i++;
-  } else {
-    break;
-  }
-}
-
-const remaining = args.slice(i);
 
 (async () => {
   try {

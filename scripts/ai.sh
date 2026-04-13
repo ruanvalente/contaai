@@ -161,7 +161,7 @@ EOF
 call_ollama() {
   local prompt="$1"
 
-  ollama run "$MODEL" "$prompt" --max-tokens "$MAX_TOKENS" --temp "$TEMPERATURE" 2>/dev/null
+  ollama run "$MODEL" "$prompt" 2>/dev/null
 }
 
 cmd_chat() {
@@ -171,7 +171,7 @@ cmd_chat() {
   echo "🤖 Iniciando chat com $MODEL (Ctrl+C para sair)"
   echo "---"
 
-  ollama run "$MODEL" --temp "$TEMPERATURE"
+  ollama run "$MODEL"
 }
 
 cmd_edit() {
@@ -328,6 +328,8 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+[[ -z "$COMMAND" && -n "$MODEL" ]] && COMMAND="chat"
 
 [[ -n "$TEMP_OVERRIDE" ]] && TEMPERATURE="$TEMP_OVERRIDE"
 

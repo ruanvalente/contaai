@@ -277,11 +277,7 @@ Sub-dividido em fases menores:
 - [x] 4.7.4 Validar build
 
 **Arquivos restantes (pendentes):**
-- book-dashboard/actions/user-books.actions.ts (509 linhas - alto risco)
-- book-dashboard/actions/user-favorites.actions.ts (duplicado discovery)
-- book-dashboard/actions/books.actions.ts (duplicado discovery)
-- book-dashboard/actions/upload-book-cover.action.ts (storage)
-- auth/auth.actions.ts (já é abstração Supabase)
+- book-dashboard/actions/upload-book-cover.action.ts (storage) ✅ Migrado para usar StorageRepository
 
 **Nota:** auth/auth.actions.ts não migrado pois já usa getSupabaseServerClient custom com cookies - é uma camada de abstração própria.
 
@@ -305,11 +301,11 @@ src/server/infrastructure/
 │   ├── supabase-book.repository.ts
 │   ├── supabase-user.repository.ts
 │   ├── supabase-reading.repository.ts
-│   ├── supabase-user-book.repository.ts    ← NOVO
-│   ├── supabase-favorite.repository.ts   ← NOVO
-│   └── supabase-user-book.repository.ts   ← NOVO
+│   ├── supabase-user-book.repository.ts
+│   ├── supabase-favorite.repository.ts
+│   └── supabase-storage.repository.ts
 └── storage/
-    └── supabase-storage.repository.ts       ← NOVO
+    └── supabase-storage.repository.ts
 ```
 
 ### Padrão de Migration
@@ -329,28 +325,28 @@ Cada nova feature que precisa de database deve seguir:
 ### Sub-fases (baixo risco, entregas incrementais):
 
 #### Fase 4.8.1: Functions de Leitura (MENOR RISCO)
-- [ ] 4.8.1.1 Migrar `getUserBooks()` para usar repository
-- [ ] 4.8.1.2 Migrar `getUserReadingBooks()` para usar repository
-- [ ] 4.8.1.3 Migrar `getUserCompletedBooks()` para usar repository
-- [ ] 4.8.1.4 Migrar `getPublishedBooks()` para usar repository
-- [ ] 4.8.1.5 Migrar `getBookById()` para usar repository
+- [x] 4.8.1.1 Migrar `getUserBooks()` para usar repository
+- [x] 4.8.1.2 Migrar `getUserReadingBooks()` para usar repository
+- [x] 4.8.1.3 Migrar `getUserCompletedBooks()` para usar repository
+- [x] 4.8.1.4 Migrar `getPublishedBooks()` para usar repository
+- [x] 4.8.1.5 Migrar `getBookById()` para usar repository
 
 #### Fase 4.8.2: Functions de Escrita (MÉDIO RISCO)
-- [ ] 4.8.2.1 Migrar `createUserBook()` para usar repository
-- [ ] 4.8.2.2 Migrar `updateUserBook()` para usar repository
-- [ ] 4.8.2.3 Migrar `saveBookContent()` para usar repository
-- [ ] 4.8.2.4 Migrar `deleteUserBook()` para usar repository
+- [x] 4.8.2.1 Migrar `createUserBook()` para usar repository
+- [x] 4.8.2.2 Migrar `updateUserBook()` para usar repository
+- [x] 4.8.2.3 Migrar `saveBookContent()` para usar repository
+- [x] 4.8.2.4 Migrar `deleteUserBook()` para usar repository
 
 #### Fase 4.8.3: Functions de Estado (MÉDIO RISCO)
-- [ ] 4.8.3.1 Migrar `publishBook()` para usar repository
-- [ ] 4.8.3.2 Migrar `markAsReading()` para usar repository
-- [ ] 4.8.3.3 Migrar `markAsCompleted()` para usar repository
-- [ ] 4.8.3.4 Migrar `updateReadingProgress()` para usar repository
+- [x] 4.8.3.1 Migrar `publishBook()` para usar repository
+- [x] 4.8.3.2 Migrar `markAsReading()` para usar repository
+- [x] 4.8.3.3 Migrar `markAsCompleted()` para usar repository
+- [x] 4.8.3.4 Migrar `updateReadingProgress()` para usar repository
 
 #### Fase 4.8.4: Functions Combinadas (ALTO RISCO)
-- [ ] 4.8.4.1 Migrar `getCurrentUserBooks()` para usar repository
-- [ ] 4.8.4.2 Remover functions duplicadas em user-favorites.actions.ts (se existirem)
-- [ ] 4.8.4.3 Validar build final
+- [x] 4.8.4.1 Migrar `getCurrentUserBooks()` para usar repository
+- [x] 4.8.4.2 Remover functions duplicadas em user-favorites.actions.ts (se existirem)
+- [x] 4.8.4.3 Validar build final
 
 **Entregas por fase:** ~40-50 linhas por fase (baixo risco)
 

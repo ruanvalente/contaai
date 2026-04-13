@@ -1,5 +1,5 @@
 import { IUserBookRepository, UserBookFilter } from "@/server/domain/repositories/user-book.repository";
-import { UserBook } from "@/server/domain/entities/user-book.entity";
+import { UserBook, UserBookStatus, ReadingStatus } from "@/server/domain/entities/user-book.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 type UserBookRow = {
@@ -171,6 +171,174 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     if (error) {
       console.error("Error deleting user book:", error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async getByUserIdAndStatus(userId: string, status: UserBookStatus): Promise<UserBook[]> {
+    const supabase = await getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("status", status)
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching user books by status:", error);
+      return [];
+    }
+
+    return (data || []).map(mapToUserBook);
+  }
+
+  async getReadingBooks(userId: string): Promise<UserBook[]> {
+    const supabase = await getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("reading_status", "reading")
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching reading books:", error);
+      return [];
+    }
+
+    return (data || []).map(mapToUserBook);
+  }
+
+  async getCompletedBooks(userId: string): Promise<UserBook[]> {
+    const supabase = await getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("reading_status", "completed")
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching completed books:", error);
+      return [];
+    }
+
+    return (data || []).map(mapToUserBook);
+  }
+
+  async getPublishedBooks(): Promise<UserBook[]> {
+    const supabase = await getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("*")
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching published books:", error);
+      return [];
+    }
+
+    return (data || []).map(mapToUserBook);
+  }
+
+  async saveContent(id: string, content: string, userId: string): Promise<boolean> {
+    const supabase = await getSupabaseServerClient();
+
+    const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+
+    const { error } = await supabase
+      .from("user_books")
+      .update({
+        content,
+        word_count: wordCount,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error saving content:", error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async publish(id: string, userId: string): Promise<UserBook | null> {
+    const supabase = await getSupabaseServerClient();
+
+    const { error } = await supabase
+      .from("user_books")
+      .update({
+        status: "published",
+        published_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error publishing book:", error);
+      return null;
+    }
+
+    return this.getById(id);
+  }
+
+  async setReadingStatus(id: string, status: ReadingStatus, userId: string): Promise<boolean> {
+    const supabase = await getSupabaseServerClient();
+
+    const updateData: Record<string, unknown> = {
+      reading_status: status,
+    };
+
+    if (status === "reading") {
+      updateData.reading_progress = 0;
+    } else if (status === "completed") {
+      updateData.reading_progress = 100;
+    }
+
+    const { error } = await supabase
+      .from("user_books")
+      .update(updateData)
+      .eq("id", id)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error setting reading status:", error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async setReadingProgress(id: string, progress: number, userId: string): Promise<boolean> {
+    const supabase = await getSupabaseServerClient();
+
+    let readingStatus: ReadingStatus = "reading";
+    if (progress >= 100) {
+      readingStatus = "completed";
+    } else if (progress <= 0) {
+      readingStatus = "none";
+    }
+
+    const { error } = await supabase
+      .from("user_books")
+      .update({
+        reading_progress: Math.min(100, Math.max(0, progress)),
+        reading_status: readingStatus,
+      })
+      .eq("id", id)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error setting reading progress:", error);
       return false;
     }
 

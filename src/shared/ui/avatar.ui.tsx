@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { cn } from "@/utils/cn";
 
@@ -6,6 +8,7 @@ type AvatarProps = {
   src?: string;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  unoptimized?: boolean;
 }
 
 export function Avatar({
@@ -13,6 +16,7 @@ export function Avatar({
   src,
   size = "md",
   className = "",
+  unoptimized = false,
 }: AvatarProps) {
   const sizes = {
     sm: "w-8 h-8 text-xs",
@@ -44,6 +48,7 @@ export function Avatar({
           width={96}
           height={96}
           className="w-full h-full object-cover"
+          unoptimized={unoptimized}
         />
       </div>
     );

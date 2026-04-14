@@ -113,10 +113,10 @@ export default async function DashboardPage() {
 // app/dashboard/library/page.tsx
 "use client";
 
-import { LibraryContentWidget } from "@/features/book-dashboard/widgets/library-content.widget";
+import { LibraryContent } from "@/features/library/widgets/library-content.widget";
 
 export default function LibraryPage() {
-  return <LibraryContentWidget />;
+  return <LibraryContent />;
 }
 ```
 
@@ -267,8 +267,8 @@ export async function POST(request: Request) {
 // app/dashboard/library/page.tsx
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/features/auth/actions/auth.actions";
-import { getCurrentUserBooks } from "@/features/book-dashboard/actions/user-books.actions";
-import { LibraryContentWidget } from "@/features/book-dashboard/widgets/library-content.widget";
+import { getCurrentUserBooks } from "@/features/library/actions";
+import { LibraryContent } from "@/features/library/widgets/library-content.widget";
 
 export default async function LibraryPage() {
   const user = await getCurrentUser();

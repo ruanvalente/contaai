@@ -125,7 +125,7 @@ export default function LibraryPage() {
 ```tsx
 // app/book/[id]/page.tsx
 import { getBookByIdAction } from "@/features/book-dashboard/actions/books.actions";
-import { BookDetailsWidget } from "@/features/book-dashboard/widgets/book-details.widget";
+import { BookDetailsWidget } from "@/features/book-details/widgets/book-details.widget";
 import { notFound } from "next/navigation";
 
 interface PageProps {

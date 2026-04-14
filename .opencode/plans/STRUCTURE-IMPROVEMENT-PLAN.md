@@ -103,6 +103,7 @@ export * from './use-library-state';
 1. **Fase 1** (✅ Concluído): Mover auth/components para widgets
 2. **Fase 2** (✅ Concluído): Auditoria e limpeza de book-dashboard
 3. **Fase 3** (✅ Concluído): Criar barrel exports
+4. **Fase 4** (✅ Concluído): Atualizar SPECs com paths corretos
 
 ---
 

@@ -154,27 +154,36 @@ type UserDropdownWidgetProps = {
 
 ## 3. Estrutura de Widgets em Features
 
-### 3.1 Book Dashboard Widgets
+### 3.1 Book Dashboard Widgets (Legado)
 
+> ⚠️ **Nota**: Muitos widgets foram migrados para features específicas. Veja migração abaixo.
+
+**Estrutura Original (legacy):**
 ```
 src/features/book-dashboard/widgets/
-├── book-details-modal.widget.tsx      # Modal de detalhes
-├── book-details-panel.widget.tsx      # Painel lateral
-├── book-editor.widget.tsx             # Editor de livro
-├── book-editor-toolbar.tsx            # Toolbar do editor
-├── categories-section.widget.tsx      # Seção de categorias
-├── create-book-modal.widget.tsx       # Modal de criação
-├── downloads-content.widget.tsx       # Conteúdo de downloads
-├── favorites-content.widget.tsx       # Conteúdo de favoritos
-├── library-content.widget.tsx         # Conteúdo da biblioteca
-├── recommended-section.widget.tsx    # Seção de recomendados
-└── search-results.widget.tsx          # Resultados de busca
+├── book-details-modal.widget.tsx      # Migrado para book-details
+├── book-details-panel.widget.tsx      # Migrado para book-details
+├── book-editor.widget.tsx             # Migrado para editor
+├── book-editor-toolbar.tsx           # Migrado para editor
+├── categories-section.widget.tsx      # Migrado para discovery
+├── create-book-modal.widget.tsx       # Migrado para library
+├── downloads-content.widget.tsx      # Mantido
+├── favorites-content.widget.tsx      # Migrado para library
+├── library-content.widget.tsx        # Migrado para library
+├── recommended-section.widget.tsx   # Migrado para discovery
+└── search-results.widget.tsx        # Mantido
 ```
+
+**Migração Concluída:**
+- `library/*` → `src/features/library/widgets/`
+- `book-details/*` → `src/features/book-details/widgets/`
+- `editor/*` → `src/features/editor/widgets/`
+- `discovery/sections/*` → `src/features/discovery/widgets/`
 
 ### 3.2 Exemplo: Library Content Widget
 
 ```tsx
-// src/features/book-dashboard/widgets/library-content.widget.tsx
+// src/features/library/widgets/library-content.widget.tsx
 "use client";
 
 import { useMemo } from "react";

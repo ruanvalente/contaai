@@ -98,11 +98,11 @@ export * from './use-library-state';
 
 ---
 
-## 🔄 ordem de Execução Sugerida
+## 🔄 Ordem de Execução Sugerida
 
-1. **Fase 1** (Imediato): Mover auth/components para widgets
-2. **Fase 2** (Próximo sprint): Auditoria e limpeza de book-dashboard
-3. **Fase 3** (Quando necessário): Criar barrel exports
+1. **Fase 1** (✅ Concluído): Mover auth/components para widgets
+2. **Fase 2** (✅ Concluído): Auditoria e limpeza de book-dashboard
+3. **Fase 3** (✅ Concluído): Criar barrel exports
 
 ---
 

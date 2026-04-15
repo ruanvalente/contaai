@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Book, Category, CATEGORIES } from "@/features/book-dashboard/types/book.types";
+import { Book, Category, CATEGORIES } from "@/server/domain/entities/book.entity";
 import { BookCard } from "../ui/book-card.ui";
-import { Tabs } from "@/shared/ui/tabs";
+import { Tabs } from "@/shared/ui/tabs.ui";
 
 type CategoriesSectionWidgetProps = {
   books: Book[];

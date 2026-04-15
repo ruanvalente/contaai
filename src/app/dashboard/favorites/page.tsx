@@ -1,6 +1,7 @@
 import { Suspense } from "react";
-import { getUserFavorites, UserFavorite } from "@/features/book-dashboard/actions/user-favorites.actions";
-import { FavoritesContent } from "@/features/book-dashboard/widgets/favorites-content.widget";
+import { getUserFavorites } from "@/features/discovery/actions/favorites.actions";
+import type { UserFavorite } from "@/features/discovery/actions/favorites.actions";
+import { FavoritesContent } from "@/features/library/widgets/favorites-content.widget";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
 async function FavoritesData() {

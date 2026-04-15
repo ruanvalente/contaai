@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { parseAndRenderLexical } from "@/features/reading/utils";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 
 type UseLexicalRendererOptions = {
   content: string;

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Book } from '@/features/book-dashboard/types/book.types';
+import { Book } from '@/server/domain/entities/book.entity';
 
 interface CategoryCache {
   books: Book[];

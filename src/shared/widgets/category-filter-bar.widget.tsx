@@ -1,6 +1,6 @@
 "use client";
 
-import { useCategoryIcons } from "@/shared/hooks/use-category-icons";
+import { useCategoryIcons } from "@/features/discovery/hooks/use-category-icons";
 
 type CategoryFilterBarProps = {
   categories: string[];

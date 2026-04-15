@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Book } from "../types/book.types";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type UseSelectedBookReturn = {
   selectedBook: Book | null;

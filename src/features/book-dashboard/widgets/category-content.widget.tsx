@@ -1,16 +1,16 @@
 "use client";
 
 import { Suspense } from "react";
-import { Container } from "@/shared/ui/container";
+import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { Pagination } from "@/shared/ui/pagination.ui";
 import { CategoryHeader } from "@/shared/ui/category-header.ui";
 import { BookSearch } from "@/shared/ui/book-search.ui";
 import { BookGrid, EmptyState } from "@/shared/ui/book-grid.ui";
 import { CategoryFilterBar } from "@/shared/widgets/category-filter-bar.widget";
-import { useCategoryFilter } from "@/shared/hooks/use-category-filter";
-import { useBooksWithCache } from "@/shared/hooks/use-books-with-cache";
-import { Book } from "@/features/book-dashboard/types/book.types";
+import { useCategoryFilter } from "@/features/discovery/hooks/use-category-filter";
+import { useBooksWithCache } from "@/features/book-dashboard/hooks/use-books-with-cache";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type CategoryContentProps = {
   initialBooks: Book[];

@@ -3,12 +3,25 @@
 import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBooks } from "@/features/book-dashboard/hooks/use-books";
-import { useSearch } from "@/shared/hooks/use-search";
-import { Book } from "@/features/book-dashboard/types/book.types";
-import { DiscoverHookReturn } from "../types/discover.types";
+import { useSearch } from "@/features/discovery/hooks/use-search";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type UseDiscoverProps = {
   initialBooks?: Book[];
+}
+
+type DiscoverHookReturn = {
+  books: Book[];
+  recommendedBooks: Book[];
+  filteredBooks: Book[];
+  selectedBook: Book | null;
+  isSearchActive: boolean;
+  isLoading: boolean;
+  query: string;
+  handleBookSelect: (book: Book) => void;
+  handleClearSelection: () => void;
+  handleLogin: () => void;
+  setQuery: (query: string) => void;
 }
 
 export function useDiscover({ initialBooks = [] }: UseDiscoverProps = {}): DiscoverHookReturn {

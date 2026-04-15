@@ -3,8 +3,17 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
-import { Avatar } from "@/shared/ui/avatar";
+import { Avatar } from "@/shared/ui/avatar.ui";
 import { Camera } from "lucide-react";
+
+function isLocalUrl(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname === "127.0.0.1" || urlObj.hostname === "localhost";
+  } catch {
+    return false;
+  }
+}
 
 type AvatarUploadProps = {
   name?: string;
@@ -43,6 +52,7 @@ export function AvatarUpload({
   };
 
   const displaySrc = preview || src;
+  const isLocal = src ? isLocalUrl(src) : false;
 
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -66,7 +76,7 @@ export function AvatarUpload({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <Avatar name={name || "U"} src={displaySrc} size={size} />
+              <Avatar name={name || "U"} src={displaySrc} size={size} unoptimized={isLocal} />
             )}
           </div>
         ) : (

@@ -3,9 +3,8 @@
 import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBooks } from "@/features/book-dashboard/hooks/use-books";
-import { useSearch } from "@/shared/hooks/use-search";
-import { Book } from "@/features/book-dashboard/types/book.types";
-import { featuredBooks } from "@/features/book-dashboard/data/books";
+import { useSearch } from "@/features/discovery/hooks/use-search";
+import { Book } from "@/server/domain/entities/book.entity";
 
 type UseBookDashboardReturn = {
   books: Book[];
@@ -28,7 +27,6 @@ export function useBookDashboard(): UseBookDashboardReturn {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const recommendedBooks = useMemo(() => {
-    if (books.length === 0) return featuredBooks;
     return books.slice(0, 6);
   }, [books]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 import { useLexicalRenderer } from "@/features/reading/hooks/use-lexical-renderer";
 
 type ReadingContentProps = {

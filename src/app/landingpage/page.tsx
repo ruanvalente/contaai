@@ -1,5 +1,5 @@
-import { LandingPageScreen } from "@/screens/landing-page/page";
+import LandingPage from "@/features/discovery/pages/landing.page";
 
 export default function Home() {
-  return <LandingPageScreen />;
+  return <LandingPage />;
 }

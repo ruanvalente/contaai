@@ -400,7 +400,7 @@ export function EmptyLibraryState() {
 ```typescript
 // library-tab-bar.widget.tsx - Componente com lógica
 'use client'
-import { useLibraryTabs } from '@/shared/hooks/use-library-tabs'
+import { useLibraryTabs } from '@/features/library/hooks/use-library-tabs'
 import { cn } from '@/utils/cn'
 
 export function LibraryTabBar() {
@@ -460,8 +460,8 @@ import { LibraryHeader } from '@/shared/ui/library-header.ui'
 import { LibraryTabBar } from '@/shared/widgets/library-tab-bar.widget'
 import { BookCard } from '@/shared/widgets/book-card.widget'
 import { EmptyLibraryState } from '@/shared/ui/empty-library-state.ui'
-import { useLibraryState } from '@/shared/hooks/use-library-state'
-import { useFavorites } from '@/shared/hooks/use-favorites'
+import { useLibraryState } from '@/features/library/hooks/use-library-state'
+import { useFavorites } from '@/features/discovery/hooks/use-favorites'
 
 export function LibraryContent() {
   const { activeTab } = useLibraryState()

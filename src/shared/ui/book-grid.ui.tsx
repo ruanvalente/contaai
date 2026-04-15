@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { BookCard } from "./book-card";
+import { BookCard } from "./book-card.ui";
 
 type Book = {
   id: string;

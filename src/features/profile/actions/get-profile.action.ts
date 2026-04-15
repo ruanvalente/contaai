@@ -1,8 +1,8 @@
 "use server";
 
-import { Profile } from "@/features/profile/types/profile.types";
+import { User } from "@/server/domain/entities/user.entity";
 
-export async function getProfileAction(): Promise<Profile | null> {
+export async function getProfileAction(): Promise<User | null> {
   const { getUserProfile } = await import("./profile.actions");
   return getUserProfile();
 }

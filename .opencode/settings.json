@@ -1,0 +1,35 @@
+{
+  "model": "ollama/qwen2.5-coder:latest",
+  "temperature": 0.2,
+  "max_tokens": 4000,
+
+  "tools": {
+    "shell": true,
+    "git": true,
+    "websearch": true,
+    "codesearch": true
+  },
+
+  "rules": {
+    "requireAnalysis": true,
+    "requireTests": false,
+    "requireDocs": false
+  },
+
+  "project": {
+    "name": "contaai",
+    "stack": ["nextjs", "supabase", "react", "typescript"],
+    "paths": {
+      "src": "src",
+      "features": "src/features",
+      "shared": "src/shared",
+      "domain": "src/domain"
+    }
+  },
+
+  "validation": {
+    "lintOnSave": true,
+    "typecheckOnSave": true,
+    "validateStructure": true
+  }
+}

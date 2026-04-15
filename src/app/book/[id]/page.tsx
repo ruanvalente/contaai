@@ -13,7 +13,7 @@ function BookContent({ params }: { params: PageProps["params"] }) {
   return <BookPageClient bookId={id} />;
 }
 
-export default function BookPage(props: PageProps) {
+export default async function BookPage(props: PageProps) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <BookContent params={props.params} />

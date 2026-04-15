@@ -397,7 +397,7 @@ import dynamic from "next/dynamic";
 
 // Componente pesado - carrega apenas no cliente
 const BookEditor = dynamic(
-  () => import("@/features/book-dashboard/widgets/book-editor.widget"),
+  () => import("@/features/editor/widgets/book-editor.widget"),
   { 
     ssr: false,
     loading: () => <EditorSkeleton />

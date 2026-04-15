@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { ReadingMode } from "@/features/reading/types/reading.types";
+import { ReadingMode } from "@/features/profile/reading/hooks/use-reading-preferences";
 import {
   MIN_FONT_SIZE,
   MAX_FONT_SIZE,

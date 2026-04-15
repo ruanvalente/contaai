@@ -1,0 +1,97 @@
+{
+  "name": "ai-dev-assistant",
+  "displayName": "AI Dev Assistant",
+  "description": "AI-powered development assistant using Ollama",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages", "Other"],
+  "activationEvents": ["onCommand:ai.explainFile", "onCommand:ai.refactorFile", "onCommand:ai.generateTests", "onCommand:ai.fixBug", "onCommand:ai.generateCommit"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ai.explainFile",
+        "title": "🤖 AI: Explain Code",
+        "description": "Explain selected code using AI"
+      },
+      {
+        "command": "ai.refactorFile",
+        "title": "🤖 AI: Refactor Code",
+        "description": "Refactor selected code using AI"
+      },
+      {
+        "command": "ai.generateTests",
+        "title": "🤖 AI: Generate Tests",
+        "description": "Generate unit tests for selected code"
+      },
+      {
+        "command": "ai.fixBug",
+        "title": "🤖 AI: Fix Bug",
+        "description": "Fix error in selected code"
+      },
+      {
+        "command": "ai.generateCommit",
+        "title": "🤖 AI: Generate Commit",
+        "description": "Generate git commit message"
+      },
+      {
+        "command": "ai.chat",
+        "title": "🤖 AI: Chat",
+        "description": "Start AI chat session"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ai.explainFile",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ai.refactorFile",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ai.generateTests",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ai.fixBug",
+        "key": "ctrl+shift+x",
+        "mac": "cmd+shift+x",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ai.generateCommit",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g",
+        "when": "!editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "AI Dev",
+      "properties": {
+        "aiDev.model": {
+          "type": "string",
+          "default": "deepseek-coder:latest",
+          "description": "Ollama model to use"
+        },
+        "aiDev.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "description": "AI temperature (0-1)"
+        },
+        "aiDev.maxTokens": {
+          "type": "number",
+          "default": 4096,
+          "description": "Max tokens per response"
+        }
+      }
+    }
+  }
+}

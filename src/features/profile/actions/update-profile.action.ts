@@ -1,6 +1,6 @@
 "use server";
 
-import { ProfileResult } from "@/features/profile/types/profile.types";
+import { UserResult } from "@/server/domain/entities/user.entity";
 
 export type UpdateProfileParams = {
   name?: string;
@@ -11,7 +11,7 @@ export type UpdateProfileParams = {
 
 export async function updateProfileAction(
   params: UpdateProfileParams,
-): Promise<ProfileResult> {
+): Promise<UserResult> {
   const { updateUserProfile } = await import("./profile.actions");
   const { uploadAvatar } = await import("./upload-avatar.action");
 
@@ -50,7 +50,7 @@ export async function updateProfileAction(
   const result = await updateUserProfile({
     name: name || undefined,
     bio: bio || undefined,
-    avatar_url: finalAvatarUrl || undefined,
+    avatarUrl: finalAvatarUrl || undefined,
   });
 
   return result;

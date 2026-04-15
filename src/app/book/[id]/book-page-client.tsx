@@ -40,14 +40,22 @@ export function BookPageClient({ bookId }: { bookId: string }) {
           .single(),
         supabase
           .from("user_books")
-          .select("id, title, author, cover_url, cover_color, category, content, word_count, created_at, published_at")
+          .select("id, title, author, user_id, cover_url, cover_color, category, content, word_count, status, created_at, published_at")
           .eq("id", bookId)
-          .eq("status", "published")
           .single(),
       ]);
 
       if (userBookRes.data) {
         const data = userBookRes.data;
+        const { data: { user } } = await supabase.auth.getUser();
+        const isOwner = user?.id === data.user_id;
+        const isPublished = data.status === "published";
+        
+        if (!isOwner && !isPublished) {
+          setIsLoading(false);
+          return;
+        }
+        
         setBook({
           id: data.id,
           title: data.title,

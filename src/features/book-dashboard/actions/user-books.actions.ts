@@ -8,6 +8,7 @@ import {
   CreateUserBookInput,
   UpdateUserBookInput,
 } from "@/server/domain/entities/user-book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { SupabaseUserBookRepository } from "@/server/infrastructure/database";
 import { generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";
@@ -36,6 +37,7 @@ export async function createUserBook(
       category: input.category,
     });
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
 
     return { success: true, book };
@@ -110,7 +112,9 @@ export async function updateUserBook(
       return { success: false, error: "Erro ao atualizar livro" };
     }
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
+
     return { success: true };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -167,8 +171,10 @@ export async function publishBook(
       return { success: false, error: "Erro ao publicar livro" };
     }
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
     revalidatePath(`/book/${id}`);
+
     return { success: true, book };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -196,7 +202,9 @@ export async function markAsReading(
       return { success: false, error: "Erro ao marcar como lendo" };
     }
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
+
     return { success: true };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -224,7 +232,9 @@ export async function markAsCompleted(
       return { success: false, error: "Erro ao marcar como concluído" };
     }
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
+
     return { success: true };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -280,7 +290,9 @@ export async function deleteUserBook(
       return { success: false, error: "Erro ao excluir livro" };
     }
 
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/library");
+
     return { success: true };
   } catch {
     return { success: false, error: "Erro interno" };
@@ -309,4 +321,24 @@ export async function getCurrentUserBooks(userId?: string): Promise<{
   ]);
 
   return { myStories, reading, completed };
+}
+
+export async function getDashboardBooks(): Promise<{
+  userBooks: UserBook[];
+  publishedBooks: UserBook[];
+}> {
+  const userId = await getCurrentUserIdOptional();
+
+  if (!userId) {
+    const published = await getPublishedBooks();
+    return { userBooks: [], publishedBooks: published };
+  }
+
+  const { myStories, reading, completed } = await getCurrentUserBooks(userId);
+  const published = await getPublishedBooks();
+
+  return {
+    userBooks: [...myStories, ...reading, ...completed],
+    publishedBooks: published,
+  };
 }

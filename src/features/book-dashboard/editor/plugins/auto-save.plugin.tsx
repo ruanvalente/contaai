@@ -1,58 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $getRoot } from "lexical";
+import { useEffect, useRef } from "react";
 import { useBookEditorStore } from "@/features/book-dashboard/store/book-editor.store";
 import { useShallow } from "zustand/shallow";
 import { saveBookContent } from "@/features/book-dashboard/actions/user-books.actions";
 
 export function AutoSavePlugin() {
-  const [editor] = useLexicalComposerContext();
-  const [lastContent, setLastContent] = useState<string | null>(null);
+  const lastSavedRef = useRef<string>("");
+  const savingRef = useRef(false);
 
-  const { bookId, isDirty, setSaving, markSaved } = useBookEditorStore(
+  const { bookId, isDirty, setSaving, markSaved, content } = useBookEditorStore(
     useShallow((state) => ({
       bookId: state.bookId,
       isDirty: state.isDirty,
       setSaving: state.setSaving,
       markSaved: state.markSaved,
+      content: state.content,
     }))
   );
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        const root = $getRoot();
-        const textContent = root.getTextContent();
-        
-        if (textContent !== lastContent) {
-          useBookEditorStore.getState().setContent(textContent);
-          setLastContent(textContent);
-        }
-      });
-    });
-  }, [editor, lastContent]);
-
-  useEffect(() => {
-    if (!isDirty || !bookId || !lastContent) return;
+    if (!isDirty || !bookId || !content || content === lastSavedRef.current || savingRef.current) {
+      return;
+    }
 
     const timer = setTimeout(async () => {
       const currentContent = useBookEditorStore.getState().content;
       
-      if (currentContent === lastContent) {
-        setSaving(true);
-        const result = await saveBookContent(bookId, currentContent);
-        if (result.success) {
-          markSaved();
-        } else {
-          setSaving(false);
-        }
+      if (currentContent === lastSavedRef.current || savingRef.current) {
+        savingRef.current = false;
+        return;
       }
+
+      savingRef.current = true;
+      setSaving(true);
+      
+      const result = await saveBookContent(bookId, currentContent);
+      
+      if (result.success) {
+        lastSavedRef.current = currentContent;
+        markSaved();
+      } else {
+        setSaving(false);
+      }
+      savingRef.current = false;
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [isDirty, bookId, lastContent, setSaving, markSaved]);
+  }, [isDirty, bookId, content, setSaving, markSaved]);
 
   return null;
 }

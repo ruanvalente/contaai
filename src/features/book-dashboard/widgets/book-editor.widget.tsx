@@ -26,7 +26,7 @@ import {
   useEditorBackupInterval,
 } from "@/features/book-dashboard/hooks";
 import { useBookEditorStore } from "@/features/book-dashboard/store/book-editor.store";
-import { editorTheme } from "@/features/book-dashboard/editor/editor-theme";
+import { editorTheme, AutoSavePlugin } from "@/features/book-dashboard/editor";
 
 const ContentRecoveryModal = dynamic(
   () => import("./content-recovery-modal.widget").then((m) => m.ContentRecoveryModal),
@@ -137,6 +137,7 @@ export const BookEditor = memo(({ bookId }: BookEditorProps) => {
             <HistoryPlugin />
             <ListPlugin />
             <EditorContentSync onInitialized={() => {}} />
+            <AutoSavePlugin />
           </div>
         </LexicalComposer>
       </div>

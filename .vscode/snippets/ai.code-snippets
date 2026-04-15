@@ -1,0 +1,27 @@
+{
+  "AI: Explain Selection": {
+    "prefix": "ai:explain",
+    "body": "Explain this ${1:code} in detail: ${2:code snippet}",
+    "description": "Use AI to explain selected code"
+  },
+  "AI: Refactor Selection": {
+    "prefix": "ai:refactor",
+    "body": "Refactor this ${1:code} following best practices: ${2:code snippet}",
+    "description": "Use AI to refactor code"
+  },
+  "AI: Generate Tests": {
+    "prefix": "ai:test",
+    "body": "Generate unit tests for: ${1:function/code}",
+    "description": "Use AI to generate tests"
+  },
+  "AI: Add JSDoc": {
+    "prefix": "ai:jsdoc",
+    "body": "Add JSDoc documentation to: ${1:code}",
+    "description": "Use AI to add documentation"
+  },
+  "AI: Fix Errors": {
+    "prefix": "ai:fix",
+    "body": "Fix this error: ${1:error message}",
+    "description": "Use AI to fix code errors"
+  }
+}

@@ -1,65 +1,24 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getSupabaseServerClient } from "@/utils/supabase/server";
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import {
   UserBook,
   UserBookStatus,
-  ReadingStatus,
   CreateUserBookInput,
   UpdateUserBookInput,
-} from "@/domain/entities/user-book.entity";
-import { COVER_COLORS, generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
+} from "@/server/domain/entities/user-book.entity";
+import { SupabaseUserBookRepository } from "@/server/infrastructure/database";
+import { generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";
 
-type SupabaseUserBook = {
-  id: string;
-  user_id: string;
-  title: string;
-  author: string;
-  cover_url: string | null;
-  cover_color: string | null;
-  content: string | null;
-  content_url: string | null;
-  status: string;
-  reading_status: string;
-  reading_progress: number;
-  category: string;
-  word_count: number;
-  created_at: string;
-  updated_at: string;
-  published_at: string | null;
-};
-
-function formatUserBook(book: SupabaseUserBook): UserBook {
-  return {
-    id: book.id,
-    userId: book.user_id,
-    title: book.title,
-    author: book.author,
-    coverUrl: book.cover_url || undefined,
-    coverColor: book.cover_color || "#8B4513",
-    content: book.content || undefined,
-    contentUrl: book.content_url || undefined,
-    status: book.status as UserBookStatus,
-    readingStatus: book.reading_status as ReadingStatus,
-    readingProgress: book.reading_progress,
-    category: book.category as UserBook["category"],
-    wordCount: book.word_count,
-    createdAt: new Date(book.created_at),
-    updatedAt: new Date(book.updated_at),
-    publishedAt: book.published_at ? new Date(book.published_at) : undefined,
-  };
-}
+const userBookRepository = new SupabaseUserBookRepository();
 
 export async function createUserBook(
   input: CreateUserBookInput,
   userId?: string
 ): Promise<{ success: boolean; book?: UserBook; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-    
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -70,31 +29,16 @@ export async function createUserBook(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const { data, error } = await supabase
-      .from("user_books")
-      .insert({
-        user_id: currentUserId,
-        title: input.title,
-        author: input.author,
-        cover_url: input.coverUrl,
-        cover_color: input.coverColor || generateRandomCoverColor(),
-        category: input.category,
-        status: "draft",
-        reading_status: "none",
-        reading_progress: 0,
-        word_count: 0,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating book:", error);
-      return { success: false, error: "Erro ao criar livro" };
-    }
+    const book = await userBookRepository.create(currentUserId, {
+      title: input.title,
+      author: input.author,
+      coverColor: input.coverColor || generateRandomCoverColor(),
+      category: input.category,
+    });
 
     revalidatePath("/dashboard/library");
 
-    return { success: true, book: formatUserBook(data) };
+    return { success: true, book };
   } catch (err) {
     console.error("Error in createUserBook:", err);
     return { success: false, error: "Erro interno" };
@@ -103,104 +47,34 @@ export async function createUserBook(
 
 export const getUserBooks = cache(
   async (userId: string, status?: UserBookStatus): Promise<UserBook[]> => {
-    const supabase = await getSupabaseServerClient();
-
-    let query = supabase
-      .from("user_books")
-      .select("*")
-      .eq("user_id", userId)
-      .order("updated_at", { ascending: false });
-
     if (status) {
-      query = query.eq("status", status);
+      return userBookRepository.getByUserIdAndStatus(userId, status);
     }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error fetching user books:", error);
-      return [];
-    }
-
-    return (data || []).map(formatUserBook);
+    return userBookRepository.getByUserId(userId, "my-stories");
   }
 );
 
 export const getUserReadingBooks = cache(
   async (userId: string): Promise<UserBook[]> => {
-    const supabase = await getSupabaseServerClient();
-
-    const { data, error } = await supabase
-      .from("user_books")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("reading_status", "reading")
-      .order("updated_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching reading books:", error);
-      return [];
-    }
-
-    return (data || []).map(formatUserBook);
+    return userBookRepository.getReadingBooks(userId);
   }
 );
 
 export const getUserCompletedBooks = cache(
   async (userId: string): Promise<UserBook[]> => {
-    const supabase = await getSupabaseServerClient();
-
-    const { data, error } = await supabase
-      .from("user_books")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("reading_status", "completed")
-      .order("updated_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching completed books:", error);
-      return [];
-    }
-
-    return (data || []).map(formatUserBook);
+    return userBookRepository.getCompletedBooks(userId);
   }
 );
 
 export const getPublishedBooks = cache(
   async (): Promise<UserBook[]> => {
-    const supabase = await getSupabaseServerClient();
-
-    const { data, error } = await supabase
-      .from("user_books")
-      .select("*")
-      .eq("status", "published")
-      .order("published_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching published books:", error);
-      return [];
-    }
-
-    return (data || []).map(formatUserBook);
+    return userBookRepository.getPublishedBooks();
   }
 );
 
 export const getBookById = cache(
   async (id: string): Promise<UserBook | null> => {
-    const supabase = await getSupabaseServerClient();
-
-    const { data, error } = await supabase
-      .from("user_books")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (error) {
-      console.error("Error fetching book:", error);
-      return null;
-    }
-
-    return formatUserBook(data);
+    return userBookRepository.getById(id);
   }
 );
 
@@ -210,8 +84,6 @@ export async function updateUserBook(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -223,19 +95,18 @@ export async function updateUserBook(
     }
 
     const updateData: Record<string, unknown> = { ...input };
-
     Object.keys(updateData).forEach(
       (key) =>
         updateData[key] === undefined && delete updateData[key]
     );
 
-    const { error } = await supabase
-      .from("user_books")
-      .update(updateData)
-      .eq("id", id)
-      .eq("user_id", currentUserId);
+    if (Object.keys(updateData).length === 0) {
+      return { success: true };
+    }
 
-    if (error) {
+    const updated = await userBookRepository.update(id, updateData);
+
+    if (!updated) {
       return { success: false, error: "Erro ao atualizar livro" };
     }
 
@@ -252,8 +123,6 @@ export async function saveBookContent(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -264,19 +133,9 @@ export async function saveBookContent(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+    const success = await userBookRepository.saveContent(id, content, currentUserId);
 
-    const { error } = await supabase
-      .from("user_books")
-      .update({
-        content,
-        word_count: wordCount,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .eq("user_id", currentUserId);
-
-    if (error) {
+    if (!success) {
       return { success: false, error: "Erro ao salvar conteúdo" };
     }
 
@@ -292,8 +151,6 @@ export async function publishBook(
   userId?: string
 ): Promise<{ success: boolean; book?: UserBook; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -304,29 +161,15 @@ export async function publishBook(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const { error } = await supabase
-      .from("user_books")
-      .update({
-        status: "published",
-        published_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .eq("user_id", currentUserId);
+    const book = await userBookRepository.publish(id, currentUserId);
 
-    if (error) {
+    if (!book) {
       return { success: false, error: "Erro ao publicar livro" };
     }
 
-    const { data: book } = await supabase
-      .from("user_books")
-      .select("*")
-      .eq("id", id)
-      .eq("user_id", currentUserId)
-      .single();
-
     revalidatePath("/dashboard/library");
     revalidatePath(`/book/${id}`);
-    return { success: true, book: book ? formatUserBook(book) : undefined };
+    return { success: true, book };
   } catch {
     return { success: false, error: "Erro interno" };
   }
@@ -337,8 +180,6 @@ export async function markAsReading(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -349,16 +190,9 @@ export async function markAsReading(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const { error } = await supabase
-      .from("user_books")
-      .update({
-        reading_status: "reading",
-        reading_progress: 0,
-      })
-      .eq("id", bookId)
-      .eq("user_id", currentUserId);
+    const success = await userBookRepository.setReadingStatus(bookId, "reading", currentUserId);
 
-    if (error) {
+    if (!success) {
       return { success: false, error: "Erro ao marcar como lendo" };
     }
 
@@ -374,8 +208,6 @@ export async function markAsCompleted(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -386,16 +218,9 @@ export async function markAsCompleted(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const { error } = await supabase
-      .from("user_books")
-      .update({
-        reading_status: "completed",
-        reading_progress: 100,
-      })
-      .eq("id", bookId)
-      .eq("user_id", currentUserId);
+    const success = await userBookRepository.setReadingStatus(bookId, "completed", currentUserId);
 
-    if (error) {
+    if (!success) {
       return { success: false, error: "Erro ao marcar como concluído" };
     }
 
@@ -412,8 +237,6 @@ export async function updateReadingProgress(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -424,23 +247,9 @@ export async function updateReadingProgress(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    let readingStatus: ReadingStatus = "reading";
-    if (progress >= 100) {
-      readingStatus = "completed";
-    } else if (progress <= 0) {
-      readingStatus = "none";
-    }
+    const success = await userBookRepository.setReadingProgress(bookId, progress, currentUserId);
 
-    const { error } = await supabase
-      .from("user_books")
-      .update({
-        reading_progress: Math.min(100, Math.max(0, progress)),
-        reading_status: readingStatus,
-      })
-      .eq("id", bookId)
-      .eq("user_id", currentUserId);
-
-    if (error) {
+    if (!success) {
       return { success: false, error: "Erro ao atualizar progresso" };
     }
 
@@ -455,8 +264,6 @@ export async function deleteUserBook(
   userId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getSupabaseServerClient();
-
     let currentUserId = userId;
     
     if (!currentUserId) {
@@ -467,13 +274,9 @@ export async function deleteUserBook(
       return { success: false, error: "Usuário não autenticado" };
     }
 
-    const { error } = await supabase
-      .from("user_books")
-      .delete()
-      .eq("id", id)
-      .eq("user_id", currentUserId);
+    const success = await userBookRepository.delete(id, currentUserId);
 
-    if (error) {
+    if (!success) {
       return { success: false, error: "Erro ao excluir livro" };
     }
 

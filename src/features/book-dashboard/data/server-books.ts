@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { cache } from "react";
-import { Book } from "@/domain/entities/book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { formatBook, formatUserBook } from "@/lib/books/format-book";
 
 export type BooksFilters = {

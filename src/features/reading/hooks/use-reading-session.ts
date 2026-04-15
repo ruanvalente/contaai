@@ -6,7 +6,7 @@ import { useDebouncedSave } from "./use-debounced-save";
 import { useReadingTheme } from "./use-reading-theme";
 import { getReadingProgress, saveReadingProgress } from "@/features/reading/actions";
 import { useHydrated } from "@/shared/hooks/use-hydrated";
-import { ReadingProgress } from "@/domain/entities/reading-progress.entity";
+import { ReadingProgress } from "@/server/domain/entities/reading-progress.entity";
 import { ReadingPreferences } from "@/features/profile/reading/hooks/use-reading-preferences";
 import { scrollToPosition } from "@/features/reading/utils";
 import { getCurrentUserIdClient } from "@/utils/auth";

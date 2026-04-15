@@ -8,6 +8,7 @@ import {
   CreateUserBookInput,
   UpdateUserBookInput,
 } from "@/server/domain/entities/user-book.entity";
+import { Book } from "@/server/domain/entities/book.entity";
 import { SupabaseUserBookRepository } from "@/server/infrastructure/database";
 import { generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";
@@ -322,22 +323,35 @@ export async function getCurrentUserBooks(userId?: string): Promise<{
   return { myStories, reading, completed };
 }
 
-export async function getDashboardBooks(): Promise<{
-  userBooks: UserBook[];
-  publishedBooks: UserBook[];
-}> {
+function mapUserBookToBook(userBook: UserBook): Book {
+  return {
+    id: userBook.id,
+    title: userBook.title,
+    author: userBook.author,
+    coverUrl: userBook.coverUrl,
+    coverColor: userBook.coverColor,
+    description: "",
+    category: userBook.category,
+    pages: Math.ceil((userBook.wordCount || 0) / 500),
+    rating: 0,
+    ratingCount: 0,
+    reviewCount: 0,
+    createdAt: userBook.createdAt,
+  };
+}
+
+export async function getDashboardBooks(): Promise<Book[]> {
   const userId = await getCurrentUserIdOptional();
 
+  const publishedBooks = await getPublishedBooks();
+  const publishedAsBooks = publishedBooks.map(mapUserBookToBook);
+
   if (!userId) {
-    const published = await getPublishedBooks();
-    return { userBooks: [], publishedBooks: published };
+    return publishedAsBooks;
   }
 
   const { myStories, reading, completed } = await getCurrentUserBooks(userId);
-  const published = await getPublishedBooks();
+  const userBooksAsBooks = [...myStories, ...reading, ...completed].map(mapUserBookToBook);
 
-  return {
-    userBooks: [...myStories, ...reading, ...completed],
-    publishedBooks: published,
-  };
+  return [...userBooksAsBooks, ...publishedAsBooks];
 }

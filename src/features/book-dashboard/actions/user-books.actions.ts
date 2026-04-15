@@ -8,7 +8,6 @@ import {
   CreateUserBookInput,
   UpdateUserBookInput,
 } from "@/server/domain/entities/user-book.entity";
-import { Book } from "@/server/domain/entities/book.entity";
 import { SupabaseUserBookRepository } from "@/server/infrastructure/database";
 import { generateRandomCoverColor } from "@/features/book-dashboard/config/book-config";
 import { cache } from "react";

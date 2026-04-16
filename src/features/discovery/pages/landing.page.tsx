@@ -145,7 +145,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700/20 text-center">
             <p className="text-gray-500 text-sm">
-              © 6 ContaAI. Todos os direitos reservados.
+              © 2026 ContaAI. Todos os direitos reservados.
             </p>
           </div>
         </Container>

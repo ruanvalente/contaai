@@ -13,7 +13,7 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeNode, CodeHighlightNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 
-import { ArrowLeft, BookOpen, FileText, Star, Calendar } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, Star, Calendar, Users, Heart } from "lucide-react";
 
 const viewerTheme = {
   paragraph: "mb-6 leading-8 text-gray-800 text-lg font-serif",
@@ -145,6 +145,8 @@ type BookReaderProps = {
     rating?: number;
     ratingCount?: number;
     wordCount?: number;
+    followersCount?: number;
+    favoritesCount?: number;
     publishedAt?: Date;
     createdAt: Date;
   };
@@ -218,6 +220,18 @@ export function BookReader({ book, isUserBook }: BookReaderProps) {
               </div>
 
               <div className="flex flex-wrap gap-6 text-sm text-gray-500 border-t border-primary-100 pt-4">
+                {book.followersCount !== undefined && book.followersCount > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    <span>{book.followersCount} seguidores</span>
+                  </div>
+                )}
+                {book.favoritesCount !== undefined && book.favoritesCount > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Heart className="w-4 h-4 text-red-500" />
+                    <span>{book.favoritesCount} favoritos</span>
+                  </div>
+                )}
                 {book.rating !== undefined && book.rating > 0 && (
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />

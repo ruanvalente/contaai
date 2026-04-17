@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar } from "lucide-react";
+import { Calendar, Users, Heart } from "lucide-react";
 import { Avatar } from "@/shared/ui/avatar.ui";
 import { cn } from "@/utils/cn";
 
@@ -8,6 +8,8 @@ type AuthorInfoProps = {
   authorName: string;
   authorAvatar?: string;
   publishedDate?: Date;
+  followersCount?: number;
+  favoritesCount?: number;
   className?: string;
 };
 
@@ -15,6 +17,8 @@ export function AuthorInfo({
   authorName,
   authorAvatar,
   publishedDate,
+  followersCount,
+  favoritesCount,
   className,
 }: AuthorInfoProps) {
   const formattedDate = publishedDate
@@ -44,6 +48,22 @@ export function AuthorInfo({
           <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
             <Calendar className="w-3.5 h-3.5" />
             <span>Publicado em {formattedDate}</span>
+          </div>
+        )}
+        {(followersCount !== undefined || favoritesCount !== undefined) && (
+          <div className="flex items-center gap-3 mt-1.5">
+            {followersCount !== undefined && (
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <Users className="w-3 h-3" />
+                <span>{followersCount} seguidores</span>
+              </div>
+            )}
+            {favoritesCount !== undefined && (
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <Heart className="w-3 h-3" />
+                <span>{favoritesCount} curtidas</span>
+              </div>
+            )}
           </div>
         )}
       </div>

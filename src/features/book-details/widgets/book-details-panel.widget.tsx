@@ -11,6 +11,8 @@ import { RatingStars } from "../ui/rating-stars.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";
 import { BookOpenIcon, UsersIcon, MessageIcon } from "../ui/icons.ui";
 import { useFavorites } from "@/features/discovery/hooks/use-favorites";
+import { useAuthorFollowStore } from "@/features/author-follow/hooks/use-author-follow";
+import { useAuthorFollowInitialized } from "@/features/author-follow/hooks/use-author-follow-initialized";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;
@@ -61,14 +63,24 @@ export function BookDetailsPanelWidget({
   isLoading = false,
 }: BookDetailsPanelWidgetProps) {
   const router = useRouter();
+  useAuthorFollowInitialized();
   const {
     toggleFavorite,
     isFavorited,
     isLoading: isFavLoading,
   } = useFavorites();
+  const {
+    follow: followAuthor,
+    unfollow: unfollowAuthor,
+    isFollowing: isAuthorFollowing,
+    isLoading: isAuthorLoading,
+  } = useAuthorFollowStore();
 
   const handleReadNow = () => {
     if (book) {
+      if (!authorFollowing) {
+        followAuthor(authorName);
+      }
       router.push(`/book/${book.id}`);
     }
   };
@@ -82,6 +94,8 @@ export function BookDetailsPanelWidget({
   }
 
   const favorited = isFavorited(book.id);
+  const authorName = book.author;
+  const authorFollowing = isAuthorFollowing(authorName);
 
   return (
     <motion.div
@@ -163,7 +177,7 @@ export function BookDetailsPanelWidget({
           className="w-full py-2.5 text-sm"
           onClick={handleReadNow}
         >
-          Ler Agora
+          {authorFollowing ? `Ler Agora` : `Ler Agora + Seguir ${book.author}`}
         </Button>
       </div>
     </motion.div>

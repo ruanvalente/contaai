@@ -25,6 +25,8 @@ type ReadingPageProps = {
     authorAvatar?: string;
     publishedAt?: Date;
     createdAt: Date;
+    followersCount?: number;
+    favoritesCount?: number;
   };
 };
 
@@ -81,6 +83,8 @@ export function ReadingPage({ bookId, book }: ReadingPageProps) {
               authorName={book.author}
               authorAvatar={book.authorAvatar}
               publishedDate={book.publishedAt}
+              followersCount={book.followersCount}
+              favoritesCount={book.favoritesCount}
             />
           </div>
 

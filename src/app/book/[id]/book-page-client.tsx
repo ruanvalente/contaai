@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { getAuthorStats, getBookStats } from "@/features/reading/actions/get-author-stats.action";
 import { BookReader } from "./book-reader";
 import { ReadingPage } from "@/features/reading/widgets/reading-page.widget";
 
@@ -20,6 +21,8 @@ type BookData = {
   rating?: number;
   ratingCount?: number;
   wordCount?: number;
+  followersCount?: number;
+  favoritesCount?: number;
   publishedAt?: Date;
 };
 
@@ -35,7 +38,7 @@ export function BookPageClient({ bookId }: { bookId: string }) {
       const [regularBookRes, userBookRes] = await Promise.all([
         supabase
           .from("books")
-          .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
+          .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, followers_count, favorites_count, created_at")
           .eq("id", bookId)
           .single(),
         supabase
@@ -55,6 +58,9 @@ export function BookPageClient({ bookId }: { bookId: string }) {
           setIsLoading(false);
           return;
         }
+
+        const authorStats = await getAuthorStats(data.author);
+        const bookStats = await getBookStats(data.id);
         
         setBook({
           id: data.id,
@@ -67,6 +73,8 @@ export function BookPageClient({ bookId }: { bookId: string }) {
           content: data.content || undefined,
           wordCount: data.word_count || 0,
           publishedAt: data.published_at ? new Date(data.published_at) : undefined,
+          followersCount: authorStats.followersCount,
+          favoritesCount: bookStats.favoritesCount,
         });
         setIsUserBook(true);
       } else if (regularBookRes.data) {
@@ -75,6 +83,10 @@ export function BookPageClient({ bookId }: { bookId: string }) {
         const category = validCategories.includes(data.category) 
           ? data.category 
           : "Drama";
+
+        const authorStats = await getAuthorStats(data.author);
+        const bookStats = await getBookStats(data.id);
+
         setBook({
           id: data.id,
           title: data.title,
@@ -87,6 +99,8 @@ export function BookPageClient({ bookId }: { bookId: string }) {
           pages: data.pages || 0,
           rating: data.rating || 0,
           ratingCount: data.rating_count || 0,
+          followersCount: authorStats.followersCount,
+          favoritesCount: bookStats.favoritesCount,
         });
         setIsUserBook(false);
       }
@@ -122,6 +136,8 @@ export function BookPageClient({ bookId }: { bookId: string }) {
           wordCount: book.wordCount || 0,
           publishedAt: book.publishedAt,
           createdAt: book.createdAt,
+          followersCount: book.followersCount,
+          favoritesCount: book.favoritesCount,
         }}
       />
     );

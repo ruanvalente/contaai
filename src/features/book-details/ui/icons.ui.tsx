@@ -8,7 +8,8 @@ import {
   Filter, 
   ChevronLeft, 
   ChevronRight, 
-  Star 
+  Star,
+  UserPlus
 } from "lucide-react";
 
 export const BookOpenIcon = BookOpen;
@@ -20,6 +21,7 @@ export const SearchIcon = Search;
 export const FilterIcon = Filter;
 export const ChevronLeftIcon = ChevronLeft;
 export const ChevronRightIcon = ChevronRight;
+export const UserPlusIcon = UserPlus;
 
 export function StarIcon({
   className,

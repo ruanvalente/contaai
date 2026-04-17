@@ -156,16 +156,6 @@ export function BookDetailsPanelWidget({
           className="py-2"
         />
       </div>
-
-      <div className="px-4 pb-4">
-        <Button
-          variant="primary"
-          className="w-full py-2.5 text-sm"
-          onClick={handleReadNow}
-        >
-          Ler Agora
-        </Button>
-      </div>
     </motion.div>
   );
 }

@@ -61,23 +61,6 @@
     "sharp",
     "unrs-resolver"
   ],
-  "overrides": {
-    "lexical": "0.43.0",
-    "@lexical/clipboard": "0.43.0",
-    "@lexical/code": "0.43.0",
-    "@lexical/dragon": "0.43.0",
-    "@lexical/headless": "0.43.0",
-    "@lexical/link": "0.43.0",
-    "@lexical/list": "0.43.0",
-    "@lexical/markdown": "0.43.0",
-    "@lexical/offset": "0.43.0",
-    "@lexical/plain-text": "0.43.0",
-    "@lexical/react": "0.43.0",
-    "@lexical/rich-text": "0.43.0",
-    "@lexical/selection": "0.43.0",
-    "@lexical/table": "0.43.0",
-    "@lexical/utils": "0.43.0"
-  },
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"

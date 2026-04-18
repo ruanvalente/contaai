@@ -44,6 +44,7 @@ O objetivo principal do Conta.AI é fornecer uma plataforma intuitiva e elegante
 - **Criação de Conteúdo**: Criar e publicar livros próprios
 - **Acompanhamento de Progresso**: Registrar e visualizar progresso de leitura
 - **Experiência Social**: Avaliar e revisar livros
+- **Seguir Autores**: Seguir autores favoritos e receber atualizações
 
 ---
 
@@ -60,12 +61,13 @@ O objetivo principal do Conta.AI é fornecer uma plataforma intuitiva e elegante
 
 ### Frontend
 
-| Tecnologia        | Versão | Descrição                |
-| ----------------- | ------ | ------------------------ |
-| **Tailwind CSS**  | 4.x    | Framework de estilização |
-| **Framer Motion** | 11.x   | Animações                |
-| **Lexical**       | 0.12.0 | Editor de texto rico     |
-| **Lucide React**  | 1.0.1  | Ícones                   |
+| Tecnologia        | Versão | Descrição                                 |
+| ----------------- | ------ | ----------------------------------------- |
+| **Tailwind CSS**  | 4.x    | Framework de estilização                  |
+| **Framer Motion** | 11.x   | Animações                                 |
+| **Lexical**       | 0.12.0 | Editor de texto rico (Rich Text Editor)  |
+| **Lucide React**  | 1.0.1  | Ícones                                    |
+| **Zod**          | 4.x    | Validação de schemas                      |
 
 ### Backend / Dados
 
@@ -98,24 +100,33 @@ conta-ai/
 │   │   ├── dashboard/         # Área autenticada
 │   │   │   ├── library/      # Biblioteca do usuário
 │   │   │   ├── favorites/     # Livros favoritos
-│   │   │   ├── downloads/     # Downloads
-│   │   │   ├── audio/         # Audiolivros
-│   │   │   ├── category/      # Categorias
-│   │   │   ├── settings/      # Configurações do usuário
-│   │   │   └── editor/        # Editor de livros
-│   │   ├── book/              # Detalhes e leitor de livros
-│   │   └── book-dashboard/    # Dashboard de gerenciamento
+│   │   │   ├── settings/    # Configurações do usuário
+│   │   │   └── layout.tsx   # Layout autenticado
+│   │   └── settings/          # Configurações global
 │   │
-│   ├── features/              # Domínio da aplicação
-│   │   ├── auth/              # Autenticação
-│   │   ├── profile/           # Perfil do usuário
+│   ├── features/              # Domínio da aplicação (Feature-based)
+│   │   ├── auth/              # Autenticação (login/register)
 │   │   ├── discovery/         # Descoberta de livros
-│   │   └── book-dashboard/    # Dashboard de livros
+│   │   ├── library/         # Biblioteca pessoal
+│   │   ├── profile/           # Perfil do usuário
+│   │   ├── reading/         # Leitor de livros
+│   │   ├── book-dashboard/    # Editor e gerenciamento
+│   │   └── author-follow/  # Follow de autores
 │   │       ├── actions/      # Server Actions
 │   │       ├── widgets/       # Componentes com lógica
 │   │       ├── hooks/         # Hooks customizados
 │   │       ├── store/         # Zustand stores
-│   │       └── data/          # Dados e queries
+│   │       └── ui/          # Componentes específicos
+│   │
+│   ├── server/               # Camada de servidor (Clean Architecture)
+│   │   ├── domain/          # Entidades e interfaces
+│   │   │   ├── entities/  # Book, User, Favorite, etc.
+│   │   │   └── repositories/  # Interfaces
+│   │   ├── infrastructure/  # Implementações
+│   │   │   ├── database/  # Repositórios Supabase
+│   │   │   ├── mappers/   # Data mappers
+│   │   │   └── storage/  # Storage Supabase
+│   │   └── usecases/       # Casos de uso
 │   │
 │   ├── shared/                # Componentes reutilizáveis
 │   │   ├── ui/                # Componentes visuais puros
@@ -125,10 +136,7 @@ conta-ai/
 │   │   ├── config/            # Configurações
 │   │   └── utils/             # Utilitários
 │   │
-│   ├── lib/                   # Bibliotecas e configurações
-│   │   └── supabase/          # Cliente e configurações Supabase
-│   │
-│   └── screens/               # Páginas de dashboard (legado)
+│   └── lib/                   # Bibliotecas e configurações
 │
 ├── supabase/
 │   ├── migrations/            # Migrações do banco de dados
@@ -170,6 +178,27 @@ src/features/*/widgets/  → Componentes específicos do domínio
 - **Zustand** para estado global client-side
 - **useState** para estado local de componentes
 
+#### 5. Clean Architecture (Backend)
+
+O projeto segue Clean Architecture na camada `src/server/`:
+
+```
+server/
+├── domain/           # Regras de negócio (core)
+│   ├── entities/    # Entidades (Book, User, Favorite)
+│   └── repositories/  # Interfaces abstratas
+├── infrastructure/  # Implementações externas
+│   ├── database/  # Repositórios Supabase
+│   ├── mappers/   # Data mappers
+│   └── storage/   # Storage
+└── usecases/       # Casos de uso (aplicação)
+```
+
+**Benefícios:**
+- Baixo acoplamento (dependency inversion)
+- Testabilidade (mock de repositórios)
+- Separação clara de responsabilidades
+
 ---
 
 ## 💾 Modelo de Banco de Dados
@@ -206,11 +235,12 @@ O banco de dados é baseado em PostgreSQL (via Supabase) e segue o seguinte sche
 | ------------ | ----------- | ------------------- |
 | `id`         | UUID        | FK para auth.users  |
 | `name`       | TEXT        | Nome do usuário     |
-| `avatar_url` | TEXT        | URL do avatar       |
+| `avatar_url` | TEXT        | URL do avatar        |
+| `bio`        | TEXT        | Biografia do usuário |
 | `created_at` | TIMESTAMPTZ | Data de criação     |
 | `updated_at` | TIMESTAMPTZ | Data de atualização |
 
-**RLS**: Leitura pública, atualizaçãoown apenas pelo próprio usuário
+**RLS**: Leitura pública, atualização apenas pelo próprio usuário
 
 **Trigger**: Criação automática na inscrição (`handle_new_user`)
 
@@ -241,16 +271,17 @@ O banco de dados é baseado em PostgreSQL (via Supabase) e segue o seguinte sche
 | `author`           | TEXT        | Autor                                      |
 | `cover_url`        | TEXT        | URL da capa                                |
 | `cover_color`      | TEXT        | Cor de fallback                            |
-| `content`          | TEXT        | Conteúdo do livro                          |
+| `content`          | TEXT        | Conteúdo do livro                           |
 | `content_url`      | TEXT        | URL do conteúdo (para downloads)           |
-| `status`           | TEXT        | Status (draft/published)                   |
-| `reading_status`   | TEXT        | Status de leitura (none/reading/completed) |
-| `reading_progress` | INTEGER     | Progresso em %                             |
+| `status`           | TEXT        | Status (draft/published)                  |
+| `reading_status`   | TEXT        | Status de leitura (none/reading/completed)|
+| `reading_progress` | INTEGER     | Progresso em %                            |
 | `category`         | TEXT        | Categoria                                  |
 | `word_count`       | INTEGER     | Contagem de palavras                       |
+| `pages`            | INTEGER     | Número de páginas                         |
 | `created_at`       | TIMESTAMPTZ | Data de criação                            |
-| `updated_at`       | TIMESTAMPTZ | Data de atualização                        |
-| `published_at`     | TIMESTAMPTZ | Data de publicação                         |
+| `updated_at`       | TIMESTAMPTZ | Data de atualização                       |
+| `published_at`     | TIMESTAMPTZ | Data de publicação                       |
 
 **RLS**:
 
@@ -266,7 +297,7 @@ O banco de dados é baseado em PostgreSQL (via Supabase) e segue o seguinte sche
 | `id`               | UUID        | Chave primária           |
 | `user_id`          | UUID        | FK para auth.users       |
 | `book_id`          | UUID        | FK para user_books       |
-| `current_position` | JSONB       | Posição atual de leitura |
+| `current_position` | JSONB       | Posição atual de leitura  |
 | `progress_percent` | INTEGER     | Progresso em %           |
 | `started_at`       | TIMESTAMPTZ | Início da leitura        |
 | `finished_at`      | TIMESTAMPTZ | Término da leitura       |
@@ -292,6 +323,34 @@ O banco de dados é baseado em PostgreSQL (via Supabase) e segue o seguinte sche
 
 **Constraints**: UNIQUE(user_id, book_id)
 **RLS**: Apenas o próprio usuário visualiza/gerencia
+
+---
+
+#### 7. `author_follow` - Seguimento de Autores
+
+| Coluna             | Tipo        | Descrição             |
+| ------------------ | ----------- | --------------------- |
+| `id`               | UUID        | Chave primária       |
+| `follower_id`      | UUID        | FK para auth.users    |
+| `author`           | TEXT        | Nome do autor        |
+| `author_avatar_url`| TEXT        | URL do avatar        |
+| `created_at`       | TIMESTAMPTZ | Data que seguiu      |
+
+**Constraints**: UNIQUE(follower_id, author)
+**RLS**: Apenas o próprio usuário gerencia
+
+---
+
+#### 8. `user_downloads` - Downloads do Usuário
+
+| Coluna             | Tipo        | Descrição           |
+| ------------------ | ----------- | --------------------- |
+| `id`               | UUID        | Chave primária       |
+| `user_id`          | UUID        | FK para auth.users   |
+| `book_id`          | UUID        | FK para user_books |
+| `created_at`       | TIMESTAMPTZ | Data do download   |
+
+**Constraints**: UNIQUE(user_id, book_id)
 
 ---
 
@@ -321,13 +380,16 @@ idx_reading_progress_book_id ON book_reading_progress(book_id)
 
 -- Favorites
 idx_user_favorites_user_id ON user_favorites(user_id)
+
+-- Author Follow
+idx_author_follow_follower_id ON author_follow(follower_id)
 ```
 
 ---
 
 ### Visões (Views)
 
-#### `unified_books_view` (018)
+#### `unified_books_view`
 
 Une books (catálogo) e user_books (criação do usuário) em uma única visão para consultas generalizadas.
 
@@ -370,17 +432,27 @@ Une books (catálogo) e user_books (criação do usuário) em uma única visão 
 - Editor de texto rico (Lexical)
 - Publicação de livros
 - Gestão de status (draft/published)
+- Auto-save periódica
+- Backup de conteúdo
 
 ### Leitor de Livros
 
 - Leitura de livros
 - Acompanhamento de progresso
-- Marcadores de posição
+- Theme customization (claro/escuro)
+- Controles de leitura
+- Salvamento automático de posição
 
 ### Sistema de Avaliação
 
 - Avaliação (1-5 estrelas)
 - Reviews textuais
+- Estatísticas de autor
+
+### following de Autores
+
+- Follow/unfollow de autores
+- Feed de autores seguidos
 
 ---
 
@@ -444,12 +516,26 @@ bun run start
 
 ## 📜 Scripts Disponíveis
 
-| Script          | Descrição                            |
-| --------------- | ------------------------------------ |
-| `bun run dev`   | Inicia o servidor de desenvolvimento |
-| `bun run build` | Gera build de produção               |
-| `bun run start` | Inicia o servidor de produção        |
-| `bun run lint`  | Verifica código com ESLint           |
+| Script           | Descrição                              |
+| ---------------- | -------------------------------------- |
+| `bun run dev`    | Inicia o servidor de desenvolvimento   |
+| `bun run build`  | Gera build de produção              |
+| `bun run start` | Inicia o servidor de produção       |
+| `bun run lint`   | Verifica código com ESLint            |
+
+### 🤖 AI Assistant Scripts
+
+| Script           | Descrição                         |
+| ---------------- | ---------------------------------|
+| `bun run ai:chat`   | Chat interativo com o assistente |
+| `bun run ai:edit`  | Editar código com AI            |
+| `bun run ai:explain`| Explicar código                |
+| `bun run ai:commit`| Criar commit semântico          |
+| `bun run ai:bug`   | Analisar e reportar bugs       |
+| `bun run ai:refactor`| Refatorar código             |
+| `bun run ai:test`  | Gerar testes                   |
+| `bun run ai:create` | Criar novos arquivos          |
+| `bun run ai:find` | Buscar no codebase           |
 
 ---
 
@@ -511,6 +597,7 @@ Seguimos o padrão Conventional Commits:
 - Componentes funcionais com React Hooks
 - Server Components por padrão
 - Separation of Concerns (UI/Widgets/Actions)
+- Clean Architecture na camada server
 
 ---
 

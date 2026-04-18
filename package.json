@@ -1,6 +1,11 @@
 {
   "name": "conta-ai",
   "version": "0.1.0",
+  "author": {
+    "name": "Ruan Valente",
+    "email": "contato.ruanvalente@gmail.com",
+    "url": "https://contaai-75ys.vercel.app/"
+  },
   "type": "module",
   "private": true,
   "scripts": {
@@ -20,17 +25,17 @@
     "ai:find": "bun run ai find"
   },
   "dependencies": {
-    "@lexical/react": "^0.12.0",
-    "@supabase/ssr": "^0.9.0",
-    "@supabase/supabase-js": "^2.99.3",
+    "@lexical/react": "^0.43.0",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.3",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.0.0",
-    "lexical": "^0.12.0",
+    "framer-motion": "^12.38.0",
+    "lexical": "^0.43.0",
     "lucide": "^1.0.0-rc.1",
     "lucide-react": "^1.0.1",
-    "next": "16.2.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "16.2.4",
+    "react": "19",
+    "react-dom": "19",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"

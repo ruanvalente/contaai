@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useBookEditorStore } from "@/features/book-dashboard/store/book-editor.store";
 import { useShallow } from "zustand/react/shallow";
 import { getBookById } from "@/features/book-dashboard/actions/user-books.actions";
-import { useEditorBackup } from "@/features/book-dashboard/hooks/use-editor-backup";
+import { useEditorBackup } from "@/shared/hooks";
 
 type BookData = {
   id: string;

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useBookEditorStore } from "@/features/book-dashboard/store/book-editor.store";
 import { useShallow } from "zustand/react/shallow";
-import { useEditorBackup } from "@/features/book-dashboard/hooks/use-editor-backup";
+import { useEditorBackup } from "@/shared/hooks";
 
 export function useEditorBackupInterval(
   bookId: string,

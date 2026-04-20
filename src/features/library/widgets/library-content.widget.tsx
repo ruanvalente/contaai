@@ -20,7 +20,7 @@ import { UserBook } from "@/server/domain/entities/user-book.entity";
 export function LibraryContent() {
   const router = useRouter();
   const { activeTab, setTab } = useLibraryTabs();
-  const { books, loading } = useUserBooks({ activeTab });
+  const { books, loading, refetch } = useUserBooks({ activeTab });
   const { publishedBookId, deletingId, setDeletingId } = useLibraryState();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +47,7 @@ export function LibraryContent() {
             loading: "Excluindo livro...",
             success: () => {
               router.refresh();
+              refetch();
               return "Livro excluído com sucesso";
             },
             error: (err) => err?.message || "Erro ao excluir livro",

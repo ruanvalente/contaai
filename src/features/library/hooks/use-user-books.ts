@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { LibraryTab } from "./use-library-tabs";
 import { getUserBooksAction, UserBookFilter } from "@/features/library/actions/user-books.actions";
@@ -22,6 +22,7 @@ export function useUserBooks({
 }: UseUserBooksOptions): UseUserBooksReturn {
   const [books, setBooks] = useState<UserBook[]>(initialBooks);
   const [loading, setLoading] = useState(!initialBooks.length);
+  const initialRender = useRef(true);
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -44,8 +45,15 @@ export function useUserBooks({
   }, [activeTab]);
 
   useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      fetchBooks();
+    }
+  }, [fetchBooks]);
+
+  const refetch = useCallback(() => {
     fetchBooks();
   }, [fetchBooks]);
 
-  return { books, loading, refetch: fetchBooks };
+  return { books, loading, refetch };
 }

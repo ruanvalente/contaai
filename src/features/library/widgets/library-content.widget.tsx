@@ -35,20 +35,22 @@ export function LibraryContent() {
       duration: Infinity,
       action: {
         label: "Excluir",
-        onClick: async () => {
-          setDeletingId(book.id);
-          toast.loading("Excluindo livro...");
+        onClick: () => {
+          const deletePromise = (async () => {
+            setDeletingId(book.id);
+            const result = await deleteUserBook(book.id);
+            setDeletingId(null);
+            return result;
+          })();
 
-          const result = await deleteUserBook(book.id);
-
-          if (result.success) {
-            toast.success("Livro excluído com sucesso");
-            router.refresh();
-          } else {
-            toast.error(result.error || "Erro ao excluir livro");
-          }
-
-          setDeletingId(null);
+          toast.promise(deletePromise, {
+            loading: "Excluindo livro...",
+            success: () => {
+              router.refresh();
+              return "Livro excluído com sucesso";
+            },
+            error: (err) => err?.message || "Erro ao excluir livro",
+          });
         },
       },
       cancel: {

@@ -8,7 +8,7 @@ import { publishBook } from "@/features/book-dashboard/actions/user-books.action
 type UseEditorPublishReturn = {
   isPublishing: boolean;
   publishError: string | null;
-  handlePublish: (isRepublish?: boolean) => Promise<void>;
+  handlePublish: (isRepublish?: boolean) => void;
 }
 
 export function useEditorPublish(
@@ -18,31 +18,43 @@ export function useEditorPublish(
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
 
-  const handlePublish = useCallback(async (isRepublish: boolean = false) => {
+  const handlePublish = useCallback((isRepublish: boolean = false) => {
     const message = isRepublish
-      ? "Tem certeza que deseja republicar sua história? As alterações ficarão disponíveis para os leitores."
-      : "Tem certeza que deseja publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
-    
-    if (!confirm(message)) {
-      return;
-    }
+      ? " republicar sua história? As alterações ficarão disponíveis para os leitores."
+      : " publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
 
-    setIsPublishing(true);
-    setPublishError(null);
-    toast.loading("Publicando livro...");
+    toast.error(`Tem certeza que deseja${message}`, {
+      duration: Infinity,
+      action: {
+        label: "Publicar",
+        onClick: () => {
+          const publishPromise = (async () => {
+            setIsPublishing(true);
+            setPublishError(null);
+            const result = await publishBook(bookId);
+            setIsPublishing(false);
+            if (!result.success || !result.book) {
+              throw new Error(result.error || "Erro ao publicar");
+            }
+            return result;
+          })();
 
-    const result = await publishBook(bookId);
-
-    if (result.success && result.book) {
-      toast.success("Livro publicado com sucesso!");
-      router.push(
-        `/dashboard/library?tab=my-stories&published=${result.book.id}`
-      );
-    } else {
-      toast.error(result.error || "Erro ao publicar");
-      setPublishError(result.error || "Erro ao publicar");
-      setIsPublishing(false);
-    }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          toast.promise(publishPromise as any, {
+            loading: "Publicando livro...",
+            success: () => {
+              router.push(`/dashboard/library?tab=my-stories`);
+              return "Livro publicado com sucesso!";
+            },
+            error: (err: Error) => err.message,
+          });
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+        onClick: () => {},
+      },
+    });
   }, [bookId, router]);
 
   return {

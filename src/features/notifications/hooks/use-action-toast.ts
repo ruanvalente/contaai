@@ -1,7 +1,7 @@
 'use client';
 
-import { toast } from 'sonner';
-import { useCallback } from 'react';
+import { toast } from '@/features/notifications';
+import { useCallback, useState } from 'react';
 
 export type ActionResult<T = unknown> = 
   | { success: true; data?: T }
@@ -46,31 +46,54 @@ export function useActionToast() {
   const withConfirm = useCallback(async (
     message: string,
     onConfirm: () => Promise<boolean>,
-    messages: { confirm?: string; success?: string; error?: string } = {}
+    messages: { success?: string; error?: string } = {}
   ): Promise<boolean> => {
     const {
-      confirm = 'Tem certeza que deseja continuar?',
       success = 'Operação realizada',
       error = 'Erro ao realizar operação',
     } = messages;
 
-    const confirmed = window.confirm(confirm);
+    return new Promise((resolve) => {
+      toast.error(message, {
+        duration: Infinity,
+        action: {
+          label: 'Confirmar',
+          onClick: async () => {
+            toast.loading('Processando...');
+            try {
+              const ok = await onConfirm();
+              if (ok) {
+                toast.success(success);
+                resolve(true);
+              } else {
+                toast.error(error);
+                resolve(false);
+              }
+            } catch {
+              toast.error(error);
+              resolve(false);
+            }
+          },
+        },
+        cancel: {
+          label: 'Cancelar',
+          onClick: () => {
+            resolve(false);
+          },
+        },
+      });
+    });
+  }, []);
 
-    if (!confirmed) return false;
-
-    toast.promise(
-      onConfirm().then((ok) => {
-        if (!ok) throw new Error('Operação não realizada');
-        return ok;
-      }),
-      {
-        loading: 'Processando...',
-        success: success,
-        error: error,
-      }
-    );
-
-    return true;
+  const showPromise = useCallback(<T,>(
+    promise: Promise<T>,
+    messages: { loading?: string; success?: string; error?: string }
+  ) => {
+    return toast.promise(promise, {
+      loading: messages.loading || 'Processando...',
+      success: messages.success || 'Sucesso',
+      error: messages.error || 'Erro',
+    });
   }, []);
 
   const showSuccess = useCallback((message: string) => {
@@ -92,6 +115,7 @@ export function useActionToast() {
   return {
     withToast,
     withConfirm,
+    showPromise,
     showSuccess,
     showError,
     showWarning,

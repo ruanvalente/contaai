@@ -31,25 +31,31 @@ export function LibraryContent() {
   };
 
   const handleDelete = async (book: UserBook) => {
-    const confirmed = window.confirm(
-      `Tem certeza que deseja excluir "${book.title}"? Esta ação não pode ser desfeita.`
-    );
+    toast.error(`Excluir "${book.title}"? Esta ação não pode ser desfeita.`, {
+      duration: Infinity,
+      action: {
+        label: "Excluir",
+        onClick: async () => {
+          setDeletingId(book.id);
+          toast.loading("Excluindo livro...");
 
-    if (!confirmed) return;
+          const result = await deleteUserBook(book.id);
 
-    setDeletingId(book.id);
-    toast.loading("Excluindo livro...");
+          if (result.success) {
+            toast.success("Livro excluído com sucesso");
+            router.refresh();
+          } else {
+            toast.error(result.error || "Erro ao excluir livro");
+          }
 
-    const result = await deleteUserBook(book.id);
-
-    if (result.success) {
-      toast.success("Livro excluído com sucesso");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Erro ao excluir livro");
-    }
-
-    setDeletingId(null);
+          setDeletingId(null);
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+        onClick: () => {},
+      },
+    });
   };
 
   return (

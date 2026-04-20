@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { publishBook } from "@/features/book-dashboard/actions/user-books.actions";
 
 type UseEditorPublishReturn = {
@@ -28,15 +29,17 @@ export function useEditorPublish(
 
     setIsPublishing(true);
     setPublishError(null);
+    toast.loading("Publicando livro...");
 
     const result = await publishBook(bookId);
 
     if (result.success && result.book) {
-      setIsPublishing(false);
+      toast.success("Livro publicado com sucesso!");
       router.push(
         `/dashboard/library?tab=my-stories&published=${result.book.id}`
       );
     } else {
+      toast.error(result.error || "Erro ao publicar");
       setPublishError(result.error || "Erro ao publicar");
       setIsPublishing(false);
     }

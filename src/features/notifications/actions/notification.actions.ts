@@ -92,25 +92,3 @@ export async function logPromise<T>({
   }
 }
 
-export function notifyClient(type: NotificationType, message: string): void {
-  const toastFn = {
-    success: toast.success,
-    error: toast.error,
-    warning: toast.warning,
-    info: toast.info,
-  }[type];
-  
-  toastFn(message);
-}
-
-export function promiseNotify<T>(
-  promise: Promise<T>,
-  messages: {
-    loading: string;
-    success: string;
-    error: string;
-  }
-): Promise<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return toast.promise(promise, messages) as any;
-}

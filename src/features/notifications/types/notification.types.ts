@@ -2,7 +2,7 @@ export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
 export type NotificationPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
 
-export interface NotificationOptions {
+export type NotificationOptions = {
   id?: string;
   duration?: number;
   closeable?: boolean;
@@ -14,7 +14,7 @@ export interface NotificationOptions {
   };
 }
 
-export interface NotificationPayload {
+export type NotificationPayload = {
   message: string;
   type?: NotificationType;
   title?: string;

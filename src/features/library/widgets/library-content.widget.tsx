@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { LibraryHeader } from "@/shared/ui/library-header.ui";
@@ -30,18 +31,22 @@ export function LibraryContent() {
   };
 
   const handleDelete = async (book: UserBook) => {
-    if (!confirm(`Tem certeza que deseja excluir "${book.title}"? Esta ação não pode ser desfeita.`)) {
-      return;
-    }
+    const confirmed = window.confirm(
+      `Tem certeza que deseja excluir "${book.title}"? Esta ação não pode ser desfeita.`
+    );
+
+    if (!confirmed) return;
 
     setDeletingId(book.id);
+    toast.loading("Excluindo livro...");
 
     const result = await deleteUserBook(book.id);
 
     if (result.success) {
+      toast.success("Livro excluído com sucesso");
       router.refresh();
     } else {
-      alert(result.error || "Erro ao excluir livro");
+      toast.error(result.error || "Erro ao excluir livro");
     }
 
     setDeletingId(null);

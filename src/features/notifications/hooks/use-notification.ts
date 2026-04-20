@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import type { NotificationType, NotificationPayload } from '../types/notification.types';
 import { NOTIFICATION_MESSAGES } from '../types/notification.types';
 
-type ToastMethod = 'success' | 'error' | 'warning' | 'info';
+// type ToastMethod = 'success' | 'error' | 'warning' | 'info';
 
 const getToastFunction = (type: NotificationType): typeof toast.success => {
   const methods: Record<NotificationType, typeof toast.success> = {

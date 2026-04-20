@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { toast } from "@/features/notifications";
 import { Book } from "@/server/domain/entities/book.entity";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/discovery/actions/favorites.actions";
 import { useFavoritesStore } from "@/shared/store/favorites.store";
@@ -70,7 +71,12 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
       );
       if (result.success) {
         addFavoriteToStore(book.id);
+        toast.success(`"${book.title}" adicionado aos favoritos`);
+      } else {
+        toast.error(result.error || "Erro ao adicionar aos favoritos");
       }
+    } catch {
+      toast.error("Erro ao adicionar aos favoritos");
     } finally {
       setLoading(false);
     }
@@ -82,7 +88,12 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
       const result = await removeFromFavorites(bookId);
       if (result.success) {
         removeFavoriteFromStore(bookId);
+        toast.success("Removido dos favoritos");
+      } else {
+        toast.error(result.error || "Erro ao remover dos favoritos");
       }
+    } catch {
+      toast.error("Erro ao remover dos favoritos");
     } finally {
       setLoading(false);
     }

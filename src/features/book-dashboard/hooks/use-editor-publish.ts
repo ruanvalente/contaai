@@ -8,7 +8,7 @@ import { publishBook } from "@/features/book-dashboard/actions/user-books.action
 type UseEditorPublishReturn = {
   isPublishing: boolean;
   publishError: string | null;
-  handlePublish: (isRepublish?: boolean) => void;
+  handlePublish: (isRepublish?: boolean, onSuccess?: () => void) => void;
 }
 
 export function useEditorPublish(
@@ -18,7 +18,7 @@ export function useEditorPublish(
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
 
-  const handlePublish = useCallback((isRepublish: boolean = false) => {
+  const handlePublish = useCallback((isRepublish: boolean = false, onSuccess?: () => void) => {
     const message = isRepublish
       ? " republicar sua história? As alterações ficarão disponíveis para os leitores."
       : " publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
@@ -43,7 +43,12 @@ export function useEditorPublish(
           toast.promise(publishPromise as any, {
             loading: "Publicando livro...",
             success: () => {
-              router.push(`/dashboard/library?tab=my-stories`);
+              router.refresh();
+              if (onSuccess) {
+                onSuccess();
+              } else {
+                router.push(`/dashboard/library?tab=my-stories`);
+              }
               return "Livro publicado com sucesso!";
             },
             error: (err: Error) => err.message,

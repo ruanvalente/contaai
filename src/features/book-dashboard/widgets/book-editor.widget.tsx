@@ -52,6 +52,8 @@ const INITIAL_CONFIG = {
     CodeNode, CodeHighlightNode, LinkNode,
   ],
   onError: (error: Error) => console.error(error),
+  spellCheck: true,
+  language: "pt-BR",
 } as const;
 
 type BookEditorProps = {
@@ -128,7 +130,11 @@ export const BookEditor = memo(({ bookId }: BookEditorProps) => {
             <div className="relative min-h-[calc(100vh-200px)]">
               <RichTextPlugin
                 contentEditable={
-                  <ContentEditable className="min-h-[calc(100vh-200px)] p-3 sm:p-4 md:p-6 outline-none" />
+                  <ContentEditable 
+                    className="min-h-[calc(100vh-200px)] p-3 sm:p-4 md:p-6 outline-none" 
+                    spellCheck
+                    lang="pt-BR"
+                  />
                 }
                 placeholder={PLACEHOLDER}
                 ErrorBoundary={LexicalErrorBoundary}

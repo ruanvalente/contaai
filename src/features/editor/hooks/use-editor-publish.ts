@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/features/notifications";
 import { publishBook } from "@/features/book-dashboard/actions/user-books.actions";
+import { useUserBooksStore } from "@/shared/store/user-books.store";
+import type { UserBook } from "@/server/domain/entities/user-book.entity";
 
 type UseEditorPublishReturn = {
   isPublishing: boolean;
@@ -17,6 +19,7 @@ export function useEditorPublish(
   const router = useRouter();
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const publishedBookRef = useRef<UserBook | null>(null);
 
   const handlePublish = useCallback((isRepublish: boolean = false, onSuccess?: () => void) => {
     const message = isRepublish
@@ -36,13 +39,18 @@ export function useEditorPublish(
             if (!result.success || !result.book) {
               throw new Error(result.error || "Erro ao publicar");
             }
+            publishedBookRef.current = result.book;
             return result;
           })();
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           toast.promise(publishPromise as any, {
             loading: "Publicando livro...",
-            success: () => {
+success: () => {
+              const book = publishedBookRef.current;
+              if (book) {
+                useUserBooksStore.getState().addBook(book);
+              }
               router.refresh();
               if (onSuccess) {
                 onSuccess();

@@ -9,8 +9,8 @@ interface NotificationManagerProps {
 }
 
 export function NotificationManager({
-  position = 'top-right',
-  theme = 'dark',
+  position = 'bottom-center',
+  theme = 'system',
   visibleToasts = 3,
 }: NotificationManagerProps) {
   return (

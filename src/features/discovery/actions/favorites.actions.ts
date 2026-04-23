@@ -46,7 +46,7 @@ export async function addToFavorites(
     return success ? { success: true } : { success: false, error: "Erro ao adicionar aos favoritos" };
   } catch (err) {
     console.error("Error in addToFavorites:", err);
-    return { success: false, error: "Erro interno" };
+    return { success: false, error: "Erro interno. Tente novamente." };
   }
 }
 
@@ -65,7 +65,7 @@ export async function removeFromFavorites(
     return success ? { success: true } : { success: false, error: "Erro ao remover dos favoritos" };
   } catch (err) {
     console.error("Error in removeFromFavorites:", err);
-    return { success: false, error: "Erro interno" };
+    return { success: false, error: "Erro interno. Tente novamente." };
   }
 }
 

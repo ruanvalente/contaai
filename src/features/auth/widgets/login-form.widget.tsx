@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { Book } from "lucide-react";
 import { signInWithEmail } from "@/features/auth/actions/auth.actions";
 
@@ -19,11 +20,14 @@ export function LoginFormWidget() {
     setError("");
 
     startTransition(async () => {
+      toast.loading("Entrando...");
       const result = await signInWithEmail(email, password);
 
       if (!result.success) {
         setError(result.error);
+        toast.error(result.error);
       } else {
+        toast.success("Login realizado com sucesso!");
         router.push("/dashboard");
         router.refresh();
       }

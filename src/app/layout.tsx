@@ -20,6 +20,8 @@ export const metadata: Metadata = {
     "Plataforma de compartilhamento de contos, histórias e muito mais. De forma simples e gratuita.",
 };
 
+import { NotificationManager } from "@/features/notifications/widgets/notification-manager.widget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +33,10 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable}`}
       data-scroll-behavior="smooth"
     >
-      <body className="min-h-screen flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col">
+        {children}
+        <NotificationManager />
+      </body>
     </html>
   );
 }

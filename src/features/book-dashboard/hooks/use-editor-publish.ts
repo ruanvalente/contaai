@@ -1,46 +1,74 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { publishBook } from "@/features/book-dashboard/actions/user-books.actions";
+import { useUserBooksStore } from "@/shared/store/user-books.store";
+import type { UserBook } from "@/server/domain/entities/user-book.entity";
 
 type UseEditorPublishReturn = {
   isPublishing: boolean;
   publishError: string | null;
-  handlePublish: (isRepublish?: boolean) => Promise<void>;
-}
+  handlePublish: (isRepublish?: boolean, onSuccess?: () => void) => void;
+};
 
-export function useEditorPublish(
-  bookId: string
-): UseEditorPublishReturn {
+export function useEditorPublish(bookId: string): UseEditorPublishReturn {
   const router = useRouter();
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const publishedBookRef = useRef<UserBook | null>(null);
 
-  const handlePublish = useCallback(async (isRepublish: boolean = false) => {
-    const message = isRepublish
-      ? "Tem certeza que deseja republicar sua história? As alterações ficarão disponíveis para os leitores."
-      : "Tem certeza que deseja publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
-    
-    if (!confirm(message)) {
-      return;
-    }
+  const handlePublish = useCallback(
+    (isRepublish: boolean = false, onSuccess?: () => void) => {
+      const message = isRepublish
+        ? " republicar sua história? As alterações ficarão disponíveis para os leitores."
+        : " publicar sua história? Após a publicação, ela ficará disponível para outros leitores.";
 
-    setIsPublishing(true);
-    setPublishError(null);
+      toast.error(`Tem certeza que deseja${message}`, {
+        duration: Infinity,
+        action: {
+          label: "Publicar",
+          onClick: () => {
+            const publishPromise = (async () => {
+              setIsPublishing(true);
+              setPublishError(null);
+              const result = await publishBook(bookId);
+              setIsPublishing(false);
+              if (!result.success || !result.book) {
+                throw new Error(result.error || "Erro ao publicar");
+              }
+              publishedBookRef.current = result.book;
+              return result;
+            })();
 
-    const result = await publishBook(bookId);
-
-    if (result.success && result.book) {
-      setIsPublishing(false);
-      router.push(
-        `/dashboard/library?tab=my-stories&published=${result.book.id}`
-      );
-    } else {
-      setPublishError(result.error || "Erro ao publicar");
-      setIsPublishing(false);
-    }
-  }, [bookId, router]);
+            toast.promise(publishPromise as any, {
+              loading: "Publicando livro...",
+              success: () => {
+                const book = publishedBookRef.current;
+                if (book) {
+                  useUserBooksStore.getState().addBook(book);
+                }
+                router.refresh();
+                if (onSuccess) {
+                  onSuccess();
+                } else {
+                  router.push(`/dashboard/library?tab=my-stories`);
+                }
+                return "Livro publicado com sucesso!";
+              },
+              error: (err: Error) => err.message,
+            });
+          },
+        },
+        cancel: {
+          label: "Cancelar",
+          onClick: () => {},
+        },
+      });
+    },
+    [bookId, router],
+  );
 
   return {
     isPublishing,

@@ -1,3 +1,4 @@
+import React from "react";
 import { useRouter } from "next/navigation";
 import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { Badge } from "@/shared/ui/badge.ui";
@@ -15,7 +16,7 @@ type BookCardProps = {
 export function BookCard({ book, tab, isDeleting, onDeleteClick }: BookCardProps) {
   const router = useRouter();
 
-  const handleClick = () => {
+  const navigateToBook = () => {
     if (tab === "my-stories") {
       router.push(`/dashboard/editor/${book.id}`);
     } else {
@@ -23,14 +24,10 @@ export function BookCard({ book, tab, isDeleting, onDeleteClick }: BookCardProps
     }
   };
 
-  const handleDelete = () => {
-    onDeleteClick(book);
-  };
-
   return (
     <div
       className="flex gap-4 p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer"
-      onClick={handleClick}
+      onClick={navigateToBook}
     >
       <div
         className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg shadow flex-shrink-0 flex items-center justify-center p-2 relative overflow-hidden"
@@ -79,7 +76,10 @@ export function BookCard({ book, tab, isDeleting, onDeleteClick }: BookCardProps
           <Button
             variant="secondary"
             className="text-xs px-3 py-1.5 rounded-lg"
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateToBook();
+            }}
           >
             {tab === "my-stories" ? (
               <>
@@ -98,7 +98,10 @@ export function BookCard({ book, tab, isDeleting, onDeleteClick }: BookCardProps
             <Button
               variant="secondary"
               className="text-xs px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50"
-              onClick={handleDelete}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteClick(book);
+              }}
               disabled={isDeleting}
             >
               {isDeleting ? (

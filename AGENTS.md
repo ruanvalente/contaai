@@ -523,20 +523,27 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-### Skills Instaladas
+### Skills do OpenCode
 
-| Skill | Localização |
-|-------|-------------|
-| Vercel React Best Practices | `.agents/skills/vercel-react-best-practices/` |
-| Frontend Design | `.agents/skills/frontend-design/` |
-| Supabase Postgres Best Practices | `.agents/skills/supabase-postgres-best-practices/` |
-| Web Artifacts Builder | `.agents/skills/web-artifacts-builder/` |
-| Accessibility Compliance | `.agents/skills/accessibility-compliance/` |
-| Defining Product Vision | `.agents/skills/defining-product-vision/` |
-| Vercel Next Best Practices | `.agents/skills/vercel-next-best-practices/` |
-| Docker Expert | `.agents/skills/docker-expert/` |
-| Next Cache Components | `.agents/skills/next-cache-components/` |
-| Typeset | `.agents/skills/typeset/` |
+O projeto possui skills personalizadas em `.opencode/skills/`:
+
+| Skill | Propósito |
+|-------|----------|
+| `feature` | Criação de features com padrões do projeto |
+| `bugfix` | Correção de bugs |
+| `refactor` | Refatoração de código |
+| `deploy` | Deploy de aplicações |
+
+### Skills do Sistema
+
+O OpenCode também fornece skills do sistema que podem ser usadas:
+
+| Skill | Propósito |
+|-------|----------|
+| `building-with-llms` | Construção com LLMs |
+| `context-driven-development` | Documentação de contexto |
+| `accessibility-compliance` | Acessibilidade WCAG 2.2 |
+| E outras disponíveis no sistema |
 
 ### Verificar Skills
 

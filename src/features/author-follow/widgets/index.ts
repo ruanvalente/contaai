@@ -1,0 +1,1 @@
+export { AuthorFollowWidget } from "./author-follow.widget";

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "@/features/notifications";
+import { useActionToast } from "@/features/notifications";
 import { Book } from "lucide-react";
 import { signInWithEmail } from "@/features/auth/actions/auth.actions";
 
@@ -12,26 +12,31 @@ export function LoginFormWidget() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { withToast } = useActionToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    startTransition(async () => {
-      toast.loading("Entrando...");
-      const result = await signInWithEmail(email, password);
-
-      if (!result.success) {
-        setError(result.error);
-        toast.error(result.error);
-      } else {
-        toast.success("Login realizado com sucesso!");
-        router.push("/dashboard");
-        router.refresh();
+    const result = await withToast(
+      signInWithEmail(email, password),
+      {
+        loadingMessage: "Entrando...",
+        successMessage: "Login realizado com sucesso!",
       }
-    });
+    );
+
+    setIsLoading(false);
+
+    if (!result.success) {
+      setError(result.error || "Erro ao fazer login");
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
   };
 
   return (
@@ -52,14 +57,21 @@ export function LoginFormWidget() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-error/10 text-error rounded-lg text-sm" role="alert" aria-live="assertive">
+            <div
+              className="mb-4 p-4 bg-error/10 text-error rounded-lg text-sm"
+              role="alert"
+              aria-live="assertive"
+            >
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="login-email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 E-mail
               </label>
               <input
@@ -75,7 +87,10 @@ export function LoginFormWidget() {
             </div>
 
             <div>
-              <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="login-password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Senha
               </label>
               <input
@@ -103,9 +118,9 @@ export function LoginFormWidget() {
               type="submit"
               variant="primary"
               className="w-full"
-              disabled={isPending}
+              disabled={isLoading}
             >
-              {isPending ? "Entrando..." : "Entrar"}
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
 

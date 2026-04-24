@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { Book } from "lucide-react";
 import { signUpWithEmail } from "@/features/auth/actions/auth.actions";
 
@@ -24,21 +25,26 @@ export function RegisterFormWidget() {
 
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
+      toast.error("As senhas não coincidem");
       return;
     }
 
     if (password.length < 6) {
       setError("A senha deve ter pelo menos 6 caracteres");
+      toast.error("A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
     startTransition(async () => {
+      toast.loading("Criando conta...");
       const result = await signUpWithEmail(email, password, name);
 
       if (!result.success) {
         setError(result.error);
+        toast.error(result.error);
       } else if (result.needsConfirmation) {
         setSuccessMessage("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
+        toast.success("Conta criada! Verifique seu e-mail.");
       } else {
         router.push("/dashboard");
         router.refresh();

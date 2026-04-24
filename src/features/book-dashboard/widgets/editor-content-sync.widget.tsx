@@ -20,10 +20,8 @@ export const EditorContentSync = memo(({ onInitialized }: EditorContentSyncProps
 
     const listener = editor.registerUpdateListener(({ editorState }) => {
       if (!mounted) return;
-      editorState.read(() => {
-        const root = $getRoot();
-        setContent(root.getTextContent());
-      });
+      const json = editorState.toJSON();
+      setContent(JSON.stringify(json));
     });
 
     return () => {
@@ -42,12 +40,26 @@ export const EditorContentSync = memo(({ onInitialized }: EditorContentSyncProps
     }
 
     initializedRef.current = true;
+    
     editor.update(() => {
       const root = $getRoot();
       root.clear();
-      const paragraph = $createParagraphNode();
-      paragraph.append($createTextNode(content));
-      root.append(paragraph);
+      
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed && parsed.root) {
+          const editorState = editor.parseEditorState(content);
+          editor.setEditorState(editorState);
+        } else {
+          const paragraph = $createParagraphNode();
+          paragraph.append($createTextNode(content));
+          root.append(paragraph);
+        }
+      } catch {
+        const paragraph = $createParagraphNode();
+        paragraph.append($createTextNode(content));
+        root.append(paragraph);
+      }
     });
     onInitialized?.();
   }, [editor, onInitialized]);

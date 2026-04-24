@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "@/features/notifications";
 import { Upload, X, Image as ImageIcon, Palette, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { createUserBook } from "@/features/book-dashboard/actions/user-books.actions";

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, MouseEvent } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 
@@ -6,7 +6,7 @@ type ButtonProps = {
   children: ReactNode;
   variant?: "primary" | "secondary";
   className?: string;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit";
   disabled?: boolean;
 };

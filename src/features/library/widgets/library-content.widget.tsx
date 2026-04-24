@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/features/notifications";
 import { Container } from "@/shared/ui/container.ui";
 import { BookListSkeleton } from "@/shared/ui/skeleton.ui";
 import { LibraryHeader } from "@/shared/ui/library-header.ui";
@@ -19,7 +20,7 @@ import { UserBook } from "@/server/domain/entities/user-book.entity";
 export function LibraryContent() {
   const router = useRouter();
   const { activeTab, setTab } = useLibraryTabs();
-  const { books, loading } = useUserBooks({ activeTab });
+  const { books, loading, refetch } = useUserBooks({ activeTab });
   const { publishedBookId, deletingId, setDeletingId } = useLibraryState();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,21 +31,34 @@ export function LibraryContent() {
   };
 
   const handleDelete = async (book: UserBook) => {
-    if (!confirm(`Tem certeza que deseja excluir "${book.title}"? Esta ação não pode ser desfeita.`)) {
-      return;
-    }
+    toast.error(`Excluir "${book.title}"? Esta ação não pode ser desfeita.`, {
+      duration: Infinity,
+      action: {
+        label: "Excluir",
+        onClick: () => {
+          const deletePromise = (async () => {
+            setDeletingId(book.id);
+            const result = await deleteUserBook(book.id);
+            setDeletingId(null);
+            return result;
+          })();
 
-    setDeletingId(book.id);
-
-    const result = await deleteUserBook(book.id);
-
-    if (result.success) {
-      router.refresh();
-    } else {
-      alert(result.error || "Erro ao excluir livro");
-    }
-
-    setDeletingId(null);
+          toast.promise(deletePromise, {
+            loading: "Excluindo livro...",
+            success: () => {
+              router.refresh();
+              refetch();
+              return "Livro excluído com sucesso";
+            },
+            error: (err) => err?.message || "Erro ao excluir livro",
+          });
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+        onClick: () => {},
+      },
+    });
   };
 
   return (

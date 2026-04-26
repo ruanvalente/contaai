@@ -7,7 +7,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Heading1, Heading2, Heading3, Type, Minus,
 } from "lucide-react";
-import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar";
+import { ToolbarButton, ToolbarDivider } from "./book-editor-toolbar.widget";
 import { useEditorToolbar } from "@/features/book-dashboard/hooks/use-editor-toolbar";
 
 export const EditorToolbar = memo(() => {

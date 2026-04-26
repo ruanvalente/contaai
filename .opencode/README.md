@@ -39,6 +39,7 @@ Configurações do OpenCode para o projeto Conta.AI, incluindo agents, commands,
 | `/create-feature` | Cria nova feature com estrutura padrão |
 | `/analyze-feature` | Analisa feature existente |
 | `/validate-structure` | Valida estrutura contra specs |
+| `/check-compliance` | Verifica conformidade com todas as specs |
 
 ---
 

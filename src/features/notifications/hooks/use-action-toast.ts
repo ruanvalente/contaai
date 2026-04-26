@@ -30,14 +30,17 @@ export function useActionToast() {
       const result = await promise;
       
       if (result.success) {
+        toast.dismiss();
         toast.success(successMessage);
       } else {
+        toast.dismiss();
         toast.error(result.error || errorMessage);
       }
       
       return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro interno';
+      toast.dismiss();
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -61,15 +64,16 @@ export function useActionToast() {
           onClick: async () => {
             toast.loading('Processando...');
             try {
-              const ok = await onConfirm();
+const ok = await onConfirm();
               if (ok) {
+                toast.dismiss();
                 toast.success(success);
-                resolve(true);
               } else {
+                toast.dismiss();
                 toast.error(error);
-                resolve(false);
               }
             } catch {
+              toast.dismiss();
               toast.error(error);
               resolve(false);
             }

@@ -1,4 +1,5 @@
 export { BookCard } from "./book-card.widget";
+export { BookCardWidget } from "./book-card-clickable.widget";
 export { BookGrid } from "./book-grid.widget";
 export { CategoryFilterBar } from "./category-filter-bar.widget";
 export { DashboardShellClient } from "./dashboard-shell.widget";

@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { BookCard } from "./book-card.ui";
+import { BookCardWidget } from "../widgets/book-card-clickable.widget";
 
 type Book = {
   id: string;
@@ -26,7 +27,7 @@ const BookGridItem = memo(function BookGridItem({
   onClick?: (id: string) => void;
 }) {
   return (
-    <BookCard
+    <BookCardWidget
       id={book.id}
       title={book.title}
       author={book.author}

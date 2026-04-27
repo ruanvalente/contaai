@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Header as LandingHeader } from "@/features/discovery/widgets/landing-header.widget";
 import { Hero as LandingHero } from "@/features/discovery/widgets/landing-hero.widget";
-import { BookCarousel as LandingBookCarousel } from "@/features/discovery/widgets/landing-book-carousel.widget";
+import { BooksShowcase as LandingBooksShowcase } from "@/features/discovery/widgets/books-showcase.widget";
 import { Container } from "@/shared/ui/container.ui";
 
 export default function LandingPage() {
@@ -47,7 +47,7 @@ export default function LandingPage() {
         </Container>
       </section>
 
-      <LandingBookCarousel />
+      <LandingBooksShowcase />
 
       <section id="community" className="py-20 bg-primary-100">
         <Container>

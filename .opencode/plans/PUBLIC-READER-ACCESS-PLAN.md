@@ -2,7 +2,7 @@
 
 **Versão:** 1.0  
 **Data:** 27/04/2026  
-**Status:** Aprovado  
+**Status:** Fase 1 Completa  
 **Fases:** 5  
 
 ---
@@ -41,14 +41,14 @@ São forçados a criar conta, resultando em perda de usuários.
 ### 1.1 Landing Page com Livros Reais
 
 #### Backend
-- [ ] Criar `getPublicBooksAction` que unifica `books` e `user_books` (status='published')
-- [ ] Utilizar/suprimir view `unified_books` existente
-- [ ] Adicionar paginação básica (20 livros por página)
+- [x] Criar `getPublicBooksAction` que unifica `books` e `user_books` (status='published')
+- [x] Utilizar/suprimir view `unified_books` existente
+- [x] Adicionar paginação básica (20 livros por página)
 
 #### Frontend
-- [ ] Substituir dados hardcoded do carousel por chamada real à API
-- [ ] Criar componente `PublicBookGrid` para landing page
-- [ ] Implementar lazy loading de imagens
+- [x] Substituir dados hardcoded do carousel por chamada real à API
+- [x] Criar componente `PublicBookGrid` para landing page
+- [x] Implementar lazy loading de imagens
 
 ### 1.2 Página Explore (Descoberta de Livros) ✅ IMPLEMENTADO
 
@@ -93,18 +93,18 @@ São forçados a criar conta, resultando em perda de usuários.
 ### 1.3 Leitura Pública
 
 #### Backend
-- [ ] Ajustar RLS da tabela `user_books`:
+- [x] Ajustar RLS da tabela `user_books`:
   ```sql
   CREATE POLICY "Anyone can view published books"
   ON user_books FOR SELECT
   USING (status = 'published');
   ```
-- [ ] Ajustar RLS de `book_reading_progress` para leitura sem escrita
+- [x] Ajustar RLS de `book_reading_progress` para leitura sem escrita
 
 #### Frontend
-- [ ] Remover proteção de rota em `/book/[id]/*` (exceto `/book/[id]/edit`)
-- [ ] Criar fallback `useAuthStore` em modo "anonymous reader"
-- [ ] Ocultar botões de edição para anônimos
+- [x] Remover proteção de rota em `/book/[id]/*` (exceto `/book/[id]/edit`)
+- [x] Criar fallback `useAuthStore` em modo "anonymous reader"
+- [x] Ocultar botões de edição para anônimos
 
 ### 1.4 Middleware Atualizado
 
@@ -112,11 +112,11 @@ São forçados a criar conta, resultando em perda de usuários.
 ```typescript
 const publicPaths = [
   '/',
+  '/explore',         // <- ADICIONADO (descobrir livros)
+  '/landingpage',
   '/login',
   '/register',
-  '/landingpage',
-  '/explore',         // <- ADICIONAR (descobrir livros)
-  '/book/',           // <- ADICIONAR (leitura pública)
+  '/book/',           // <- ADICIONADO (leitura pública)
   '/book-dashboard/', // <- LIMITADO (edit requires auth)
   '/api/',
   // ... existentes

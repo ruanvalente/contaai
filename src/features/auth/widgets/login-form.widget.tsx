@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useActionToast } from "@/features/notifications";
 import { Book } from "lucide-react";
 import { signInWithEmail } from "@/features/auth/actions/auth.actions";
+import {
+  getPendingAction,
+  clearPendingAction,
+} from "@/shared/hooks/use-auth-redirect";
+import { followAuthor } from "@/features/author-follow/actions/author-follow.actions";
+import { addToFavorites } from "@/features/discovery/actions/favorites.actions";
+import { rateBook } from "@/features/book-details/actions/rate-book.action";
 
 export function LoginFormWidget() {
   const [email, setEmail] = useState("");
@@ -14,27 +21,60 @@ export function LoginFormWidget() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { withToast } = useActionToast();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const result = await withToast(
-      signInWithEmail(email, password),
-      {
-        loadingMessage: "Entrando...",
-        successMessage: "Login realizado com sucesso!",
-      }
-    );
+    const result = await withToast(signInWithEmail(email, password), {
+      loadingMessage: "Entrando...",
+      successMessage: "Login realizado com sucesso!",
+    });
 
     setIsLoading(false);
 
     if (!result.success) {
       setError(result.error || "Erro ao fazer login");
     } else {
-      router.push("/dashboard");
+      const pendingAction = getPendingAction();
+      if (pendingAction) {
+        clearPendingAction();
+
+        try {
+          if (
+            pendingAction.type === "follow" &&
+            pendingAction.payload.authorName
+          ) {
+            await followAuthor(pendingAction.payload.authorName as string);
+          } else if (
+            pendingAction.type === "favorite" &&
+            pendingAction.payload.bookId
+          ) {
+            await addToFavorites(
+              pendingAction.payload.bookId as string,
+              (pendingAction.payload.bookTitle as string) || "",
+              (pendingAction.payload.bookAuthor as string) || "",
+            );
+          } else if (
+            pendingAction.type === "rate" &&
+            pendingAction.payload.bookId &&
+            pendingAction.payload.rating
+          ) {
+            await rateBook(
+              pendingAction.payload.bookId as string,
+              pendingAction.payload.rating as number,
+            );
+          }
+        } catch (err) {
+          console.error("Error processing pending action:", err);
+        }
+      }
+
+      router.push(redirectTo);
       router.refresh();
     }
   };

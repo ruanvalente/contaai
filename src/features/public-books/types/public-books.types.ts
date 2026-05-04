@@ -17,13 +17,13 @@ export interface PublicBookListItem {
   coverColor: string;
   category: BookCategory;
   rating: number;
+  pages: number;
+  ratingCount: number;
+  reviewCount: number;
 }
 
 export interface PublicBookDetail extends PublicBookListItem {
   description: string;
-  pages: number;
-  ratingCount: number;
-  reviewCount: number;
   createdAt: Date;
   wordCount?: number;
   publishedAt?: Date;

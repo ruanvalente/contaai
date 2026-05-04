@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { Container } from "@/shared/ui/container.ui";
 import { BookCard } from "@/shared/ui/book-card.ui";
 import { motion } from "framer-motion";
 
-interface FeaturedBook {
+export interface FeaturedBook {
   id: string;
   title: string;
   author: string;
@@ -15,7 +14,11 @@ interface FeaturedBook {
   rating?: number;
 }
 
-export function BookCarousel() {
+interface BookCarouselProps {
+  onBookSelect?: (book: FeaturedBook) => void;
+}
+
+export function BookCarousel({ onBookSelect }: BookCarouselProps = {}) {
   const [books, setBooks] = useState<FeaturedBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -87,7 +90,10 @@ export function BookCarousel() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="shrink-0"
                 >
-                  <Link href={`/book/${book.id}`}>
+                  <div
+                    onClick={() => onBookSelect?.(book)}
+                    className="cursor-pointer"
+                  >
                     <BookCard
                       id={book.id}
                       title={book.title}
@@ -97,7 +103,7 @@ export function BookCarousel() {
                       rating={book.rating}
                       isFeatured={index === 2}
                     />
-                  </Link>
+                  </div>
                 </motion.div>
               ))}
         </div>

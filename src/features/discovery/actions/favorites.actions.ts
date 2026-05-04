@@ -23,15 +23,12 @@ export async function addToFavorites(
   bookAuthor: string,
   bookCoverColor?: string,
   bookCoverUrl?: string,
-  bookCategory?: string
+  bookCategory?: string,
+  sessionId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const userId = await getCurrentUserIdOptional();
-
-    if (!userId) {
-      return { success: false, error: "Usuário não autenticado" };
-    }
-
+    
     const book = {
       id: bookId,
       title: bookTitle,
@@ -41,7 +38,10 @@ export async function addToFavorites(
       category: bookCategory || "Drama",
     };
 
-    const success = await favoriteRepository.add(userId, book);
+    const success = await favoriteRepository.add(
+      userId ? userId : (sessionId || `anonymous-${Math.random().toString(36).substring(7)}`), 
+      book
+    );
 
     return success ? { success: true } : { success: false, error: "Erro ao adicionar aos favoritos" };
   } catch (err) {
@@ -51,16 +51,20 @@ export async function addToFavorites(
 }
 
 export async function removeFromFavorites(
-  bookId: string
+  bookId: string,
+  sessionId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const userId = await getCurrentUserIdOptional();
-
-    if (!userId) {
-      return { success: false, error: "Usuário não autenticado" };
+    
+    if (!userId && !sessionId) {
+      return { success: false, error: "Faça login para remover favoritos" };
     }
-
-    const success = await favoriteRepository.remove(userId, bookId);
+    
+    const success = await favoriteRepository.remove(
+      userId ? userId : sessionId!,
+      bookId
+    );
 
     return success ? { success: true } : { success: false, error: "Erro ao remover dos favoritos" };
   } catch (err) {
@@ -69,30 +73,34 @@ export async function removeFromFavorites(
   }
 }
 
-export async function getUserFavorites(): Promise<UserFavorite[]> {
+export async function getUserFavorites(sessionId?: string): Promise<UserFavorite[]> {
   try {
     const userId = await getCurrentUserIdOptional();
-
-    if (!userId) {
-      return [];
+    
+    if (userId) {
+      return favoriteRepository.getByUser(userId);
+    } else if (sessionId) {
+      return favoriteRepository.getByUser(sessionId);
     }
-
-    return favoriteRepository.getByUser(userId);
+    
+    return [];
   } catch (err) {
     console.error("Error in getUserFavorites:", err);
     return [];
   }
 }
 
-export async function isBookFavorited(bookId: string): Promise<boolean> {
+export async function isBookFavorited(bookId: string, sessionId?: string): Promise<boolean> {
   try {
     const userId = await getCurrentUserIdOptional();
-
-    if (!userId) {
-      return false;
+    
+    if (userId) {
+      return favoriteRepository.isFavorited(userId, bookId);
+    } else if (sessionId) {
+      return favoriteRepository.isFavorited(sessionId, bookId);
     }
-
-    return favoriteRepository.isFavorited(userId, bookId);
+    
+    return false;
   } catch {
     return false;
   }

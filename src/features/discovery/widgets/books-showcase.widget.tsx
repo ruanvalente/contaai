@@ -11,7 +11,11 @@ import { motion } from "framer-motion";
 
 const CATEGORIES: Category[] = ["All", "Sci-Fi", "Fantasy", "Drama", "Business", "Education", "Geography"];
 
-export function BooksShowcase() {
+type BooksShowcaseProps = {
+  onBookSelect?: (book: PublicBookListItem) => void;
+}
+
+export function BooksShowcase({ onBookSelect }: BooksShowcaseProps = {}) {
   const [books, setBooks] = useState<PublicBookListItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
   const [isLoading, setIsLoading] = useState(true);
@@ -107,7 +111,10 @@ export function BooksShowcase() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="shrink-0"
               >
-                <Link href={`/book/${book.id}`}>
+                <div
+                  onClick={() => onBookSelect?.(book)}
+                  className="cursor-pointer"
+                >
                   <BookCard
                     id={book.id}
                     title={book.title}
@@ -117,7 +124,7 @@ export function BooksShowcase() {
                     rating={book.rating}
                     isFeatured={index < 3}
                   />
-                </Link>
+                </div>
               </motion.div>
             ))}
           </div>

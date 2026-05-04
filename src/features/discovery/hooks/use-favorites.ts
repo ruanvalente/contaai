@@ -5,6 +5,7 @@ import { toast } from "@/features/notifications";
 import { Book } from "@/server/domain/entities/book.entity";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/discovery/actions/favorites.actions";
 import { useFavoritesStore } from "@/shared/store/favorites.store";
+import { getAnonymousSessionId } from "@/shared/lib/anonymous-session";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];
@@ -48,7 +49,8 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
       
       setLoading(true);
       try {
-        const favorites = await getUserFavorites();
+        const sessionId = getAnonymousSessionId();
+        const favorites = await getUserFavorites(sessionId);
         const ids = favorites.map((f) => f.bookId);
         setInitialFavorites(ids);
       } finally {
@@ -61,13 +63,15 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
   const addFavorite = useCallback(async (book: Book) => {
     setLoading(true);
     try {
+      const sessionId = getAnonymousSessionId();
       const result = await addToFavorites(
         book.id,
         book.title,
         book.author,
         book.coverColor,
         book.coverUrl,
-        book.category
+        book.category,
+        sessionId
       );
       if (result.success) {
         addFavoriteToStore(book.id);
@@ -85,7 +89,8 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
   const removeFavorite = useCallback(async (bookId: string) => {
     setLoading(true);
     try {
-      const result = await removeFromFavorites(bookId);
+      const sessionId = getAnonymousSessionId();
+      const result = await removeFromFavorites(bookId, sessionId);
       if (result.success) {
         removeFavoriteFromStore(bookId);
         toast.success("Removido dos favoritos");
@@ -108,7 +113,9 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
   }, [isFavoritedFn, addFavorite, removeFavorite]);
 
   const isFavorited = useCallback(
-    (bookId: string) => isFavoritedFn(bookId),
+    (bookId: string) => {
+      return isFavoritedFn(bookId);
+    },
     [isFavoritedFn]
   );
 

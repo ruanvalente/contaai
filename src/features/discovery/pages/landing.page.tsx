@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Header as LandingHeader } from "@/features/discovery/widgets/landing-header.widget";
 import { Hero as LandingHero } from "@/features/discovery/widgets/landing-hero.widget";
 import { BooksShowcase as LandingBooksShowcase } from "@/features/discovery/widgets/books-showcase.widget";
 import { Container } from "@/shared/ui/container.ui";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/shared/storage/use-auth-store";
 import type { PublicBookListItem } from "@/features/public-books/types/public-books.types";
 import type { Book } from "@/server/domain/entities/book.entity";
 import { BookDetailsModalWidget } from "@/features/book-details/widgets/book-details-modal.widget";
@@ -28,7 +30,23 @@ function mapToBook(book: PublicBookListItem): Book {
 }
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { user, isInitialized, isLoading, initialize } = useAuthStore();
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  useEffect(() => {
+    if (isInitialized && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, isInitialized, router]);
+
+  if (!isInitialized || isLoading) {
+    return <main className="min-h-screen bg-primary-100" />;
+  }
 
   const handleBookSelect = (book: PublicBookListItem) => {
     setSelectedBook(mapToBook(book));

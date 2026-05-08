@@ -3,6 +3,8 @@
 import { create } from 'zustand';
 import { createClient } from '@/utils/supabase/client';
 import { getAnonymousSessionId } from '@/shared/lib/anonymous-session';
+import { toast } from '@/features/notifications';
+import { useAuthStore } from '@/shared/storage/use-auth-store';
 
 type FollowState = {
   followedIds: string[];
@@ -58,6 +60,12 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
       const result = await followAuthor(authorName, sessionId);
       if (result.success) {
         set((state) => ({ followedIds: [...state.followedIds, authorName] }));
+        const user = useAuthStore.getState().user;
+        if (user) {
+          toast.success(`Seguindo "${authorName}"`);
+        } else {
+          toast.success(`Seguindo "${authorName}"! Faça login para gerenciar suas conexões.`);
+        }
       }
       return result;
     } finally {

@@ -16,6 +16,8 @@ import { useAuthorFollowStore } from "@/features/author-follow/hooks/use-author-
 import { useAuthorFollowInitialized } from "@/features/author-follow/hooks/use-author-follow-initialized";
 import { useRouter } from "next/navigation";
 import { getAnonymousSessionId } from "@/shared/lib/anonymous-session";
+import { toast } from "@/features/notifications";
+import { useAuthStore } from "@/shared/storage/use-auth-store";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;
@@ -113,7 +115,12 @@ export function BookDetailsPanelWidget({
     const sessionId = getAnonymousSessionId();
     import('@/features/book-details/actions/rate-book.action').then(({ rateBook }) => {
       rateBook(book!.id, rating, sessionId).then(result => {
-        if (!result.success) {
+        if (result.success) {
+          const user = useAuthStore.getState().user;
+          if (!user) {
+            toast.success('Avaliação salva! Faça login para sincronizar com sua conta.');
+          }
+        } else {
           setUserRating(null);
         }
       }).catch(err => {

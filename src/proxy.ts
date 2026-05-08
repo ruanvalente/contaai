@@ -7,6 +7,7 @@ export async function proxy(request: NextRequest) {
   const publicPaths = [
     "/",
     "/explore",
+    "/my-session",
     "/landingpage",
     "/login",
     "/register",

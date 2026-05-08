@@ -10,9 +10,8 @@ import {
   Download, 
   Heart, 
   Settings, 
-  LogOut 
+  LogOut,
 } from "lucide-react";
-
 type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;

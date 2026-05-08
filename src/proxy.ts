@@ -21,8 +21,6 @@ export async function proxy(request: NextRequest) {
       (path) => pathname === path || pathname.startsWith(path),
     ) || pathname.startsWith("/auth/");
 
-  console.log(`is public path: ${isPublicPath}, pathname: ${pathname}`);
-
   if (isPublicPath) {
     return NextResponse.next();
   }

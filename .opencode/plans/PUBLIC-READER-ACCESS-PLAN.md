@@ -216,13 +216,12 @@ Usuário logado clica "Seguir Autor"
 
 **Duração estimada:** 1-2 semanas  
 **Prioridade:** MÉDIA  
-**Status:** ✅ IMPLEMENTADO (sem navbar adaptativa por perfil)
 
 ### 3.1 Sistema de Perfis
 
 #### Banco de Dados
 ```sql
--- Migration: 030_add_user_role.sql
+-- Migration: 0XX_add_user_role.sql
 ALTER TABLE profiles 
 ADD COLUMN role TEXT DEFAULT 'reader' 
 CHECK (role IN ('reader', 'author'));
@@ -233,49 +232,43 @@ SET role = 'author'
 WHERE id IN (SELECT DISTINCT user_id FROM user_books WHERE status = 'published');
 ```
 
-**Triggers adicionados:**
-- `auto_update_author_role`: atualiza role para `'author'` quando um livro é publicado
-- `auto_downgrade_author_role`: rebaixa para `'reader'` quando o último livro publicado é removido
-
 #### Backend
-- [x] Criar `getUserRole` action
-- [x] Detectar autor automaticamente: usuário com livros publicados → role='author'
-- [ ] Admin manual: ability para promover reader → author (não implementado, postergado)
+- [ ] Criar `getUserRole` action
+- [ ] Detectar autor automaticamente: usuário com livros publicados → role='author'
+- [ ] Admin manual: ability para promuevar reader → author
 
 ### 3.2 Landing Page Adaptativa
 
 #### Frontend: `src/features/discovery/pages/landing.page.tsx`
 ```typescript
-const { user, isInitialized, initialize } = useAuthStore()
+const { user, role } = useAuthStore()
 
-useEffect(() => { initialize() }, [initialize])
-
-useEffect(() => {
-  if (isInitialized && user) {
-    router.replace('/dashboard')
-  }
-}, [user, isInitialized, router])
+return (
+  <>
+    {!user && <PublicBooksList />}
+    {user && role === 'reader' && <ReaderLanding />}
+    {user && role === 'author' && <AuthorDashboard />}
+  </>
+)
 ```
 
-**Comportamento implementado:** Usuários logados são redirecionados para `/dashboard`; anônimos veem a landing page completa.
+### 3.3 Menu/Navbar por Perfil
 
-### 3.3 Auth Store com Role
+#### Arquivo: `src/shared/widgets/navbar.widget.tsx`
 
-#### Arquivo: `src/shared/storage/use-auth-store.ts`
-- [x] `AuthUser.role?: UserRole` adicionado ao tipo
-- [x] `initialize()` busca role do profile no banco
-- [x] `onAuthStateChange` atualiza role em cada evento de auth
-- [x] Fallback: detecta autor por published books se role não estiver explícito
+| Estado | Items |
+|--------|-------|
+| **Anônimo** | Início, Explorar, Login, Cadastrar |
+| **Leitor** | Início, Biblioteca, Favoritos, Downloads, Perfil |
+| **Autor** | + Dashboard, Criar Livro |
 
 ### Entregáveis
 
-| Entregável | Arquivo | Status |
-|-----------|---------|--------|
-| Migration role | `supabase/migrations/030_add_user_role.sql` | ✅ Criado |
-| Action getRole | `src/features/auth/actions/get-user-role.action.ts` | ✅ Criado |
-| Auth store role | `src/shared/storage/use-auth-store.ts` | ✅ Modificado |
-| Landing redirect | `src/features/discovery/pages/landing.page.tsx` | ✅ Modificado |
-| Navbar adaptativa | `src/shared/widgets/navbar.widget.tsx` | ❌ Não implementado (removido do escopo) |
+| Entregável | Arquivo |
+|-----------|---------|
+| Migration role | `supabase/migrations/0XX_add_user_role.sql` |
+| Action getRole | `src/features/auth/actions/get-user-role.action.ts` |
+| Navbar dinâmica | `src/shared/widgets/navbar.widget.tsx` |
 
 ---
 
@@ -564,11 +557,10 @@ Fase 5 (Otimizações)
 - [ ] (Opcional) Migrar para Lazy Auth usando `useAuthRedirect` nas UIs
 
 ### Fase 3: Diferenciação
-- [x] Migration `role` executada (com triggers de auto-update/downgrade)
-- [x] Action `getUserRole` implementada (com fallback para published books)
-- [x] Auth store com `AuthUser.role` populado no initialize e onAuthStateChange
-- [x] Landing page redireciona usuários logados para `/dashboard`
-- [ ] Navbar adaptativa (postergado — fora do escopo atual)
+- [ ] Migration `role` executada
+- [ ] Action `getUserRole` implementada
+- [ ] Navbar adaptativa
+- [ ] Landing page dinâmica
 
 ### Fase 4: Limitações
 - [ ] Matriz de permissões aplicada

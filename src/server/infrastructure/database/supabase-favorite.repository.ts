@@ -30,23 +30,35 @@ function formatFavorite(row: FavoriteRow): UserFavorite {
 
 export class SupabaseFavoriteRepository implements IFavoriteRepository {
   async add(
-    userId: string,
+    userId: string | null,
     book: FavoriteBook
   ): Promise<boolean> {
     try {
       const supabase = await getSupabaseServerClient();
-
+      
+      const insertData: any = {
+        book_id: book.id,
+        book_title: book.title,
+        book_author: book.author,
+        book_cover_color: book.coverColor,
+        book_cover_url: book.coverUrl,
+        book_category: book.category,
+      };
+      
+      // Check if it's an anonymous user (session_id format)
+      if (userId && userId.startsWith('anonymous-')) {
+        insertData.session_id = userId;
+        insertData.user_id = null;
+      } else if (userId) {
+        insertData.user_id = userId;
+      } else {
+        console.error("Invalid user/session ID");
+        return false;
+      }
+      
       const { error } = await supabase
         .from("user_favorites")
-        .insert({
-          user_id: userId,
-          book_id: book.id,
-          book_title: book.title,
-          book_author: book.author,
-          book_cover_color: book.coverColor,
-          book_cover_url: book.coverUrl,
-          book_category: book.category,
-        });
+        .insert(insertData);
 
       if (error) {
         if (error.code === "23505") {
@@ -68,12 +80,20 @@ export class SupabaseFavoriteRepository implements IFavoriteRepository {
   async remove(userId: string, bookId: string): Promise<boolean> {
     try {
       const supabase = await getSupabaseServerClient();
-
-      const { error } = await supabase
+      
+      let query = supabase
         .from("user_favorites")
         .delete()
-        .eq("user_id", userId)
         .eq("book_id", bookId);
+      
+      // Check if it's anonymous (session_id format)
+      if (userId && userId.startsWith('anonymous-')) {
+        query = query.eq("session_id", userId).is("user_id", null);
+      } else {
+        query = query.eq("user_id", userId);
+      }
+      
+      const { error } = await query;
 
       if (error) {
         console.error("Error removing from favorites:", error);
@@ -92,12 +112,20 @@ export class SupabaseFavoriteRepository implements IFavoriteRepository {
   async getByUser(userId: string): Promise<UserFavorite[]> {
     try {
       const supabase = await getSupabaseServerClient();
-
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from("user_favorites")
         .select("*")
-        .eq("user_id", userId)
         .order("created_at", { ascending: false });
+      
+      // Check if it's anonymous (session_id format)
+      if (userId && userId.startsWith('anonymous-')) {
+        query = query.eq("session_id", userId).is("user_id", null);
+      } else {
+        query = query.eq("user_id", userId);
+      }
+      
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching favorites:", error);
@@ -111,21 +139,41 @@ export class SupabaseFavoriteRepository implements IFavoriteRepository {
     }
   }
 
-  async isFavorited(userId: string, bookId: string): Promise<boolean> {
+  async isFavorited(userId: string | null, bookId: string): Promise<boolean> {
+    if (!userId) return false;
+    
     try {
       const supabase = await getSupabaseServerClient();
-
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from("user_favorites")
         .select("id")
-        .eq("user_id", userId)
         .eq("book_id", bookId)
         .single();
-
+      
+      // Check if it's anonymous (session_id format)
+      if (userId.startsWith('anonymous-')) {
+        query = supabase
+          .from("user_favorites")
+          .select("id")
+          .eq("session_id", userId)
+          .eq("book_id", bookId)
+          .single();
+      } else {
+        query = supabase
+          .from("user_favorites")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("book_id", bookId)
+          .single();
+      }
+      
+      const { data, error } = await query;
+      
       if (error) {
         return false;
       }
-
+      
       return !!data;
     } catch {
       return false;

@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
@@ -7,18 +7,29 @@ export type AuthorFollowResult =
   | { success: boolean; error?: string }
   | { success: false; error: string };
 
-export async function followAuthor(authorName: string): Promise<AuthorFollowResult> {
+export async function followAuthor(
+  authorName: string,
+  sessionId?: string,
+): Promise<AuthorFollowResult> {
   try {
     const userId = await getCurrentUserIdOptional();
-    if (!userId) {
-      return { success: false, error: "Usuário não autenticado" };
+    const supabase = await getSupabaseServerClient();
+
+    const insertData: any = {
+      author_name: authorName,
+      created_at: new Date().toISOString(),
+    };
+
+    if (userId) {
+      insertData.user_id = userId;
+    } else if (sessionId) {
+      insertData.session_id = sessionId;
+      insertData.user_id = null;
+    } else {
+      return { success: false, error: "Sessão inválida" };
     }
 
-    const supabase = await getSupabaseServerClient();
-    const { error } = await supabase.from("author_follow").insert({
-      user_id: userId,
-      author_name: authorName,
-    });
+    const { error } = await supabase.from("author_follow").insert(insertData);
 
     if (error) {
       if (error.code === "23505") {
@@ -35,19 +46,34 @@ export async function followAuthor(authorName: string): Promise<AuthorFollowResu
   }
 }
 
-export async function unfollowAuthor(authorName: string): Promise<AuthorFollowResult> {
+export async function unfollowAuthor(
+  authorName: string,
+  sessionId?: string,
+): Promise<AuthorFollowResult> {
   try {
     const userId = await getCurrentUserIdOptional();
-    if (!userId) {
-      return { success: false, error: "Usuário não autenticado" };
-    }
-
     const supabase = await getSupabaseServerClient();
-    const { error } = await supabase
+
+    let query = supabase
       .from("author_follow")
       .delete()
-      .eq("user_id", userId)
       .eq("author_name", authorName);
+
+    if (userId) {
+      query = query.eq("user_id", userId);
+    } else if (sessionId) {
+      // For anonymous, use session_id
+      query = supabase
+        .from("author_follow")
+        .delete()
+        .eq("author_name", authorName)
+        .eq("session_id", sessionId)
+        .is("user_id", null);
+    } else {
+      return { success: false, error: "Faça login para deixar de seguir" };
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error("Error in unfollowAuthor:", error);
@@ -61,12 +87,22 @@ export async function unfollowAuthor(authorName: string): Promise<AuthorFollowRe
   }
 }
 
-export async function getFollowedAuthorsByUser(userId: string): Promise<string[]> {
+export async function getFollowedAuthorsByUser(
+  userId?: string,
+  sessionId?: string,
+): Promise<string[]> {
   const supabase = await getSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("author_follow")
-    .select("author_name")
-    .eq("user_id", userId);
+  let query = supabase.from("author_follow").select("author_name");
+
+  if (userId) {
+    query = query.eq("user_id", userId);
+  } else if (sessionId) {
+    query = query.eq("session_id", sessionId).is("user_id", null);
+  } else {
+    return [];
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching followed authors:", error);

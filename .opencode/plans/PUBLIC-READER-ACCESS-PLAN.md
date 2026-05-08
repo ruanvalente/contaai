@@ -138,65 +138,77 @@ const publicPaths = [
 
 ---
 
-## Fase 2: Autenticação Lazy
+## Fase 2: Ações Anônimas Diretas (via Session ID)
 
 **Duração estimada:** 1-2 semanas  
 **Prioridade:** ALTA  
+**Status:** ✅ IMPLEMENTADO (abordagem diferente do planejado)
 
-### 2.1 Hook de Auth Lazy
+### 2.1 Hook de Auth Redirect (Criado, mas não utilizado)
 
 #### Arquivo: `src/shared/hooks/use-auth-redirect.ts`
-```typescript
-'use client'
-export function useAuthRedirect() {
-  const store = useAuthStore()
-  
-  const requireAuth = (callback: () => Promise<void>, fallback?: string) => {
-    if (store.user) {
-      return callback()
-    }
-    // Armazenar intent + redirecionar
-    redirectToLogin({ callback, fallback })
-  }
-  
-  return { requireAuth }
-}
-```
+- Implementado com `savePendingAction`, `getPendingAction`, `clearPendingAction`
+- Expiração de 24h para pending actions
+- **Nota:** Hook criado mas componentes da Fase 2 não o utilizam
 
-### 2.2 Ações com Auth Lazy
+### 2.2 Ações com Suporte a Anônimos (Session ID)
 
-#### Server Actions (protegidas)
+#### Server Actions (aceitam usuários anônimos via sessionId)
 | Action | Arquivo | Comportamento |
 |--------|---------|---------------|
-| `followAuthor` | `src/features/auth/actions/follow-author.action.ts` | `requireAuth()` |
-| `rateBook` | `src/features/discovery/actions/rate-book.action.ts` | `requireAuth()` |
-| `addFavorite` | `src/features/discovery/actions/favorites.actions.ts` | `requireAuth()` |
+| `followAuthor` | `src/features/author-follow/actions/author-follow.actions.ts` | Aceita `sessionId` opcional para anônimos |
+| `rateBook` | `src/features/book-details/actions/rate-book.action.ts` | Aceita `sessionId` opcional, salva `rated_by_type` |
+| `addToFavorites` | `src/features/discovery/actions/favorites.actions.ts` | Aceita `sessionId` opcional para anônimos |
+| `requireAuth` | `src/features/auth/actions/require-auth.action.ts` | Disponível para casos que exigem login obrigatório |
 
-#### Fluxo
+#### Fluxo Real Implementado
 ```
-Usuário clica "Seguir Autor"
-├── Autenticado? → Executa ação → Toast "Seguindo!"
-└── Não autenticado? 
-    ├── Salva intent em localStorage
-    ├── Redireciona para /login?redirect=/book/123&intent=follow
-    └── Após login → Executa ação savedIntent
+Usuário anônimo clica "Seguir Autor"
+├── Gera sessionId via getAnonymousSessionId()
+├── Chama followAuthor(authorName, sessionId)
+├── Salva no banco com session_id (user_id = null)
+└──反馈 imediato: "Seguindo!" (sem redirect)
+
+Usuário logado clica "Seguir Autor"
+├── Usa userId do auth
+├── Salva no banco com user_id
+└── Feedback imediato: "Seguindo!"
 ```
 
-### 2.3 Componentes com Lazy Auth
+### 2.3 Componentes (Sem Lazy Auth)
 
-| Componente | Arquivo | Estado |
-|------------|---------|--------|
-| `FollowButton` | `src/features/auth/ui/follow-button.ui.tsx` | ✅ |
-| `RatingInput` | `src/features/discovery/ui/rating-input.ui.tsx` | ✅ |
-| `FavoriteButton` | `src/shared/ui/favorite-button.ui.tsx` | ✅ |
+| Componente | Arquivo | Comportamento |
+|------------|---------|--------------|
+| `AuthorFollowWidget` | `src/features/author-follow/widgets/author-follow.widget.tsx` | Chama `follow()` diretamente (usa store com sessionId) |
+| `RatingInput` | `src/features/book-details/ui/rating-input.ui.tsx` | Chama `onRate()` diretamente via `handleRate()` |
+| `FavoriteButton` | `src/shared/ui/favorite-button.ui.tsx` | UI pura, recebe `onClick` do pai |
+| `BookDetailsPanelWidget` | `src/features/book-details/widgets/book-details-panel.widget.tsx` | Gerencia rating/favoritos com `getAnonymousSessionId()` |
+
+### 2.4 Store de Follow (Suporta Anônimos)
+
+#### Arquivo: `src/features/author-follow/hooks/use-author-follow.ts`
+- `follow(authorName)`: usa `getAnonymousSessionId()` se não autenticado
+- `initialize()`: carrega follows por `user_id` OU `session_id`
+- `isFollowing()`: verifica no array local `followedIds`
+
+### 2.5 Login Form (Processa Pending Actions do Lazy Auth)
+
+#### Arquivo: `src/features/auth/widgets/login-form.widget.tsx`
+- Após login bem-sucedido, verifica `getPendingAction()`
+- Executa ações pendentes: `follow`, `favorite`, `rate`
+- Faz `clearPendingAction()` após execução
+- **Nota:** Funcionalidade mantida para compatibilidade, mas fluxo principal mudou
 
 ### Entregáveis
 
-| Entregável | Arquivo |
-|-----------|---------|
-| Hook de redirect | `src/shared/hooks/use-auth-redirect.ts` |
-| Action protected | `src/features/auth/actions/require-auth.action.ts` |
-| Componentes atualizados | `src/features/*/ui/*.ui.tsx` (3 arquivos) |
+| Entregável | Arquivo | Status |
+|-----------|---------|--------|
+| Hook de redirect | `src/shared/hooks/use-auth-redirect.ts` | ✅ Criado (não usado no fluxo principal) |
+| Action require-auth | `src/features/auth/actions/require-auth.action.ts` | ✅ Criado |
+| Actions com sessionId | `author-follow.actions.ts`, `rate-book.action.ts`, `favorites.actions.ts` | ✅ Implementado |
+| Store com anônimos | `src/features/author-follow/hooks/use-author-follow.ts` | ✅ Implementado |
+| Login com pending | `src/features/auth/widgets/login-form.widget.tsx` | ✅ Implementado |
+| Lib session anônima | `src/shared/lib/anonymous-session.ts` | ✅ Implementado |
 
 ---
 
@@ -534,12 +546,15 @@ Fase 5 (Otimizações)
 - [x] Link "Explorar" adicionado no header (`landing-header.widget.tsx`)
 - [x] Middleware ajustado (`/explore` e `/book/` adicionados)
 
-### Fase 2: Lazy Auth
-- [ ] Hook `useAuthRedirect` implementado
-- [ ] `FollowButton` com lazy auth
-- [ ] `RatingInput` com lazy auth
-- [ ] `FavoriteButton` com lazy auth
-- [ ] Redirect com callback funcionando
+### Fase 2: Ações Anônimas Diretas (Session ID)
+- [x] Hook `useAuthRedirect` criado (disponível, não usado no fluxo principal)
+- [x] `author-follow.actions.ts` aceita `sessionId` para anônimos
+- [x] `rate-book.action.ts` aceita `sessionId`, salva `rated_by_type`
+- [x] `favorites.actions.ts` aceita `sessionId` para anônimos
+- [x] `use-author-follow.ts` store gerencia follows anônimos
+- [x] `book-details-panel.widget.tsx` usa `getAnonymousSessionId()`
+- [x] Login form processa pending actions (compatibilidade)
+- [ ] (Opcional) Migrar para Lazy Auth usando `useAuthRedirect` nas UIs
 
 ### Fase 3: Diferenciação
 - [ ] Migration `role` executada

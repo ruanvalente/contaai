@@ -6,6 +6,7 @@ type MetricsCardProps = {
   onClick?: () => void;
   isActive?: boolean;
   isLoading?: boolean;
+  displayValue?: string;
 }
 
 export function MetricsCard({
@@ -16,6 +17,7 @@ export function MetricsCard({
   onClick,
   isActive = false,
   isLoading = false,
+  displayValue,
 }: MetricsCardProps) {
   const Component = onClick ? "button" : "div";
   
@@ -33,7 +35,7 @@ export function MetricsCard({
         )}
       </div>
       <p className={`text-sm font-bold leading-none ${isActive ? 'text-accent-600' : 'text-gray-900'}`}>
-        {isActive ? '✓' : value}
+        {isActive ? '✓' : (displayValue ?? value)}
       </p>
       <p className={`text-[10px] mt-0.5 ${isActive ? 'text-accent-600' : 'text-gray-500'}`}>{label}</p>
     </Component>

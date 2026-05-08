@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/shared/ui/button.ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ export function RegisterFormWidget() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,21 +35,33 @@ export function RegisterFormWidget() {
       return;
     }
 
-    startTransition(async () => {
-      toast.loading("Criando conta...");
+    setIsLoading(true);
+    const toastId = toast.loading("Criando conta...");
+    
+    try {
       const result = await signUpWithEmail(email, password, name);
+
+      toast.dismiss(toastId);
 
       if (!result.success) {
         setError(result.error);
         toast.error(result.error);
+        setIsLoading(false);
       } else if (result.needsConfirmation) {
         setSuccessMessage("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
         toast.success("Conta criada! Verifique seu e-mail.");
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
+        toast.success("Conta criada com sucesso!");
         router.push("/dashboard");
-        router.refresh();
       }
-    });
+    } catch (err) {
+      toast.dismiss(toastId);
+      setError("Erro interno. Tente novamente.");
+      toast.error("Erro interno. Tente novamente.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -160,9 +172,9 @@ export function RegisterFormWidget() {
               type="submit"
               variant="primary"
               className="w-full"
-              disabled={isPending}
+              disabled={isLoading}
             >
-              {isPending ? "Criando conta..." : "Criar conta"}
+              {isLoading ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
 

@@ -6,6 +6,7 @@ import { Book } from "@/server/domain/entities/book.entity";
 import { addToFavorites, removeFromFavorites, getUserFavorites } from "@/features/discovery/actions/favorites.actions";
 import { useFavoritesStore } from "@/shared/store/favorites.store";
 import { getAnonymousSessionId } from "@/shared/lib/anonymous-session";
+import { useAuthStore } from "@/shared/storage/use-auth-store";
 
 type UseFavoritesOptions = {
   initialFavoritedIds?: string[];
@@ -75,7 +76,12 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
       );
       if (result.success) {
         addFavoriteToStore(book.id);
-        toast.success(`"${book.title}" adicionado aos favoritos`);
+        const user = useAuthStore.getState().user;
+        if (user) {
+          toast.success(`"${book.title}" adicionado aos favoritos`);
+        } else {
+          toast.success(`"${book.title}" favoritado! Faça login para acessar em outros dispositivos.`);
+        }
       } else {
         toast.error(result.error || "Erro ao adicionar aos favoritos");
       }

@@ -19,13 +19,12 @@ interface ExplorePageProps {
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   await connection();
-  const { category, page } = await searchParams;
+  const { category } = await searchParams;
   const selectedCategory = (category as Category) || "All";
-  const currentPage = parseInt(page || "1", 10);
 
   const result = await getPublicBooksAction({
     category: selectedCategory === "All" ? undefined : selectedCategory,
-    page: currentPage,
+    page: 1,
     limit: 20,
   });
 
@@ -34,9 +33,8 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
       <section className="py-20">
         <Container>
           <ExploreClient
-            books={result.books}
-            totalPages={result.totalPages}
-            currentPage={currentPage}
+            initialBooks={result.books}
+            initialTotalPages={result.totalPages}
             selectedCategory={selectedCategory}
           />
         </Container>

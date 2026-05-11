@@ -7,7 +7,7 @@ import { BookCover } from '@/shared/ui/book-cover.ui'
 import { cn } from '@/utils/cn'
 import type { SessionFavoriteBook } from '../types/session-library.types'
 
-interface FavoriteBookCardProps {
+type FavoriteBookCardProps = {
   book: SessionFavoriteBook
   onRemove?: (bookId: string) => void
   index?: number
@@ -23,7 +23,7 @@ export function FavoriteBookCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="group relative"
+      className="group relative shrink-0 w-28 sm:w-32"
     >
       <Link
         href={`/book/${book.bookId}`}

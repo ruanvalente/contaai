@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, use } from "react";
 import { BookPageClient } from "./book-page-client";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 import type { Metadata } from "next";
@@ -21,7 +21,7 @@ function BookSchemaLd({ book }: { book: NonNullable<Awaited<ReturnType<typeof ge
     },
     "description": book.description || `Leia "${book.title}" de ${book.author} na Conta.AI`,
     "genre": book.category,
-    "url": `${process.env.NEXT_PUBLIC_BASE_URL || "https://contaai.vercel.app"}/book/${book.id}`,
+    "url": `${process.env.NEXT_PUBLIC_BASE_URL || "https://contaai-livid.vercel.app"}/book/${book.id}`,
     ...(book.coverUrl && {
       "image": book.coverUrl,
     }),
@@ -72,16 +72,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function BookPage(props: PageProps) {
-  const { id } = await props.params;
+async function BookContent({ params }: { params: PageProps["params"] }) {
+  const { id } = await params;
   const book = await getPublicBookByIdAction(id);
 
   return (
     <>
       {book && <BookSchemaLd book={book} />}
-      <Suspense fallback={<PageSkeleton />}>
-        <BookPageClient bookId={id} />
-      </Suspense>
+      <BookPageClient bookId={id} />
     </>
+  );
+}
+
+export default function BookPage(props: PageProps) {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <BookContent params={props.params} />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 import { IBookRepository } from "@/server/domain/repositories/book.repository";
 import { Book, BookCategory } from "@/server/domain/entities/book.entity";
 import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
-import { mapToBookEntity, mapToBookFromUserBook } from "../mappers/book.mapper";
+import { mapToBookEntity } from "../mappers/book.mapper";
 
 export class SupabaseBookRepository implements IBookRepository {
   async getAll(category?: BookCategory, search?: string): Promise<Book[]> {
@@ -68,17 +68,16 @@ export class SupabaseBookRepository implements IBookRepository {
     const supabase = await getSupabaseAdmin();
     
     const { data, error } = await supabase
-      .from("user_books")
-      .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
-      .eq("status", "published")
+      .from("books")
+      .select("id, title, author, cover_url, cover_color, description, category, pages, rating, rating_count, review_count, created_at")
       .or(`title.ilike.*${query}*,author.ilike.*${query}*,category.ilike.*${query}*`)
-      .order("published_at", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error searching books:", error);
       return [];
     }
 
-    return (data || []).map(mapToBookFromUserBook);
+    return (data || []).map(mapToBookEntity);
   }
 }

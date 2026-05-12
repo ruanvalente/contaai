@@ -12,16 +12,11 @@ export type UserFavorite = {
 
 export type FavoriteBook = {
   id: string;
-  title: string;
-  author: string;
-  coverColor?: string;
-  coverUrl?: string;
-  category?: string;
 };
 
 export interface IFavoriteRepository {
-  add(userId: string, book: FavoriteBook): Promise<boolean>;
+  add(userId: string | null, book: FavoriteBook): Promise<boolean>;
   remove(userId: string, bookId: string): Promise<boolean>;
   getByUser(userId: string): Promise<UserFavorite[]>;
-  isFavorited(userId: string, bookId: string): Promise<boolean>;
+  isFavorited(userId: string | null, bookId: string): Promise<boolean>;
 }

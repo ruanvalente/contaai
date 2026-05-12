@@ -53,11 +53,6 @@ export async function syncPendingActions(userId: string): Promise<{ synced: numb
         const { addToFavorites } = await import('@/features/discovery/actions/favorites.actions')
         const result = await addToFavorites(
           action.payload.bookId as string,
-          (action.payload.bookTitle as string) || '',
-          (action.payload.bookAuthor as string) || '',
-          action.payload.bookCoverColor as string | undefined,
-          action.payload.bookCoverUrl as string | undefined,
-          action.payload.bookCategory as string | undefined,
         )
         if (result.success) synced++
         else failed++

@@ -98,19 +98,14 @@ CREATE TABLE IF NOT EXISTS ratings (
 );
 
 -- ---------------------------------------------------------------
--- 2.5. user_favorites (favoritos com cache de metadados)
--- Nota: book_title, book_author, etc. são cache desnormalizado.
--- Normalização completa depende de alterações no app layer.
+-- 2.5. user_favorites (favoritos — metadados via unified_books)
+-- Os metadados do livro (título, autor, capa, categoria) são
+-- obtidos via JOIN com a view unified_books no repositório.
 -- ---------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_favorites (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   book_id UUID NOT NULL,
-  book_title TEXT NOT NULL,
-  book_author TEXT NOT NULL,
-  book_cover_color TEXT,
-  book_cover_url TEXT,
-  book_category TEXT,
   session_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -366,14 +361,61 @@ BEGIN
     SELECT COUNT(*) FROM user_favorites WHERE book_id = ub.id
   );
 
-  -- followers_count fica como 0 até decisão de design (ver DB-OPTIMIZATION-PLAN)
-  UPDATE books SET followers_count = 0;
-  UPDATE user_books SET followers_count = 0;
+  -- Recalcular followers_count (derivado de author_follow)
+  UPDATE books b
+  SET followers_count = (
+    SELECT COUNT(*) FROM author_follow WHERE author_name = b.author
+  );
+
+  UPDATE user_books ub
+  SET followers_count = (
+    SELECT COUNT(*) FROM author_follow WHERE author_name = ub.author
+  );
 END;
 $$ LANGUAGE plpgsql;
 
 -- ---------------------------------------------------------------
--- 4.9. Funções de migração de sessão (anonymous → authenticated)
+-- 4.9. recalculate_author_followers_count: recalcula followers
+--      de todos os livros de um autor específico
+-- ---------------------------------------------------------------
+CREATE OR REPLACE FUNCTION recalculate_author_followers_count(p_author_name TEXT)
+RETURNS void AS $$
+DECLARE
+  v_followers INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO v_followers
+  FROM author_follow
+  WHERE author_name = p_author_name;
+
+  UPDATE books SET followers_count = v_followers WHERE author = p_author_name;
+  UPDATE user_books SET followers_count = v_followers WHERE author = p_author_name;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ---------------------------------------------------------------
+-- 4.10. update_followers_count_on_follow_change: trigger function
+--       mantém followers_count sincronizado com author_follow
+-- ---------------------------------------------------------------
+CREATE OR REPLACE FUNCTION update_followers_count_on_follow_change()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_author_name TEXT;
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    v_author_name := NEW.author_name;
+  ELSIF TG_OP = 'DELETE' THEN
+    v_author_name := OLD.author_name;
+  END IF;
+
+  PERFORM recalculate_author_followers_count(v_author_name);
+
+  IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ---------------------------------------------------------------
+-- 4.11. Funções de migração de sessão (anonymous → authenticated)
 -- ---------------------------------------------------------------
 CREATE OR REPLACE FUNCTION migrate_session_follows(
   p_session_id TEXT,
@@ -520,6 +562,12 @@ DROP TRIGGER IF EXISTS trg_validate_reading_progress_book_id ON book_reading_pro
 CREATE TRIGGER trg_validate_reading_progress_book_id
   BEFORE INSERT OR UPDATE ON book_reading_progress
   FOR EACH ROW EXECUTE FUNCTION validate_book_id();
+
+-- Trigger: atualizar followers_count ao seguir/deixar de seguir autor
+DROP TRIGGER IF EXISTS trg_author_follow_followers_count ON author_follow;
+CREATE TRIGGER trg_author_follow_followers_count
+  AFTER INSERT OR DELETE ON author_follow
+  FOR EACH ROW EXECUTE FUNCTION update_followers_count_on_follow_change();
 
 -- ===============================================================
 -- 6. VIEWS

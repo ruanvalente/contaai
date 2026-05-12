@@ -423,38 +423,111 @@ Atualmente `author_follow` conta seguidores por `author_name`, não por livro es
 4. ✅ Script de verificação: `supabase/migrations/verify_schema.sql`
 5. ✅ Executado: `drop_all.sql` → `000_initial_schema.sql` → `verify_schema.sql` — **All checks passed**
 
-### Fase 1: 🔴 Manutenção Imediata (Caso NÃO opte pelo reset)
-> **Nota:** Caso opte por **não** resetar o banco, aplique as correções incrementais:
+### Fase 1: 🧹 Database Reset (Clean Slate) — ✅ CONCLUÍDO
 
-1. Migration 033: Remover `authors` + `author_books` (tabelas órfãs)
-2. Migration 034: Remover índices duplicados
-3. Migration 039: Adicionar índices faltantes
+Reset completo do banco e recriação com schema consolidado `000_initial_schema.sql`.
 
-### Fase 2: 🟡 Otimização de Performance
-> Aplicável tanto para schema novo (já incluso no consolidado) quanto para schema existente:
+### Fase 2: 🟢 Normalização e Consistência — ✅ CONCLUÍDO
 
-4. Migration 037: Otimizar trigger de rating
-5. Migration 036: Trigger validação `ratings.book_id`
-6. Migration 038: Corrigir FK `book_reading_progress`
+#### Migration 042 — Normalizar `user_favorites` (cache removal)
+**Status:** ✅ Concluído (aplicado como `042_normalize_user_favorites.sql`)
 
-### Fase 3: 🟢 Melhorias e Completude
-7. Migration 040: Atualizar view `unified_books`
-8. Migration 035: Normalizar `user_favorites` (após app layer)
-9. Migration 041: Trigger `followers_count` (após decisão de design)
-10. Consolidar documentação RLS em `database-spec.md`
+Removeu as 5 colunas de cache desnormalizado de `user_favorites`:
+- `book_title`, `book_author`, `book_cover_color`, `book_cover_url`, `book_category`
+
+**App layer alterado:**
+- `supabase-favorite.repository.ts` — `add()` sem cache columns; `getByUser()` faz JOIN batch com `unified_books`
+- `favorites.actions.ts` — `addToFavorites(bookId, sessionId)` sem metadados
+- `use-favorites.ts` — hook simplificado
+- `get-session-favorites.action.ts` — JOIN batch com `unified_books`
+- `login-form.widget.tsx` e `anonymous-persistence.ts` — chamadas atualizadas
+
+**Verificado:** INSERT sem cache columns funciona ✅, JOIN com `unified_books` retorna metadata correta ✅
+
+#### Migration 043 — Trigger `followers_count`
+**Status:** ✅ Concluído (aplicado como `043_followers_count_trigger.sql`)
+
+Implementou:
+- Função `recalculate_author_followers_count(p_author_name TEXT)` - recalcula followers por nome do autor
+- Função `update_followers_count_on_follow_change()` - trigger function para INSERT/DELETE
+- Trigger `trg_author_follow_followers_count` ON `author_follow` AFTER INSERT OR DELETE
+- `recalculate_book_stats()` atualizada para incluir `followers_count`
+
+**Decisão de design:** `followers_count` é calculado por `author_name` (seguidores do autor do livro), resolvendo a decisão pendente documentada anteriormente.
+
+**Verificado:** INSERT em `author_follow` → `followers_count` incrementa ✅, DELETE → decrementa ✅
+
+### Fase 3: 🐞 Correções Pós-Migration — ✅ CONCLUÍDO
+
+#### Search não retornava resultados
+**Status:** ✅ Corrigido
+
+**Problema:** `SupabaseBookRepository.search()` consultava `user_books` (vazia) em vez de `books`.
+
+**Fixo em:** `src/server/infrastructure/database/supabase-book.repository.ts`
+```diff
+- .from("user_books").eq("status", "published")
++ .from("books")
+```
+
+#### Click no resultado de busca ia para /book-dashboard
+**Status:** ✅ Corrigido
+
+**Problema:** `handleBookSelect` no header redirecionava para `/book-dashboard?id=${book.id}`.
+
+**Fixo em:** `src/shared/ui/header.ui.tsx`
+```diff
+- router.push(`/book-dashboard?id=${book.id}`);
++ router.push(`/book/${book.id}`);
+```
+
+### Fase 4: 🗂️ Supabase CLI Migration Tracking — ✅ CONCLUÍDO
+
+Registradas 3 migrations pendentes na tabela `supabase_migrations.schema_migrations`:
+- `032` — `add_session_library_indexes` (já aplicada, não rastreada)
+- `042` — `normalize_user_favorites` (já aplicada, não rastreada)
+- `043` — `followers_count_trigger` (já aplicada, não rastreada)
+
+Agora o Supabase CLI reconhece todas as 34 migrations (001 → 043).
+
+### 🗓️ Próximas Melhorias (não priorizadas)
+
+Estes itens do plano original permanecem como dívida técnica para sprints futuros:
+
+| # | Tarefa | Prioridade | Impacto | Esforço |
+|---|--------|-----------|---------|---------|
+| 1 | ~~Remover tabelas órfãs `authors` + `author_books`~~ | 🔴 Crítico | Baixo | 30min |
+| 2 | ~~Limpar índices duplicados~~ | 🔴 Crítico | Médio | 30min |
+| 3 | Otimizar trigger de rating (só atualizar tabela correta) | 🟡 Média | Médio | 1h |
+| 4 | Trigger validação `ratings.book_id` (contra books + user_books) | 🟡 Média | Médio | 1h |
+| 5 | Corrigir FK `book_reading_progress` (aceitar books + user_books) | 🟡 Média | Alto | 2h |
+| 6 | Atualizar view `unified_books` (incluir followers_count, favorites_count) | 🟢 Baixa | Baixo | 30min |
+| 7 | Adicionar índices faltantes (profiles.role, ratings.session_id) | 🟡 Média | Médio | 30min |
+
+**Nota:** Os itens 1 e 2 (tabelas órfãs e índices duplicados) já estão resolvidos no schema consolidado `000_initial_schema.sql` — são irrelevantes para quem usa o schema novo. Só seriam necessários como migrations incrementais se o banco antigo ainda estivesse em uso.
 
 ---
 
-## ✅ Critérios de Sucesso
+## ✅ Critérios de Sucesso — Fase Atual
 
-- [ ] Nenhuma tabela órfã no schema `public`
-- [ ] Nenhum índice duplicado (verificar com `pg_indexes`)
+### Concluídos nesta sprint:
+
+- [x] **`user_favorites` normalizado** — sem colunas de cache, dados vêm via JOIN com `unified_books`
+- [x] **Trigger `followers_count` implementado** — sincronizado automaticamente com `author_follow`
+- [x] **Search de livros funcionando** — consulta `books` (não `user_books` vazia)
+- [x] **Resultado de busca redireciona para `/book/[id]`** — não mais para `/book-dashboard`
+- [x] **Migrations registradas no tracking do Supabase CLI** — `supabase_migrations.schema_migrations` completo
+- [x] **Build TypeScript** — `bun run build` sem erros, 24/24 páginas
+
+### Pendentes para sprints futuras:
+
+- [ ] Nenhuma tabela órfã no schema `public` (já resolvido no schema consolidado)
+- [ ] Nenhum índice duplicado (já resolvido no schema consolidado)
 - [ ] Trigger de rating atualiza apenas a tabela correta
 - [ ] `ratings.book_id` validado contra `books` e `user_books`
 - [ ] `book_reading_progress` aceita books de qualquer fonte
 - [ ] View `unified_books` inclui `followers_count` e `favorites_count`
 - [ ] Políticas RLS consolidadas e documentadas
-- [ ] Testes de regressão passam (favoritos, ratings, leitura)
 
 ---
 

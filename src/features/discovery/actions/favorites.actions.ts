@@ -19,28 +19,14 @@ export type UserFavorite = {
 
 export async function addToFavorites(
   bookId: string,
-  bookTitle: string,
-  bookAuthor: string,
-  bookCoverColor?: string,
-  bookCoverUrl?: string,
-  bookCategory?: string,
   sessionId?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const userId = await getCurrentUserIdOptional();
-    
-    const book = {
-      id: bookId,
-      title: bookTitle,
-      author: bookAuthor,
-      coverColor: bookCoverColor || "#8B4513",
-      coverUrl: bookCoverUrl,
-      category: bookCategory || "Drama",
-    };
 
     const success = await favoriteRepository.add(
       userId ? userId : (sessionId || `anonymous-${Math.random().toString(36).substring(7)}`), 
-      book
+      { id: bookId }
     );
 
     return success ? { success: true } : { success: false, error: "Erro ao adicionar aos favoritos" };

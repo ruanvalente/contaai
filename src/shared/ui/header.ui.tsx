@@ -136,7 +136,7 @@ export function Header() {
     clearResults();
     setQuery("");
     setIsSearchFocused(false);
-    router.push(`/book-dashboard?id=${book.id}`);
+    router.push(`/book/${book.id}`);
   };
 
   const handleClearSearch = () => {

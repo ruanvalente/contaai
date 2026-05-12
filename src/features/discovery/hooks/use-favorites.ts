@@ -65,15 +65,7 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
     setLoading(true);
     try {
       const sessionId = getAnonymousSessionId();
-      const result = await addToFavorites(
-        book.id,
-        book.title,
-        book.author,
-        book.coverColor,
-        book.coverUrl,
-        book.category,
-        sessionId
-      );
+      const result = await addToFavorites(book.id, sessionId);
       if (result.success) {
         addFavoriteToStore(book.id);
         const user = useAuthStore.getState().user;

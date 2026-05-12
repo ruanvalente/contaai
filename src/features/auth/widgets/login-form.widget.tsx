@@ -59,8 +59,6 @@ export function LoginFormWidget() {
         } else if (legacyAction.type === "favorite" && legacyAction.payload.bookId) {
           await addToFavorites(
             legacyAction.payload.bookId as string,
-            (legacyAction.payload.bookTitle as string) || "",
-            (legacyAction.payload.bookAuthor as string) || "",
           );
           synced++;
         } else if (legacyAction.type === "rate" && legacyAction.payload.bookId && legacyAction.payload.rating) {
@@ -86,8 +84,6 @@ export function LoginFormWidget() {
           } else if (action.type === "favorite" && action.payload.bookId) {
             await addToFavorites(
               action.payload.bookId as string,
-              (action.payload.bookTitle as string) || "",
-              (action.payload.bookAuthor as string) || "",
             );
             synced++;
           } else if (action.type === "rate" && action.payload.bookId && action.payload.rating) {

@@ -11,42 +11,58 @@ export async function getSessionFavoritesAction(
     const userId = await getCurrentUserIdOptional()
     const supabase = await getSupabaseServerClient()
 
+    let favorites;
+
     if (userId) {
       const { data, error } = await supabase
         .from('user_favorites')
-        .select('*')
+        .select('id, book_id, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
 
       if (error) return []
-      return mapFavorites(data)
+      favorites = data || []
+    } else if (sessionId) {
+      const { data, error } = await supabase
+        .from('user_favorites')
+        .select('id, book_id, created_at')
+        .eq('session_id', sessionId)
+        .is('user_id', null)
+        .order('created_at', { ascending: false })
+
+      if (error) return []
+      favorites = data || []
+    } else {
+      return []
     }
 
-    if (!sessionId) return []
+    if (favorites.length === 0) return []
 
-    const { data, error } = await supabase
-      .from('user_favorites')
-      .select('*')
-      .eq('session_id', sessionId)
-      .is('user_id', null)
-      .order('created_at', { ascending: false })
+    // Batch-fetch book metadata from unified_books
+    const bookIds = favorites.map(f => f.book_id)
+    const { data: books } = await supabase
+      .from("unified_books")
+      .select("id, title, author, cover_color, cover_url, category")
+      .in("id", bookIds)
 
-    if (error) return []
-    return mapFavorites(data)
+    const bookMap = new Map(
+      (books || []).map(b => [b.id, b])
+    )
+
+    return favorites.map((row) => {
+      const book = bookMap.get(row.book_id)
+      return {
+        id: row.id,
+        bookId: row.book_id,
+        bookTitle: book?.title ?? 'Unknown',
+        bookAuthor: book?.author ?? 'Unknown',
+        bookCoverUrl: book?.cover_url ?? null,
+        bookCoverColor: book?.cover_color ?? null,
+        bookCategory: book?.category ?? null,
+        favoritedAt: row.created_at || new Date().toISOString(),
+      }
+    })
   } catch {
     return []
   }
-}
-
-function mapFavorites(data: any[]): SessionFavoriteBook[] {
-  return (data || []).map((row) => ({
-    id: row.id,
-    bookId: row.book_id,
-    bookTitle: row.book_title,
-    bookAuthor: row.book_author,
-    bookCoverUrl: row.book_cover_url || null,
-    bookCoverColor: row.book_cover_color || null,
-    bookCategory: row.book_category || null,
-    favoritedAt: row.created_at || new Date().toISOString(),
-  }))
 }

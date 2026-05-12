@@ -1,8 +1,8 @@
 # Plano de Evolução: Acesso Leitor Anônimo
 
-**Versão:** 1.0  
+**Versão:** 1.1  
 **Data:** 27/04/2026  
-**Status:** Fase 1 Completa  
+**Status:** Fase 5 Em Progresso  
 **Fases:** 5
 
 ---
@@ -368,51 +368,49 @@ export async function syncPendingActions(userId: string) {
 ## Fase 5: Otimizações
 
 **Duração estimada:** 1-2 semanas  
-**Prioridade:** BAIXA
+**Prioridade:** BAIXA  
+**Status:** 🚧 EM IMPLEMENTAÇÃO
 
 ### 5.1 Performance
 
-- [ ] Streaming na listagem de livros (`loading.tsx` com Suspense)
-- [ ] Caching com `React.cache()` para queries frequentes
-- [ ] Lazy load de imagens de capa (`next/image` com placeholder)
-- [ ] Virtualização de listas longas (>100 livros)
+- [x] Streaming na listagem de livros (`loading.tsx` com Suspense) - páginas existentes já possuem
+- [x] Caching com `React.cache()` para queries frequentes - `getPublicBooksAction` já usa `cache()`
+- [x] Lazy load de imagens de capa (`next/image` com placeholder) - `BookCover` já usa `next/image`
+- [ ] Virtualização de listas longas (>100 livros) - Pendente
 
 ### 5.2 SEO
 
-- [ ] Metadata dinâmica por livro (`generateMetadata`)
-- [ ] Open Graph tags para compartilhamento
-- [ ] Sitemap.xml com livros públicos
-- [ ] Schema.org para livros (Structured Data)
+- [x] Metadata dinâmica por livro (`generateMetadata`) - `/book/[id]/page.tsx`
+- [x] Open Graph tags para compartilhamento - `generateMetadata` com OG e Twitter cards
+- [x] Open Graph image dinâmica - `/book/[id]/opengraph-image.tsx`
+- [x] Sitemap.xml com livros públicos - `/app/sitemap.ts`
+- [x] Schema.org para livros (Structured Data) - `BookSchemaLd` component
 
 ### 5.3 Analytics
 
-Eventos a trackear:
-| Evento | Descrição |
-|--------|----------|
-| `page_view_anon` | Leituras por anônimos |
-| `reading_start_anon` | Início de leitura (anônimo) |
-| `auth_redirect_triggered` | Usuário redirecionado para login |
-| `lazy_auth_converted` | Conversão após login lazy |
-| `reader_to_author` | Anônimo → Leitor → Autor |
+Eventos implementados em `src/lib/analytics.ts`:
+
+| Evento | Descrição | Status |
+|--------|-----------|--------|
+| `page_view_anon` | Página vista por anônimos | ✅ |
+| `reading_start_anon` | Início de leitura (anônimo) | ✅ |
+| `auth_redirect_triggered` | Usuário redirecionado para login | ✅ |
+| `lazy_auth_converted` | Conversão após login lazy | ✅ |
+| `reader_to_author` | Anônimo → Leitor → Autor | ✅ |
 
 ### 5.4 Monitoramento
 
-```typescript
-// Dashboard sugeridos
-- Taxa anônimos vs autenticados
-- Conversão lazy auth (%)
-- Tempo médio até primeira leitura
-- Livros mais lidos (todos)
-```
+- [ ] Dashboard de analytics (pendente integração com provedor)
 
 ### Entregáveis
 
-| Entregável          | Arquivo                             |
-| ------------------- | ----------------------------------- |
-| Suspense boundaries | Pages atualizadas                   |
-| OG images           | `app/book/[id]/opengraph-image.tsx` |
-| Sitemap             | `app/sitemap.ts`                    |
-| Analytics events    | `src/lib/analytics.ts`              |
+| Entregável          | Arquivo                             | Status |
+| ------------------- | ----------------------------------- | ------ |
+| Suspense boundaries | Pages atualizadas                   | ✅     |
+| OG images           | `app/book/[id]/opengraph-image.tsx` | ✅     |
+| Sitemap             | `app/sitemap.ts`                    | ✅     |
+| Analytics events    | `src/lib/analytics.ts`              | ✅     |
+| Schema.org          | `BookSchemaLd` component             | ✅     |
 
 ---
 
@@ -617,10 +615,10 @@ Fase 5 (Otimizações)
 
 ### Fase 5: Otimizações
 
-- [ ] Performance verificada
-- [ ] SEO implementado
-- [ ] Analytics configurado
-- [ ] Monitoramento ativo
+- [x] Performance verificada (streaming, cache, lazy loading já existentes)
+- [x] SEO implementado (metadata, OG, sitemap, schema.org)
+- [x] Analytics configurado (src/lib/analytics.ts com 5 eventos)
+- [ ] Monitoramento ativo (pendente integração com provedor)
 
 ### Melhorias Futuras
 

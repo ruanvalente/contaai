@@ -6,7 +6,7 @@ import { FavoriteBookCard } from '../ui/favorite-book-card.ui'
 import { EmptyFavorites } from '../ui/empty-favorites.ui'
 import type { SessionFavoriteBook } from '../types/session-library.types'
 
-interface SessionFavoritesListProps {
+type SessionFavoritesListProps = {
   favorites: SessionFavoriteBook[]
   isLoading: boolean
 }
@@ -26,9 +26,9 @@ export function SessionFavoritesList({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+      <div className="flex flex-wrap justify-start gap-4 md:gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="animate-pulse">
+          <div key={i} className="animate-pulse shrink-0 w-28 sm:w-32">
             <div className="aspect-[3/4] rounded-lg bg-primary-300" />
             <div className="mt-2 space-y-1.5">
               <div className="h-3 w-3/4 rounded bg-primary-300" />
@@ -45,7 +45,7 @@ export function SessionFavoritesList({
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+    <div className="flex flex-wrap justify-start gap-4 md:gap-6">
       {favorites.map((book, index) => (
         <FavoriteBookCard
           key={book.id}

@@ -6,11 +6,12 @@ import { Header as LandingHeader } from "@/features/discovery/widgets/landing-he
 import { Hero as LandingHero } from "@/features/discovery/widgets/landing-hero.widget";
 import { BooksShowcase as LandingBooksShowcase } from "@/features/discovery/widgets/books-showcase.widget";
 import { Container } from "@/shared/ui/container.ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 import type { PublicBookListItem } from "@/features/public-books/types/public-books.types";
 import type { Book } from "@/server/domain/entities/book.entity";
 import { BookDetailsModalWidget } from "@/features/book-details/widgets/book-details-modal.widget";
+import { getFeaturedPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
 
 function mapToBook(book: PublicBookListItem): Book {
   return {
@@ -29,7 +30,11 @@ function mapToBook(book: PublicBookListItem): Book {
   };
 }
 
-export default function LandingPage() {
+type LandingPageProps = {
+  initialBooks: PublicBookListItem[];
+};
+
+export default function LandingPage({ initialBooks }: LandingPageProps) {
   const router = useRouter();
   const { user, isInitialized, isLoading, initialize } = useAuthStore();
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -61,7 +66,7 @@ export default function LandingPage() {
       <LandingHeader />
       <LandingHero />
       
-      <LandingBooksShowcase onBookSelect={handleBookSelect} />
+      <LandingBooksShowcase initialBooks={initialBooks} onBookSelect={handleBookSelect} />
       
       <section id="community" className="py-20 bg-primary-100">
         <Container>

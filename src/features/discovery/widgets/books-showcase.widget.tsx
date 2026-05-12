@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Container } from "@/shared/ui/container.ui";
 import { BookCard } from "@/shared/ui/book-card.ui";
-import { getPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
+import { getFeaturedPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
 import type { PublicBookListItem } from "@/features/public-books/types/public-books.types";
 import type { Category } from "@/server/domain/entities/book.entity";
 import { motion } from "framer-motion";
@@ -12,43 +12,34 @@ import { motion } from "framer-motion";
 const CATEGORIES: Category[] = ["All", "Sci-Fi", "Fantasy", "Drama", "Business", "Education", "Geography"];
 
 type BooksShowcaseProps = {
+  initialBooks: PublicBookListItem[];
   onBookSelect?: (book: PublicBookListItem) => void;
 }
 
-export function BooksShowcase({ onBookSelect }: BooksShowcaseProps = {}) {
-  const [books, setBooks] = useState<PublicBookListItem[]>([]);
+export function BooksShowcase({ initialBooks, onBookSelect }: BooksShowcaseProps = { initialBooks: [] }) {
+  const [books, setBooks] = useState(initialBooks);
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadBooks() {
-      setIsLoading(true);
-      try {
-        const filters = selectedCategory === "All" ? { limit: 20 } : { category: selectedCategory, limit: 20 };
-        const result = await getPublicBooksAction(filters);
-        if (mounted) {
-          setBooks(result.books);
-        }
-      } catch (error) {
-        console.error("Failed to load books:", error);
-        if (mounted) {
-          setBooks([]);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
+  const handleCategoryChange = async (category: Category) => {
+    setSelectedCategory(category);
+    
+    if (category === "All") {
+      setBooks(initialBooks);
+      return;
     }
 
-    loadBooks();
-
-    return () => {
-      mounted = false;
-    };
-  }, [selectedCategory]);
+    setIsLoading(true);
+    try {
+      const result = await getFeaturedPublicBooksAction(20);
+      const filtered = result.filter(book => book.category === category);
+      setBooks(filtered);
+    } catch (error) {
+      console.error("Failed to filter books:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className="py-20 bg-primary-200 relative overflow-hidden">
@@ -74,7 +65,7 @@ export function BooksShowcase({ onBookSelect }: BooksShowcaseProps = {}) {
             {CATEGORIES.map((category) => (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category
                     ? "bg-accent-500 text-white"

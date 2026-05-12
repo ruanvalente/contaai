@@ -1,22 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { BookCover } from '@/shared/ui/book-cover.ui';
 import { StarRating } from '@/shared/ui/star-rating.ui';
-import { BookSearch } from '@/shared/ui/book-search.ui';
-import type { PublicBookListItem } from '@/features/public-books/types/public-books.types';
-import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { getPublicBooksAction } from '@/features/public-books/actions/public-books.actions';
+import type { PublicBookListItem } from '@/features/public-books/types/public-books.types';
+import type { Category } from '@/server/domain/entities/book.entity';
+import { motion } from 'framer-motion';
 
 interface ExploreClientProps {
-  books: PublicBookListItem[];
-  totalPages: number;
-  currentPage: number;
-  selectedCategory: string;
+  initialBooks: PublicBookListItem[];
+  initialTotalPages: number;
+  selectedCategory: Category;
 }
 
-const CATEGORIES = ['All', 'Sci-Fi', 'Fantasy', 'Drama', 'Business', 'Education', 'Geography'];
+const CATEGORIES: Category[] = ["All", "Sci-Fi", "Fantasy", "Drama", "Business", "Education", "Geography"];
 
 function FeaturedBookCard({ book, index }: { book: PublicBookListItem; index: number }) {
   return (
@@ -39,9 +39,11 @@ function FeaturedBookCard({ book, index }: { book: PublicBookListItem; index: nu
         </div>
       </Link>
       <div className="mt-3 text-center">
-        <h3 className="font-display font-semibold text-gray-900 text-base leading-tight">
-          {book.title}
-        </h3>
+        <Link href={`/book/${book.id}`} className="hover:underline">
+          <h3 className="font-display font-semibold text-gray-900 text-base leading-tight">
+            {book.title}
+          </h3>
+        </Link>
         <p className="text-sm text-gray-500 mt-1">{book.author}</p>
         {book.rating !== null && book.rating !== undefined && (
           <div className="mt-2 flex justify-center">
@@ -53,13 +55,95 @@ function FeaturedBookCard({ book, index }: { book: PublicBookListItem; index: nu
   );
 }
 
+function BookSkeleton() {
+  return (
+    <div className="animate-pulse flex flex-col items-center">
+      <div className="bg-gray-300 rounded-lg w-full aspect-[3/4] max-w-[160px]" />
+      <div className="mt-2 h-4 w-3/4 bg-gray-300 rounded" />
+      <div className="mt-1 h-3 w-1/2 bg-gray-200 rounded" />
+    </div>
+  );
+}
+
 export function ExploreClient({
-  books,
-  totalPages,
-  currentPage,
+  initialBooks,
+  initialTotalPages,
   selectedCategory,
 }: ExploreClientProps) {
+  const [books, setBooks] = useState<PublicBookListItem[]>(initialBooks);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [category, setCategory] = useState<Category>(selectedCategory);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const loadMoreBooks = useCallback(async () => {
+    if (isLoadingMore || currentPage >= totalPages) return;
+    
+    setIsLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const filters = category === "All" 
+        ? { page: nextPage, limit: 20 }
+        : { category, page: nextPage, limit: 20 };
+      
+      const result = await getPublicBooksAction(filters);
+      setBooks(prev => [...prev, ...result.books]);
+      setCurrentPage(nextPage);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      console.error('Failed to load more books:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [currentPage, totalPages, isLoadingMore, category]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && currentPage < totalPages) {
+          loadMoreBooks();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [loadMoreBooks, isLoadingMore, currentPage, totalPages]);
+
+  useEffect(() => {
+    async function loadCategoryBooks() {
+      if (category === selectedCategory) return;
+      
+      setIsLoadingMore(true);
+      try {
+        const filters = category === "All" 
+          ? { page: 1, limit: 20 }
+          : { category, page: 1, limit: 20 };
+        
+        const result = await getPublicBooksAction(filters);
+        setBooks(result.books);
+        setCurrentPage(1);
+        setTotalPages(result.totalPages);
+      } catch (error) {
+        console.error('Failed to load category books:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+
+    loadCategoryBooks();
+  }, [category, selectedCategory]);
 
   const filteredBooks = searchQuery
     ? books.filter(
@@ -111,27 +195,52 @@ export function ExploreClient({
       >
         <div className="flex flex-wrap gap-2 justify-center">
           {CATEGORIES.map((cat) => (
-            <Link
+            <button
               key={cat}
-              href={`/explore?category=${cat}`}
+              onClick={() => setCategory(cat)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === cat
+                category === cat
                   ? 'bg-accent-500 text-white'
                   : 'bg-primary-100 text-gray-700 hover:bg-primary-300'
               }`}
             >
               {cat}
-            </Link>
+            </button>
           ))}
         </div>
       </motion.div>
 
       {filteredBooks.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
-          {filteredBooks.map((book, index) => (
-            <FeaturedBookCard key={book.id} book={book} index={index} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
+            {filteredBooks.map((book, index) => (
+              <FeaturedBookCard key={book.id} book={book} index={index % 20} />
+            ))}
+            {isLoadingMore && (
+              <>
+                <BookSkeleton />
+                <BookSkeleton />
+                <BookSkeleton />
+                <BookSkeleton />
+                <BookSkeleton />
+              </>
+            )}
+          </div>
+          
+          <div ref={loadMoreRef} className="h-4" />
+          
+          {!isLoadingMore && currentPage < totalPages && (
+            <div className="text-center py-4 text-sm text-gray-500">
+              Role para carregar mais livros
+            </div>
+          )}
+          
+          {!isLoadingMore && currentPage >= totalPages && books.length > 0 && (
+            <div className="text-center py-4 text-sm text-gray-500">
+              Fim da lista
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-12">
           <p className="text-gray-500">
@@ -140,35 +249,6 @@ export function ExploreClient({
               : 'Nenhum livro encontrado nesta categoria'}
           </p>
         </div>
-      )}
-
-      {totalPages > 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-12 flex justify-center gap-2"
-        >
-          {currentPage > 1 && (
-            <Link
-              href={`/explore?category=${selectedCategory}&page=${currentPage - 1}`}
-              className="px-4 py-2 rounded-lg bg-primary-100 text-gray-700 hover:bg-primary-300 transition-colors"
-            >
-              Anterior
-            </Link>
-          )}
-          <span className="px-4 py-2 text-gray-700">
-            Página {currentPage} de {totalPages}
-          </span>
-          {currentPage < totalPages && (
-            <Link
-              href={`/explore?category=${selectedCategory}&page=${currentPage + 1}`}
-              className="px-4 py-2 rounded-lg bg-accent-500 text-white hover:bg-accent-600 transition-colors"
-            >
-              Próxima
-            </Link>
-          )}
-        </motion.div>
       )}
     </>
   );

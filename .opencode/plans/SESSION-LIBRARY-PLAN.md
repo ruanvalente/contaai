@@ -1,9 +1,12 @@
 # Plano de Implementação: Minha Sessão (Session Library)
 
-**Versão:** 1.0
-**Data:** 08/05/2026
-**Status:** Pendente
+**Versão:** 1.1
+**Data:** 15/05/2026
+**Status:** Em Andamento
 **Sprints:** 3
+
+> 📋 **Pré-requisito para Testes:** O projeto não possui configuração de testes. Antes de implementar os testes da Sprint 3, veja o plano complementar:  
+> **[TESTING-SETUP-PLAN.md](./TESTING-SETUP-PLAN.md)** — Configuração completa de Vitest (unitários) e Playwright (E2E).
 
 ---
 
@@ -721,6 +724,12 @@ useEffect(() => {
 
 ### 5.5 Testes
 
+> ⚠️ **Pré-requisito:** O ambiente de testes não está configurado no projeto. Execute primeiro o plano [TESTING-SETUP-PLAN.md](./TESTING-SETUP-PLAN.md) para:
+> - Instalar Vitest + Testing Library + JSDOM
+> - Instalar Playwright
+> - Configurar `vitest.config.ts` e `playwright.config.ts`
+> - Adicionar scripts no `package.json`
+
 #### Testes Unitários
 
 ```
@@ -802,26 +811,58 @@ Usar `framer-motion` (já existente no projeto):
 
 ### Arquivos da Sprint 3
 
-| Arquivo                                                                          | Ação      |
-| -------------------------------------------------------------------------------- | --------- |
-| `src/features/session-library/hooks/use-session-sync.ts`                         | **Criar** |
-| `src/features/session-library/widgets/session-sync-banner.widget.tsx`            | **Criar** |
-| `src/features/session-library/store/__tests__/session-sync.store.test.ts`        | **Criar** |
-| `src/features/session-library/lib/__tests__/session-cache.test.ts`               | **Criar** |
-| `src/features/session-library/hooks/__tests__/use-session-library.test.tsx`      | **Criar** |
-| `src/features/session-library/widgets/__tests__/session-library.widget.test.tsx` | **Criar** |
-| `e2e/my-session.spec.ts`                                                         | **Criar** |
+> 📋 **Pré-requisito:** Configurar ambiente de testes conforme [TESTING-SETUP-PLAN.md](./TESTING-SETUP-PLAN.md)
+
+| Arquivo                                                                          | Ação      | Prioridade |
+| -------------------------------------------------------------------------------- | --------- | ---------- |
+| **Configuração do Ambiente**                                                    |           |            |
+| `vitest.config.ts`                                                             | **Criar** | 🔴 Alta (pré-requisito) |
+| `playwright.config.ts`                                                         | **Criar** | 🔴 Alta (pré-requisito) |
+| `tests/setup.ts`                                                                | **Criar** | 🔴 Alta |
+| `package.json` (scripts de teste)                                              | **Modificar** | 🔴 Alta |
+| **Feature Session Library**                                                   |           |            |
+| `src/features/session-library/hooks/use-session-sync.ts`                         | **Concluído** | ✅ |
+| `src/features/session-library/widgets/session-sync-banner.widget.tsx`            | **Concluído** | ✅ |
+| **Testes Unitários**                                                           |           |            |
+| `src/features/session-library/store/__tests__/session-sync.store.test.ts`        | **Criar** | 🟡 Média |
+| `src/features/session-library/lib/__tests__/session-cache.test.ts`               | **Criar** | 🟡 Média |
+| `src/features/session-library/hooks/__tests__/use-session-library.test.tsx`      | **Criar** | 🟡 Média |
+| `src/features/session-library/widgets/__tests__/session-library.widget.test.tsx` | **Criar** | 🟡 Média |
+| **Testes E2E**                                                                 |           |            |
+| `e2e/my-session.spec.ts`                                                         | **Criar** | 🟡 Média |
+| **BroadcastChannel (Opcional)**                                                 |           |            |
+| `src/features/session-library/hooks/use-session-library.ts` (adicionar BroadcastChannel) | **Modificar** | 🟢 Baixa |
 
 ### Validação Sprint 3
 
-- [ ] Sync automático no login (anônimo → logado)
-- [ ] Banner de sync aparece e desaparece
-- [ ] Toast de sucesso/erro no sync
-- [ ] Multi-tab funcional (BroadcastChannel)
+#### ✅ Itens Concluídos
+
+- [x] Hook `use-session-sync.ts` implementado
+- [x] Widget `session-sync-banner.widget.tsx` implementado
+- [x] Sync automático no login (anônimo → logado)
+- [x] Banner de sync aparece e desaparece
+- [x] Toast de sucesso/erro no sync
+
+#### ⏳ Configuração do Ambiente de Testes (Pré-requisito)
+
+- [ ] `vitest.config.ts` criado
+- [ ] `playwright.config.ts` criado
+- [ ] `tests/setup.ts` criado
+- [ ] Scripts de teste adicionados ao `package.json`
+- [ ] Dependências instaladas (vitest, @testing-library, playwright, jsdom)
+
+#### ⏳ Itens Pendentes
+
+- [ ] BroadcastChannel multi-tab (opcional)
+- [ ] Teste: `session-sync.store.test.ts`
+- [ ] Teste: `session-cache.test.ts`
+- [ ] Teste: `use-session-library.test.tsx`
+- [ ] Teste: `session-library.widget.test.tsx`
+- [ ] Teste E2E: `e2e/my-session.spec.ts`
 - [ ] Testes unitários passam
 - [ ] Testes E2E passam
-- [ ] Edge cases cobertos (sessão expirada, cache corrompido, race condition)
 - [ ] `bun run build` passa
+- [ ] `bun run lint` sem warnings
 
 ---
 
@@ -1029,34 +1070,46 @@ src/
 
 ## Checklist de Implementação
 
-### Sprint 1 — Fundação
+> 📋 **Status Geral:** ~87% concluído. Sprints 1 e 2 100% concluídas. Sprint 3 pendente: configuração de ambiente de testes + testes.
 
-- [ ] Types criados
-- [ ] Session sync store
-- [ ] Server actions (favorites, authors, clear)
-- [ ] Session cache lib
-- [ ] Migration SQL (índices)
+### Sprint 1 — Fundação ✅ 100%
 
-### Sprint 2 — UI + Rota
+- [x] Types criados (`session-library.types.ts`)
+- [x] Session sync store (`session-sync.store.ts`)
+- [x] Server actions (favorites, authors, clear)
+- [x] Session cache lib (`session-cache.ts`)
+- [x] Migration SQL (índices: `031_*.sql`, `032_*.sql`)
 
-- [ ] Rota /my-session + loading
-- [ ] useSessionLibrary hook
-- [ ] SessionHero, SessionTabs UI
-- [ ] FavoriteBookCard, FollowedAuthorCard UI
-- [ ] Empty states
-- [ ] SessionLibraryWidget container
-- [ ] SessionFavoritesList, SessionAuthorsList widgets
-- [ ] permissions.ts (view:session)
-- [ ] proxy.ts (/my-session)
-- [ ] landing-header (nav item)
+### Sprint 2 — UI + Rota ✅ 100%
 
-### Sprint 3 — Sincronização + Testes
+- [x] Rota `/my-session` + loading
+- [x] `useSessionLibrary` hook
+- [x] `SessionHero`, `SessionTabs` UI
+- [x] `FavoriteBookCard`, `FollowedAuthorCard` UI
+- [x] Empty states (`empty-favorites.ui.tsx`, `empty-authors.ui.tsx`)
+- [x] `SessionLibraryWidget` container
+- [x] `SessionFavoritesList`, `SessionAuthorsList` widgets
+- [x] `permissions.ts` (add `view:session`)
+- [x] `proxy.ts` (add `/my-session` como público)
+- [x] `landing-header` (nav item "Minha Sessão")
 
-- [ ] useSessionSync hook
-- [ ] SessionSyncBanner widget
-- [ ] Integração com login
-- [ ] BroadcastChannel multi-tab
+### Sprint 3 — Sincronização + Testes ⏳ ~60%
+
+#### ✅ Concluído
+
+- [x] `useSessionSync` hook
+- [x] `SessionSyncBanner` widget
+- [x] Integração com login
+
+#### ⏳ Pendente
+
+- [ ] **Configuração Ambiente de Testes** (pré-requisito: ver [TESTING-SETUP-PLAN.md](./TESTING-SETUP-PLAN.md))
+  - [ ] Instalar dependências (vitest, @testing-library, playwright, jsdom)
+  - [ ] Criar `vitest.config.ts`
+  - [ ] Criar `playwright.config.ts`
+  - [ ] Criar `tests/setup.ts`
+  - [ ] Adicionar scripts no `package.json`
+- [ ] BroadcastChannel multi-tab (opcional)
 - [ ] Testes unitários
 - [ ] Testes E2E
-- [ ] Edge cases tratados
 - [ ] Build + Lint passando

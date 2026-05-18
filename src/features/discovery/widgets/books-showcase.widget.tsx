@@ -1,0 +1,146 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Container } from "@/shared/ui/container.ui";
+import { BookCard } from "@/shared/ui/book-card.ui";
+import { getFeaturedPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
+import type { PublicBookListItem } from "@/features/public-books/types/public-books.types";
+import type { Category } from "@/server/domain/entities/book.entity";
+import { motion } from "framer-motion";
+
+const CATEGORIES: Category[] = ["All", "Sci-Fi", "Fantasy", "Drama", "Business", "Education", "Geography"];
+
+type BooksShowcaseProps = {
+  initialBooks: PublicBookListItem[];
+  onBookSelect?: (book: PublicBookListItem) => void;
+}
+
+export function BooksShowcase({ initialBooks, onBookSelect }: BooksShowcaseProps = { initialBooks: [] }) {
+  const [books, setBooks] = useState(initialBooks);
+  const [selectedCategory, setSelectedCategory] = useState<Category>("All");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCategoryChange = async (category: Category) => {
+    setSelectedCategory(category);
+    
+    if (category === "All") {
+      setBooks(initialBooks);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await getFeaturedPublicBooksAction(20);
+      const filtered = result.filter(book => book.category === category);
+      setBooks(filtered);
+    } catch (error) {
+      console.error("Failed to filter books:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-20 bg-primary-200 relative overflow-hidden">
+      <Container>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-4">
+            Obras em Destaque
+          </h2>
+          <p className="text-gray-700 max-w-xl mx-auto">
+            Explore as contribuições mais recentes da nossa comunidade literária
+          </p>
+        </motion.div>
+
+        {/* Category Filter */}
+        <div className="flex justify-center mb-8">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {CATEGORIES.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === category
+                    ? "bg-accent-500 text-white"
+                    : "bg-primary-100 text-gray-700 hover:bg-primary-300"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Books Grid */}
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-4 md:gap-8 overflow-x-auto pb-8 px-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="shrink-0 animate-pulse">
+                <div className="w-32 sm:w-40">
+                  <div className="bg-gray-300 rounded-lg w-full aspect-[2/3]" />
+                  <div className="mt-2 h-4 bg-gray-300 rounded w-3/4" />
+                  <div className="mt-1 h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : books.length > 0 ? (
+          <div className="flex items-center justify-center gap-4 md:gap-8 overflow-x-auto pb-8 px-4 scrollbar-hide">
+            {books.slice(0, 12).map((book, index) => (
+              <motion.div
+                key={book.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="shrink-0"
+              >
+                <div
+                  onClick={() => onBookSelect?.(book)}
+                  className="cursor-pointer"
+                >
+                  <BookCard
+                    id={book.id}
+                    title={book.title}
+                    author={book.author}
+                    coverUrl={book.coverUrl}
+                    coverColor={book.coverColor}
+                    rating={book.rating}
+                    isFeatured={index < 3}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">
+              {selectedCategory === "All" 
+                ? "Nenhum livro encontrado" 
+                : `Nenhum livro encontrado em ${selectedCategory}`}
+            </p>
+          </div>
+        )}
+
+        {books.length > 0 && (
+          <div className="mt-12 text-center">
+            <Link
+              href="/explore"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-500 text-white rounded-full font-medium hover:bg-accent-600 transition-colors"
+            >
+              Ver todos os livros
+              <span>→</span>
+            </Link>
+          </div>
+        )}
+      </Container>
+    </section>
+  );
+}

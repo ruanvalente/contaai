@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Book } from "@/server/domain/entities/book.entity";
 import { BookCover } from "@/shared/ui/book-cover.ui";
@@ -8,11 +8,16 @@ import { Badge } from "@/shared/ui/badge.ui";
 import { Button } from "@/shared/ui/button.ui";
 import { FavoriteButton } from "@/shared/ui/favorite-button.ui";
 import { RatingStars } from "../ui/rating-stars.ui";
+import { RatingInput } from "../ui/rating-input.ui";
 import { MetricsCard } from "../ui/metrics-card.ui";
 import { BookOpenIcon, UsersIcon, MessageIcon } from "../ui/icons.ui";
 import { useFavorites } from "@/features/discovery/hooks/use-favorites";
 import { useAuthorFollowStore } from "@/features/author-follow/hooks/use-author-follow";
 import { useAuthorFollowInitialized } from "@/features/author-follow/hooks/use-author-follow-initialized";
+import { useRouter } from "next/navigation";
+import { getAnonymousSessionId } from "@/shared/lib/anonymous-session";
+import { toast } from "@/features/notifications";
+import { useAuthStore } from "@/shared/storage/use-auth-store";
 
 type BookDetailsPanelWidgetProps = {
   book: Book | null;
@@ -76,6 +81,23 @@ export function BookDetailsPanelWidget({
     isLoading: isAuthorLoading,
   } = useAuthorFollowStore();
 
+  const [userRating, setUserRating] = useState<number | null>(null);
+  
+  useEffect(() => {
+    async function loadUserRating() {
+      if (!book) return;
+      try {
+        const { getUserRating } = await import('@/features/book-details/actions/rate-book.action');
+        const sessionId = getAnonymousSessionId();
+        const rating = await getUserRating(book.id, sessionId);
+        setUserRating(rating);
+      } catch (err) {
+        console.error('Error loading user rating:', err);
+      }
+    }
+    loadUserRating();
+  }, [book?.id]);
+
   const handleReadNow = () => {
     if (book) {
       if (!authorFollowing) {
@@ -83,6 +105,29 @@ export function BookDetailsPanelWidget({
       }
       router.push(`/book/${book.id}`);
     }
+  };
+
+  const handleRate = (rating: number) => {
+    // Atualização otimista da UI
+    setUserRating(rating);
+    
+    // Chamar server action diretamente (permite anônimos)
+    const sessionId = getAnonymousSessionId();
+    import('@/features/book-details/actions/rate-book.action').then(({ rateBook }) => {
+      rateBook(book!.id, rating, sessionId).then(result => {
+        if (result.success) {
+          const user = useAuthStore.getState().user;
+          if (!user) {
+            toast.success('Avaliação salva! Faça login para sincronizar com sua conta.');
+          }
+        } else {
+          setUserRating(null);
+        }
+      }).catch(err => {
+        console.error('Error rating book:', err);
+        setUserRating(null);
+      });
+    });
   };
 
   if (isLoading) {
@@ -141,6 +186,14 @@ export function BookDetailsPanelWidget({
           <p className="text-xs text-gray-500 mb-1.5">{book.author}</p>
 
           <RatingStars rating={book.rating} size="sm" showValue={true} />
+          
+          <RatingInput
+            bookId={book.id}
+            currentRating={book.rating}
+            userRating={userRating}
+            size="sm"
+            onRate={handleRate}
+          />
 
           <div className="mt-auto pt-2">
             <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
@@ -150,7 +203,7 @@ export function BookDetailsPanelWidget({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 px-4 pb-4">
+      <div className="grid grid-cols-2 gap-2 px-4 pb-4">
         <MetricsCard
           label="Páginas"
           value={book.pages}
@@ -160,13 +213,8 @@ export function BookDetailsPanelWidget({
         <MetricsCard
           label="Avaliações"
           value={book.ratingCount}
+          displayValue={`${book.rating?.toFixed(1) || '0.0'} / 5`}
           icon={<UsersIcon className="w-3.5 h-3.5" />}
-          className="py-2"
-        />
-        <MetricsCard
-          label="Resenhas"
-          value={book.reviewCount}
-          icon={<MessageIcon className="w-3.5 h-3.5" />}
           className="py-2"
         />
       </div>

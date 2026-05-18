@@ -2,6 +2,9 @@
 
 import { create } from 'zustand';
 import { createClient } from '@/utils/supabase/client';
+import { getAnonymousSessionId } from '@/shared/lib/anonymous-session';
+import { toast } from '@/features/notifications';
+import { useAuthStore } from '@/shared/storage/use-auth-store';
 
 type FollowState = {
   followedIds: string[];
@@ -21,16 +24,27 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const sessionId = !user ? getAnonymousSessionId() : null;
+      
+      if (user) {
+        const { data, error } = await supabase
+          .from("author_follow")
+          .select("author_name")
+          .eq("user_id", user.id);
+        if (!error && data) {
+          set({ followedIds: data.map((row) => row.author_name), isInitialized: true });
+        }
+      } else if (sessionId) {
+        const { data, error } = await supabase
+          .from("author_follow")
+          .select("author_name")
+          .eq("session_id", sessionId)
+          .is("user_id", null);
+        if (!error && data) {
+          set({ followedIds: data.map((row) => row.author_name), isInitialized: true });
+        }
+      } else {
         set({ isInitialized: true });
-        return;
-      }
-      const { data, error } = await supabase
-        .from("author_follow")
-        .select("author_name")
-        .eq("user_id", user.id);
-      if (!error && data) {
-        set({ followedIds: data.map((row) => row.author_name), isInitialized: true });
       }
     } catch (err) {
       console.error("Error initializing author follow:", err);
@@ -41,10 +55,17 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
   follow: async (authorName: string) => {
     set({ isLoading: true });
     try {
+      const sessionId = getAnonymousSessionId();
       const { followAuthor } = await import('@/features/author-follow/actions/author-follow.actions');
-      const result = await followAuthor(authorName);
+      const result = await followAuthor(authorName, sessionId);
       if (result.success) {
         set((state) => ({ followedIds: [...state.followedIds, authorName] }));
+        const user = useAuthStore.getState().user;
+        if (user) {
+          toast.success(`Seguindo "${authorName}"`);
+        } else {
+          toast.success(`Seguindo "${authorName}"! Faça login para gerenciar suas conexões.`);
+        }
       }
       return result;
     } finally {
@@ -54,8 +75,9 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
   unfollow: async (authorName: string) => {
     set({ isLoading: true });
     try {
+      const sessionId = getAnonymousSessionId();
       const { unfollowAuthor } = await import('@/features/author-follow/actions/author-follow.actions');
-      const result = await unfollowAuthor(authorName);
+      const result = await unfollowAuthor(authorName, sessionId);
       if (result.success) {
         set((state) => ({ followedIds: state.followedIds.filter((id) => id !== authorName) }));
       }

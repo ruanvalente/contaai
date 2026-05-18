@@ -6,6 +6,8 @@ export async function proxy(request: NextRequest) {
 
   const publicPaths = [
     "/",
+    "/explore",
+    "/my-session",
     "/landingpage",
     "/login",
     "/register",
@@ -13,10 +15,12 @@ export async function proxy(request: NextRequest) {
     "/terms",
     "/privacy",
     "/api/health",
+    "/book/", // Public reading of books
   ];
-  const isPublicPath = publicPaths.some(
-    (path) => pathname === path || pathname.startsWith("/auth/"),
-  );
+  const isPublicPath =
+    publicPaths.some(
+      (path) => pathname === path || pathname.startsWith(path),
+    ) || pathname.startsWith("/auth/");
 
   if (isPublicPath) {
     return NextResponse.next();

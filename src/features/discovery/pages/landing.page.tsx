@@ -1,54 +1,73 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Header as LandingHeader } from "@/features/discovery/widgets/landing-header.widget";
 import { Hero as LandingHero } from "@/features/discovery/widgets/landing-hero.widget";
-import { BookCarousel as LandingBookCarousel } from "@/features/discovery/widgets/landing-book-carousel.widget";
+import { BooksShowcase as LandingBooksShowcase } from "@/features/discovery/widgets/books-showcase.widget";
 import { Container } from "@/shared/ui/container.ui";
+import { useState, useEffect, useTransition } from "react";
+import { useAuthStore } from "@/shared/storage/use-auth-store";
+import type { PublicBookListItem } from "@/features/public-books/types/public-books.types";
+import type { Book } from "@/server/domain/entities/book.entity";
+import { BookDetailsModalWidget } from "@/features/book-details/widgets/book-details-modal.widget";
+import { getFeaturedPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
 
-export default function LandingPage() {
+function mapToBook(book: PublicBookListItem): Book {
+  return {
+    id: book.id,
+    title: book.title,
+    author: book.author,
+    coverUrl: book.coverUrl,
+    coverColor: book.coverColor,
+    rating: book.rating || 0,
+    description: '',
+    category: book.category,
+    pages: book.pages || 0,
+    ratingCount: book.ratingCount || 0,
+    reviewCount: book.reviewCount || 0,
+    createdAt: new Date(),
+  };
+}
+
+type LandingPageProps = {
+  initialBooks: PublicBookListItem[];
+};
+
+export default function LandingPage({ initialBooks }: LandingPageProps) {
+  const router = useRouter();
+  const { user, isInitialized, isLoading, initialize } = useAuthStore();
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  useEffect(() => {
+    if (isInitialized && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, isInitialized, router]);
+
+  if (!isInitialized || isLoading) {
+    return <main className="min-h-screen bg-primary-100" />;
+  }
+
+  const handleBookSelect = (book: PublicBookListItem) => {
+    setSelectedBook(mapToBook(book));
+  };
+
+  const handleClearSelection = () => {
+    setSelectedBook(null);
+  };
+
   return (
     <main className="min-h-screen bg-primary-100">
       <LandingHeader />
       <LandingHero />
-
-      <section id="my-authors" className="py-20 bg-primary-200">
-        <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-4">
-              Meus Autores
-            </h2>
-            <p className="text-gray-700 max-w-xl mx-auto">
-              Acompanhe seus autores favoritos e descubra novas histórias.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: "Maria Silva", stories: 12 },
-              { name: "João Pedro", stories: 8 },
-              { name: "Ana Clara", stories: 15 },
-            ].map((author) => (
-              <div
-                key={author.name}
-                className="bg-white rounded-lg p-6 shadow-md text-center hover:shadow-lg transition-shadow"
-              >
-                <div className="w-16 h-16 bg-primary-300 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl text-gray-700 font-display">
-                    {author.name.charAt(0)}
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {author.name}
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  {author.stories} histórias publicadas
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <LandingBookCarousel />
-
+      
+      <LandingBooksShowcase initialBooks={initialBooks} onBookSelect={handleBookSelect} />
+      
       <section id="community" className="py-20 bg-primary-100">
         <Container>
           <div className="text-center mb-12">
@@ -91,8 +110,8 @@ export default function LandingPage() {
           </div>
         </Container>
       </section>
-
-      <section id="contributes" className="py-20 bg-primary-200">
+      
+      <section id="contribute" className="py-20 bg-primary-200">
         <Container>
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-4">
@@ -110,7 +129,7 @@ export default function LandingPage() {
           </div>
         </Container>
       </section>
-
+      
       <footer className="py-12 bg-primary-300">
         <Container>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -150,6 +169,11 @@ export default function LandingPage() {
           </div>
         </Container>
       </footer>
+
+      <BookDetailsModalWidget
+        book={selectedBook}
+        onClose={handleClearSelection}
+      />
     </main>
   );
 }

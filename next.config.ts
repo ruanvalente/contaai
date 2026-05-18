@@ -27,7 +27,6 @@ const nextConfig: NextConfig = {
     ],
     dangerouslyAllowSVG: true,
   },
-  cacheComponents: true,
 };
 
 export default nextConfig;

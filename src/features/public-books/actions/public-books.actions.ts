@@ -19,7 +19,13 @@ const DEFAULT_LIMIT = 20;
  */
 export const getPublicBooksAction = cache(
   async (filters?: PublicBooksFilters): Promise<PublicBooksResult> => {
-    const supabase = await getSupabaseAdmin();
+    let supabase;
+    try {
+      supabase = await getSupabaseAdmin();
+    } catch {
+      console.warn("Supabase not available, returning empty results");
+      return { books: [], total: 0, page: 1, totalPages: 0 };
+    }
 
     const page = filters?.page ?? 1;
     const limit = filters?.limit ?? DEFAULT_LIMIT;
@@ -80,7 +86,13 @@ export const getPublicBooksAction = cache(
  * Get a single public book by ID from unified_books view
  */
 export const getPublicBookByIdAction = cache(async (id: string) => {
-  const supabase = await getSupabaseAdmin();
+  let supabase;
+  try {
+    supabase = await getSupabaseAdmin();
+  } catch {
+    console.warn("Supabase not available, returning null");
+    return null;
+  }
 
   const { data: book } = await supabase
     .from("unified_books")
@@ -113,7 +125,13 @@ export const getPublicBookByIdAction = cache(async (id: string) => {
  */
 export const getFeaturedPublicBooksAction = cache(
   async (limit: number = 10) => {
-    const supabase = await getSupabaseAdmin();
+    let supabase;
+    try {
+      supabase = await getSupabaseAdmin();
+    } catch {
+      console.warn("Supabase not available, returning empty results");
+      return [];
+    }
 
     const { data } = await supabase
       .from("unified_books")
@@ -146,7 +164,13 @@ export const searchPublicBooksAction = cache(async (query: string) => {
     return [];
   }
 
-  const supabase = await getSupabaseAdmin();
+  let supabase;
+  try {
+    supabase = await getSupabaseAdmin();
+  } catch {
+    console.warn("Supabase not available, returning empty results");
+    return [];
+  }
 
   const { data } = await supabase
     .from("unified_books")

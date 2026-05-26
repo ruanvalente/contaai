@@ -1,8 +1,8 @@
 # Plano de Configuração: Ambiente de Testes (Vitest + Playwright)
 
-**Versão:** 3.0
-**Data:** 15/05/2026
-**Status:** Em Andamento — 259 testes implementados, editor e E2E adiados
+**Versão:** 3.1
+**Data:** 24/05/2026
+**Status:** Em Andamento — 278 testes implementados, E2E e profile pendentes
 **Referência:** SESSION-LIBRARY-PLAN.md (Sprint 3)
 
 ---
@@ -793,10 +793,10 @@ test.describe('Explore - Favoritos', () => {
 
 #### 🟢 Baixa Prioridade
 
-##### Editor ⏸️ Adiado
-- [ ] `editor/hooks/__tests__/use-editor.test.tsx`
-- [ ] `editor/hooks/__tests__/use-editor-backup-interval.test.tsx`
-- [ ] `editor/widgets/__tests__/book-editor.widget.test.tsx`
+##### Editor 🟡 Parcial (apenas testes essenciais — Lexical não mockado)
+- [x] `editor/hooks/__tests__/use-editor.test.tsx`
+- [x] `editor/hooks/__tests__/use-editor-backup-interval.test.tsx`
+- [x] `editor/widgets/__tests__/book-editor.widget.test.tsx`
 
 ### 9.4 Testes E2E — ⏸️ Adiado (requer setup de ambiente + banco)
 
@@ -894,7 +894,7 @@ Este plano cobre **TODAS** as features do projeto:
 | Author Follow | `src/features/author-follow/` | ✅ Completo (1 skip) | 28 |
 | Book Details | `src/features/book-details/` | 🟡 Parcial (1 skip) | 19 |
 | Book Dashboard | `src/features/book-dashboard/` | 🟡 Parcial (1 skip) | 32 |
-| Editor | `src/features/editor/` | ⏸️ Adiado | — |
+| Editor | `src/features/editor/` | 🟡 Parcial (essenciais) | 19 |
 | E2E | `e2e/` | ⏸️ Adiado | — |
 | Profile | `src/features/profile/` | 🔴 Não iniciado (fora do escopo) | — |
-| **Total** | | | **259** |
+| **Total** | | | **278** |

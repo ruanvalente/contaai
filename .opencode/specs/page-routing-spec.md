@@ -17,17 +17,17 @@ Este documento define a especificação para estrutura de páginas e rotas na ap
 src/app/
 ├── page.tsx                           # Landing page (/)
 ├── layout.tsx                         # Root layout
-├── loading.tsx                        # Loading global
-├── error.tsx                         # Error global
-├── not-found.tsx                     # 404 global
+├── loading.tsx                        # Loading global (skeleton)
+├── error.tsx                          # Error boundary global
+├── not-found.tsx                      # 404 global
+├── globals.css                        # Estilos globais
 │
-├── login/
-│   ├── page.tsx                      # /login
-│   └── layout.tsx                    # Layout específico
-│
-├── register/
-│   ├── page.tsx                      # /register
-│   └── layout.tsx
+├── (auth)/                            # Grupo de autenticação
+│   ├── layout.tsx                     # Layout compartilhado
+│   ├── login/
+│   │   └── page.tsx                   # /login
+│   └── register/
+│       └── page.tsx                   # /register
 │
 ├── dashboard/                         # Área autenticada
 │   ├── page.tsx                      # /dashboard
@@ -44,14 +44,11 @@ src/app/
 │   ├── downloads/
 │   │   └── page.tsx                  # /dashboard/downloads
 │   │
-│   ├── category/
-│   │   └── page.tsx                  # /dashboard/category
-│   │
 │   ├── settings/
 │   │   └── page.tsx                  # /dashboard/settings
 │   │
-│   ├── audio/
-│   │   └── page.tsx                  # /dashboard/audio
+│   ├── category/
+│   │   └── page.tsx                  # /dashboard/category
 │   │
 │   └── editor/
 │       └── [id]/
@@ -61,23 +58,41 @@ src/app/
 │   └── [id]/
 │       └── page.tsx                  # /book/[id]
 │
-├── library/
-│   └── page.tsx                      # /library (público)
+├── explore/                           # Explorar livros
+│   ├── page.tsx                      # /explore
+│   └── loading.tsx
 │
-├── category/
-│   └── page.tsx                      # /category (público)
+├── my-session/                        # Sessão anônima
+│   ├── page.tsx                      # /my-session
+│   └── loading.tsx
 │
-├── favorites/
-│   └── page.tsx                      # /favorites (público)
+├── settings/                          # Configurações
+│   └── page.tsx                      # /settings
 │
-├── downloads/
-│   └── page.tsx                      # /downloads (público)
+├── downloads/                         # Downloads públicos
+│   └── page.tsx                      # /downloads
 │
-├── audio-books/
-│   └── page.tsx                      # /audio-books
+├── library/                           # Biblioteca pública
+│   └── page.tsx                      # /library
 │
-└── landingpage/
-    └── page.tsx                      # /landingpage
+├── category/                          # Categorias
+│   └── page.tsx                      # /category
+│
+├── favorites/                         # Favoritos públicos
+│   └── page.tsx                      # /favorites
+│
+├── book-dashboard/                    # Dashboard de livros
+│   └── page.tsx                      # /book-dashboard
+│
+├── landingpage/                       # Landing page institucional
+│   └── page.tsx                      # /landingpage
+│
+└── api/                               # API routes
+    ├── health/
+    │   └── route.ts                  # /api/health
+    └── auth/
+        └── callback/
+            └── route.ts              # /api/auth/callback
 ```
 
 ---
@@ -221,10 +236,16 @@ export default async function DashboardLayout({
 
 ### 4.1 Autenticação
 
-```tsx
-// app/(auth)/login/page.tsx
-// app/(auth)/register/page.tsx
+```
+src/app/(auth)/
+├── layout.tsx                     # Layout compartilhado
+├── login/
+│   └── page.tsx                   # /login
+└── register/
+    └── page.tsx                   # /register
+```
 
+```tsx
 // app/(auth)/layout.tsx
 export default function AuthLayout({
   children,
@@ -232,7 +253,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="auth-container">
+    <div className="flex items-center justify-center min-h-screen">
       {children}
     </div>
   );

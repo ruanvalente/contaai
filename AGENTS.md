@@ -28,9 +28,13 @@ src/
 ├── app/                    # Next.js App Router (rotas)
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Landing page
+│   ├── loading.tsx        # Root loading
+│   ├── error.tsx          # Root error boundary
+│   ├── not-found.tsx      # Global 404
+│   ├── (auth)/            # Route group de autenticação
+│   │   ├── login/         # Login
+│   │   └── register/      # Cadastro
 │   ├── dashboard/         # Área autenticada
-│   ├── login/             # Login
-│   ├── register/          # Cadastro
 │   └── ...
 ├── features/              # Domínio da aplicação
 │   ├── auth/              # Autenticação

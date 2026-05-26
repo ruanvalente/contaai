@@ -61,99 +61,11 @@ export function useExample(
 
 ---
 
-## 2. Hooks Existentes
+## 2. Hooks Compartilhados (src/shared/hooks/)
 
-### 2.1 useFavorites
+Os hooks listados abaixo estão em `src/shared/hooks/` e são reutilizáveis entre features:
 
-```tsx
-// src/shared/hooks/use-favorites.ts
-type UseFavoritesOptions = {
-  initialFavoritedIds?: string[];
-};
-
-type UseFavoritesReturn = {
-  favoritedIds: string[];
-  isLoading: boolean;
-  isLoaded: boolean;
-  addFavorite: (book: Book) => Promise<void>;
-  removeFavorite: (bookId: string) => Promise<void>;
-  toggleFavorite: (book: Book) => Promise<void>;
-  isFavorited: (bookId: string) => boolean;
-};
-```
-
-### 2.2 useFavoritesSearch
-
-```tsx
-// src/shared/hooks/use-favorites-search.ts
-type UseFavoritesSearchReturn = {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  filteredFavorites: UserFavorite[];
-  isSearching: boolean;
-};
-```
-
-### 2.3 useCategoryFilter
-
-```tsx
-// src/shared/hooks/use-category-filter.ts
-type UseCategoryFilterReturn = {
-  selectedCategory: Category | "All";
-  setCategory: (category: Category | "All") => void;
-  filteredBooks: Book[];
-};
-```
-
-### 2.4 useCategoryIcons
-
-```tsx
-// src/shared/hooks/use-category-icons.ts
-type UseCategoryIconsReturn = {
-  getIcon: (category: Category) => React.ReactNode;
-  getColor: (category: Category) => string;
-};
-```
-
-### 2.5 useLibraryState
-
-```tsx
-// src/shared/hooks/use-library-state.ts
-type UseLibraryStateReturn = {
-  activeTab: "all" | "reading" | "completed";
-  setActiveTab: (tab: "all" | "reading" | "completed") => void;
-};
-```
-
-### 2.6 useLibraryTabs
-
-```tsx
-// src/shared/hooks/use-library-tabs.ts
-type UseLibraryTabsReturn = {
-  tabs: Tab[];
-  activeTab: string;
-  setActiveTab: (tabId: string) => void;
-};
-```
-
-### 2.7 useSearch
-
-```tsx
-// src/shared/hooks/use-search.ts
-type UseSearchOptions = {
-  debounceMs?: number;
-  minLength?: number;
-};
-
-type UseSearchReturn = {
-  query: string;
-  setQuery: (q: string) => void;
-  isSearching: boolean;
-  debouncedQuery: string;
-};
-```
-
-### 2.8 useSidebar
+### 2.1 useSidebar
 
 ```tsx
 // src/shared/hooks/use-sidebar.ts
@@ -165,113 +77,110 @@ type UseSidebarReturn = {
 };
 ```
 
-### 2.9 useBookList
-
-```tsx
-// src/shared/hooks/use-book-list.ts
-type UseBookListReturn = {
-  books: Book[];
-  isLoading: boolean;
-  error: string | null;
-  refetch: () => void;
-};
-```
-
-### 2.10 useBooksWithCache
-
-```tsx
-// src/shared/hooks/use-books-with-cache.ts
-type UseBooksWithCacheOptions = {
-  category?: Category | "All";
-  cacheKey?: string;
-};
-
-type UseBooksWithCacheReturn = {
-  books: Book[];
-  isLoading: boolean;
-  isCached: boolean;
-};
-```
-
-### 2.11 useUserBooks
-
-```tsx
-// src/shared/hooks/use-user-books.ts
-type UseUserBooksReturn = {
-  myStories: UserBook[];
-  reading: UserBook[];
-  completed: UserBook[];
-  isLoading: boolean;
-};
-```
-
-### 2.12 useHydrated
+### 2.2 useHydrated
 
 ```tsx
 // src/shared/hooks/use-hydrated.ts
 type UseHydratedReturn = boolean;
 ```
 
+### 2.3 useAuthRedirect
+
+```tsx
+// src/shared/hooks/use-auth-redirect.ts
+type UseAuthRedirectReturn = {
+  isRedirecting: boolean;
+  redirectToLogin: () => void;
+  redirectToDashboard: () => void;
+};
+```
+
 ---
 
-## 3. Hooks em Features
+## 3. Hooks por Feature
 
-### 3.1 Book Dashboard Hooks
+### 3.1 Discovery
+
+```
+src/features/discovery/hooks/
+├── use-category-filter.ts
+├── use-category-icons.ts
+├── use-discover.ts
+├── use-favorites-search.ts
+├── use-favorites.ts
+└── use-search.ts
+```
+
+### 3.2 Library
+
+```
+src/features/library/hooks/
+├── use-library-state.ts
+├── use-library-tabs.ts
+└── use-user-books.ts
+```
+
+### 3.3 Book Dashboard
 
 ```
 src/features/book-dashboard/hooks/
-├── use-books.ts                  # Gestão de livros
-├── use-book-dashboard.hook.ts    # Dashboard stats
-├── use-categories.ts             # Categorias
-├── use-selected-book.ts          # Livro selecionado
-└── ...
+├── use-book-dashboard.ts
+├── use-book-editor.ts
+├── use-books-with-cache.ts
+├── use-books.ts
+├── use-categories.ts
+├── use-editor-backup-interval.ts
+├── use-editor-backup.ts
+├── use-editor-publish.ts
+├── use-editor-toolbar.ts
+└── use-selected-book.ts
 ```
 
-### 3.2 Exemplo: useBooks
+### 3.4 Editor
 
-```tsx
-// src/features/book-dashboard/hooks/use-books.ts
-"use client";
+```
+src/features/editor/hooks/
+├── use-book-editor.ts
+├── use-editor-backup-interval.ts
+├── use-editor-backup.ts
+├── use-editor-publish.ts
+└── use-editor-toolbar.ts
+```
 
-import { useState, useEffect } from "react";
-import { Book } from "@/features/book-dashboard/types/book.types";
-import { getBooksAction, searchBooksAction, getBooksByCategoryAction } from "../actions/books.actions";
+### 3.5 Reading
 
-export function useBooks(options: { 
-  category?: string;
-  search?: string;
-} = {}) {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+```
+src/features/reading/hooks/
+├── use-click-outside.ts
+├── use-debounced-save.ts
+├── use-escape-key.ts
+├── use-lexical-renderer.ts
+├── use-panel-toggle.ts
+├── use-reading-controls.ts
+├── use-reading-session.ts
+└── use-reading-theme.ts
+```
 
-  useEffect(() => {
-    async function fetchBooks() {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        let result: Book[];
-        if (options.search) {
-          result = await searchBooksAction(options.search);
-        } else if (options.category && options.category !== "All") {
-          result = await getBooksByCategoryAction(options.category);
-        } else {
-          result = await getBooksAction();
-        }
-        setBooks(result);
-      } catch (err) {
-        setError("Failed to load books");
-      } finally {
-        setIsLoading(false);
-      }
-    }
+### 3.6 Outras Features
 
-    fetchBooks();
-  }, [options.category, options.search]);
+```
+src/features/notifications/hooks/
+├── use-action-toast.ts
+└── use-notification.ts
 
-  return { books, isLoading, error };
-}
+src/features/profile/hooks/
+└── use-profile-form.ts
+
+src/features/public-books/hooks/
+└── use-public-books.ts
+
+src/features/author-follow/hooks/
+├── use-author-follow-initialized.ts
+└── use-author-follow.ts
+
+src/features/session-library/hooks/
+├── use-session-library.ts
+└── use-session-sync.ts
 ```
 
 ---

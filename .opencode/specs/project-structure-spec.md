@@ -41,8 +41,6 @@ conta-ai/
 │   ├── app/                       # Next.js App Router
 │   ├── features/                  # Funcionalidades por domínio
 │   ├── shared/                    # Componentes compartilhados
-│   ├── screens/                   # Páginas de dashboard
-│   ├── landing/                   # Landing page
 │   └── utils/                     # Utilitários
 │
 ├── supabase/                      # Configurações Supabase
@@ -67,9 +65,13 @@ conta-ai/
 src/app/
 ├── layout.tsx                    # Root layout
 ├── page.tsx                      # Landing page
-├── globals.css                    # Estilos globais
+├── loading.tsx                   # Root loading (skeleton)
+├── error.tsx                     # Root error boundary
+├── not-found.tsx                 # Global 404
+├── globals.css                   # Estilos globais
 │
 ├── (auth)/                       # Grupo de autenticação
+│   ├── layout.tsx                # Shared auth layout
 │   ├── login/
 │   │   └── page.tsx
 │   └── register/
@@ -78,11 +80,12 @@ src/app/
 ├── dashboard/                    # Área autenticada
 │   ├── page.tsx
 │   ├── layout.tsx
+│   ├── loading.tsx
+│   ├── error.tsx
 │   ├── library/
 │   ├── favorites/
 │   ├── downloads/
 │   ├── settings/
-│   ├── audio/
 │   ├── category/
 │   └── editor/
 │       └── [id]/
@@ -90,14 +93,27 @@ src/app/
 ├── book/
 │   └── [id]/
 │
+├── explore/                      # Explorar livros
+│   ├── page.tsx
+│   └── loading.tsx
+│
+├── my-session/                   # Sessão anônima
+│   ├── page.tsx
+│   └── loading.tsx
+│
+├── settings/                     # Configurações
+├── downloads/                    # Downloads públicos
 ├── library/                      # Biblioteca pública
-├── category/
-├── favorites/
-├── downloads/
-├── audio-books/
-├── landingpage/
-└── api/                         # API routes
-    └── [endpoint]/
+├── category/                     # Categorias
+├── favorites/                    # Favoritos públicos
+├── book-dashboard/               # Dashboard de livros
+├── landingpage/                  # Landing page institucional
+└── api/                          # API routes
+    ├── health/
+    │   └── route.ts
+    └── auth/
+        └── callback/
+            └── route.ts
 ```
 
 ---
@@ -106,63 +122,85 @@ src/app/
 
 ```
 src/features/
-├── auth/                         # Autenticação
+├── auth/                        # Autenticação
 │   ├── actions/
-│   │   └── auth.actions.ts
-│   ├── components/
 │   ├── hooks/
-│   ├── types/
 │   └── widgets/
 │
-├── profile/                      # Perfil do usuário
+├── profile/                     # Perfil do usuário
 │   ├── actions/
-│   │   ├── get-profile.action.ts
-│   │   ├── update-profile.action.ts
-│   │   ├── upload-avatar.action.ts
-│   │   └── upload.actions.ts
-│   ├── components/
+│   ├── hooks/
+│   ├── pages/
+│   ├── reading/
+│   ├── ui/
+│   └── widgets/
+│
+├── book-dashboard/              # Dashboard de livros (legado)
+│   ├── actions/
+│   ├── config/
+│   ├── data/
+│   ├── hooks/
+│   ├── store/
+│   ├── ui/
+│   └── widgets/
+│
+├── library/                     # Biblioteca pessoal
+│   ├── actions/
+│   ├── hooks/
+│   └── widgets/
+│
+├── discovery/                   # Descoberta de livros
+│   ├── actions/
+│   ├── hooks/
+│   ├── pages/
+│   ├── ui/
+│   └── widgets/
+│
+├── editor/                      # Editor Lexical
+│   ├── hooks/
+│   ├── plugins/
+│   ├── store/
+│   └── widgets/
+│
+├── book-details/                # Detalhes do livro
+│   ├── actions/
+│   ├── ui/
+│   └── widgets/
+│
+├── reading/                     # Leitura (progresso)
+│   ├── actions/
+│   ├── hooks/
+│   ├── ui/
+│   ├── utils/
+│   └── widgets/
+│
+├── public-books/                # Livros públicos
+│   ├── actions/
 │   ├── hooks/
 │   ├── types/
-│   │   └── profile.types.ts
-│   ├── widgets/
-│   │   ├── avatar-upload.widget.tsx
-│   │   └── profile-form.widget.tsx
-│   └── store/
+│   ├── ui/
+│   └── widgets/
 │
-└── book-dashboard/              # Dashboard de livros
+├── author-follow/               # Seguir autores
+│   ├── actions/
+│   ├── hooks/
+│   └── widgets/
+│
+├── notifications/               # Notificações (toast)
+│   ├── actions/
+│   ├── hooks/
+│   ├── types/
+│   ├── ui/
+│   └── widgets/
+│
+└── session-library/             # Sessão anônima
     ├── actions/
-    │   ├── books.actions.ts
-    │   ├── user-books.actions.ts
-    │   ├── user-favorites.actions.ts
-    │   └── upload-book-cover.action.ts
-    ├── components/
-    ├── data/
     ├── hooks/
-    │   ├── use-books.ts
-    │   ├── use-categories.ts
-    │   ├── use-selected-book.ts
-    │   └── use-book-dashboard.hook.ts
-    ├── pages/
-    │   └── book-dashboard.page.tsx
+    ├── lib/
     ├── store/
-    │   └── book-editor.store.ts
     ├── types/
-    │   ├── book.types.ts
-    │   └── user-book.types.ts
     ├── ui/
-    ├── widgets/
-    │   ├── book-card.widget.tsx
-    │   ├── book-editor.widget.tsx
-    │   ├── book-details-modal.widget.tsx
-    │   ├── categories-section.widget.tsx
-    │   ├── create-book-modal.widget.tsx
-    │   ├── downloads-content.widget.tsx
-    │   ├── favorites-content.widget.tsx
-    │   ├── library-content.widget.tsx
-    │   ├── recommended-section.widget.tsx
-    │   └── search-results.widget.tsx
-    └── specs/
-        └── use-case.spec.md
+    └── widgets/
 ```
 
 ---
@@ -172,30 +210,36 @@ src/features/
 ```
 src/shared/
 ├── ui/                          # Componentes UI (puros)
-│   ├── avatar.tsx
-│   ├── badge.tsx
-│   ├── book-card.tsx
-│   ├── book-cover.tsx
-│   ├── button.tsx
+│   ├── avatar.ui.tsx
+│   ├── badge.ui.tsx
+│   ├── book-card.ui.tsx
+│   ├── book-cover.ui.tsx
+│   ├── book-grid.ui.tsx
+│   ├── book-search.ui.tsx
+│   ├── button.ui.tsx
 │   ├── category-header.ui.tsx
-│   ├── container.tsx
+│   ├── container.ui.tsx
 │   ├── empty-favorites-state.ui.tsx
 │   ├── empty-library-state.ui.tsx
 │   ├── favorite-button.ui.tsx
 │   ├── favorites-header.ui.tsx
 │   ├── favorites-search-bar.ui.tsx
+│   ├── follow-button.ui.tsx
 │   ├── header.ui.tsx
 │   ├── library-header.ui.tsx
 │   ├── pagination.ui.tsx
 │   ├── published-notification.ui.tsx
-│   ├── search-input.tsx
-│   ├── sidebar.tsx
+│   ├── search-input.ui.tsx
+│   ├── sidebar.ui.tsx
 │   ├── skeleton.ui.tsx
-│   ├── stats-card.tsx
-│   ├── tabs.tsx
-│   └── topbar.tsx
+│   ├── star-rating.ui.tsx
+│   ├── stats-card.ui.tsx
+│   ├── tabs.ui.tsx
+│   └── topbar.ui.tsx
 │
 ├── widgets/                     # Componentes Widget (lógica)
+│   ├── book-card-clickable.widget.tsx
+│   ├── book-card.widget.tsx
 │   ├── book-grid.widget.tsx
 │   ├── category-filter-bar.widget.tsx
 │   ├── dashboard-shell.widget.tsx
@@ -204,31 +248,26 @@ src/shared/
 │   ├── library-tab-bar.widget.tsx
 │   └── user-dropdown.widget.tsx
 │
-├── hooks/                       # Hooks customizados
-│   ├── use-book-list.ts
-│   ├── use-books-with-cache.ts
-│   ├── use-category-filter.ts
-│   ├── use-category-icons.ts
-│   ├── use-favorites.ts
-│   ├── use-favorites-search.ts
+├── hooks/                       # Hooks customizados (compartilhados)
+│   ├── use-auth-redirect.ts
 │   ├── use-hydrated.ts
-│   ├── use-library-state.ts
-│   ├── use-library-tabs.ts
-│   ├── use-search.ts
-│   ├── use-sidebar.ts
-│   └── use-user-books.ts
+│   └── use-sidebar.ts
 │
 ├── store/                       # Zustand stores
 │   ├── category-cache.store.ts
 │   ├── favorites.store.ts
 │   ├── pagination-cache.store.ts
 │   ├── search.store.ts
-│   └── sidebar.store.ts
+│   ├── sidebar.store.ts
+│   └── user-books.store.ts
 │
 ├── config/                      # Configurações
-│   ├── providers.tsx
-│   ├── supabase.ts
-│   └── theme.ts
+│   └── supabase.ts
+│
+├── lib/                         # Bibliotecas compartilhadas
+│   ├── anonymous-persistence.ts
+│   ├── anonymous-session.ts
+│   └── permissions.ts
 │
 ├── storage/                     # Storage adapters
 │   └── use-auth-store.ts
@@ -238,8 +277,7 @@ src/shared/
     │   ├── client.ts
     │   ├── middleware.ts
     │   └── server.ts
-    ├── cn.ts
-    └── ...
+    └── cn.ts
 ```
 
 ---

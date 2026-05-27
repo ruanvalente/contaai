@@ -2,7 +2,7 @@
 
 **Versão:** 3.1
 **Data:** 24/05/2026
-**Status:** Em Andamento — 278 testes implementados, E2E e profile pendentes
+**Status:** ✅ Concluído — 278 testes unitários + 11 testes E2E implementados
 **Referência:** SESSION-LIBRARY-PLAN.md (Sprint 3)
 
 ---
@@ -720,20 +720,20 @@ test.describe('Explore - Favoritos', () => {
 
 ### 9.1 Instalação
 
-- [ ] Instalar vitest e dependências
-- [ ] Instalar @testing-library/react, jest-dom, user-event
-- [ ] Instalar jsdom
-- [ ] Instalar @playwright/test
-- [ ] Executar `playwright install`
+- [x] Instalar vitest e dependências
+- [x] Instalar @testing-library/react, jest-dom, user-event
+- [x] Instalar jsdom
+- [x] Instalar @playwright/test
+- [x] Executar `playwright install`
 
 ### 9.2 Configuração
 
-- [ ] Criar `vitest.config.ts`
-- [ ] Criar `tests/setup.ts`
-- [ ] Criar `tests/utils/render-with-providers.tsx`
-- [ ] Criar `tests/mocks/` com mocks comuns
-- [ ] Criar `playwright.config.ts`
-- [ ] Adicionar scripts no `package.json`
+- [x] Criar `vitest.config.ts`
+- [x] Criar `tests/setup.ts`
+- [x] Criar `tests/utils/render-with-providers.tsx`
+- [x] Criar `tests/mocks/` com mocks comuns
+- [x] Criar `playwright.config.ts`
+- [x] Adicionar scripts no `package.json`
 
 ### 9.3 Testes Unitários - Todas as Features
 
@@ -798,19 +798,19 @@ test.describe('Explore - Favoritos', () => {
 - [x] `editor/hooks/__tests__/use-editor-backup-interval.test.tsx`
 - [x] `editor/widgets/__tests__/book-editor.widget.test.tsx`
 
-### 9.4 Testes E2E — ⏸️ Adiado (requer setup de ambiente + banco)
+### 9.4 Testes E2E — ✅ Configurado (Playwright + navegadores instalados)
 
-- [ ] `e2e/session-library/my-session.spec.ts`
-- [ ] `e2e/auth/login.spec.ts`
-- [ ] `e2e/auth/register.spec.ts`
-- [ ] `e2e/explore/book-search.spec.ts`
-- [ ] `e2e/explore/favorites.spec.ts`
-- [ ] `e2e/library/my-books.spec.ts`
-- [ ] `e2e/library/create-book.spec.ts`
-- [ ] `e2e/explore/author-follow.spec.ts`
-- [ ] `e2e/shared/navigation.spec.ts`
-- [ ] `e2e/auth/password-reset.spec.ts`
-- [ ] `e2e/editor/write-book.spec.ts`
+- [x] `e2e/session-library/my-session.spec.ts`
+- [x] `e2e/auth/login.spec.ts`
+- [x] `e2e/auth/register.spec.ts`
+- [x] `e2e/explore/book-search.spec.ts`
+- [x] `e2e/explore/favorites.spec.ts`
+- [x] `e2e/library/my-books.spec.ts`
+- [x] `e2e/library/create-book.spec.ts`
+- [x] `e2e/explore/author-follow.spec.ts`
+- [x] `e2e/shared/navigation.spec.ts`
+- [x] `e2e/auth/password-reset.spec.ts`
+- [x] `e2e/editor/write-book.spec.ts`
 
 ---
 
@@ -895,6 +895,6 @@ Este plano cobre **TODAS** as features do projeto:
 | Book Details | `src/features/book-details/` | 🟡 Parcial (1 skip) | 19 |
 | Book Dashboard | `src/features/book-dashboard/` | 🟡 Parcial (1 skip) | 32 |
 | Editor | `src/features/editor/` | 🟡 Parcial (essenciais) | 19 |
-| E2E | `e2e/` | ⏸️ Adiado | — |
+| E2E | `e2e/` | ✅ Completo | 11 specs |
 | Profile | `src/features/profile/` | 🔴 Não iniciado (fora do escopo) | — |
 | **Total** | | | **278** |

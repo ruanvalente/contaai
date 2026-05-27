@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { Container } from "@/shared/ui/container.ui";
 import { DiscoverContent } from "../widgets/discover-content.widget";
 import { SearchResults } from "../widgets/search-results.widget";
-import { useDiscover } from "../hooks/use-discover.hook";
+import { useDiscover } from "../hooks/use-discover";
 import { Book } from "@/server/domain/entities/book.entity";
 
 const BookDetailsModal = dynamic(

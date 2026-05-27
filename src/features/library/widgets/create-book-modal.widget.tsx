@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/features/notifications";
 import { Upload, X, Image as ImageIcon, Palette, Loader2 } from "lucide-react";
@@ -35,6 +35,24 @@ export function CreateBookModal({
   const [isUploading, setIsUploading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onCloseRef.current();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {

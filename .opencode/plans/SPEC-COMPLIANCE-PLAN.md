@@ -2,7 +2,7 @@
 
 **Versão:** 1.1
 **Data:** 26/05/2026
-**Status:** Em Andamento — Fase 1 (S2) ✅ Concluída
+**Status:** ✅ Concluído — Todas as fases finalizadas
 **Referência:** STRUCTURE-IMPROVEMENT-PLAN.md (refatoração de pastas concluída)
 
 ---
@@ -232,10 +232,10 @@ export default function NotFound() {
 ```
 
 **Checklist:**
-- [ ] Criar `src/app/loading.tsx`
-- [ ] Criar `src/app/error.tsx`
-- [ ] Criar `src/app/not-found.tsx`
-- [ ] Verificar build com `bun run build`
+- [x] Criar `src/app/loading.tsx`
+- [x] Criar `src/app/error.tsx`
+- [x] Criar `src/app/not-found.tsx`
+- [x] Verificar build com `bun run build`
 
 ---
 
@@ -526,11 +526,11 @@ src/features/book-dashboard/hooks/
 ````
 
 **Checklist:**
-- [ ] Atualizar `project-structure-spec.md` seção 3 (features)
-- [ ] Atualizar `project-structure-spec.md` seção 4 (shared)
-- [ ] Atualizar `page-routing-spec.md` com rotas reais
-- [ ] Atualizar `hooks-spec.md` com hooks por feature
-- [ ] Atualizar seções de actions/ui/widgets em specs correspondentes
+- [x] Atualizar `project-structure-spec.md` seção 3 (features)
+- [x] Atualizar `project-structure-spec.md` seção 4 (shared)
+- [x] Atualizar `page-routing-spec.md` com rotas reais
+- [x] Atualizar `hooks-spec.md` com hooks por feature
+- [x] Atualizar seções de actions/ui/widgets em specs correspondentes
 
 ---
 
@@ -564,12 +564,12 @@ export default function AuthLayout({
 **Passo 3:** Verificar se há links para `/login` e `/register` no código e confirmar que continuam funcionando (rotas são as mesmas com ou sem route group).
 
 **Checklist:**
-- [ ] Criar `src/app/(auth)/`
-- [ ] Mover `login/` para `(auth)/login/`
-- [ ] Mover `register/` para `(auth)/register/`
-- [ ] Criar `(auth)/layout.tsx` (opcional)
-- [ ] Verificar links da aplicação
-- [ ] Verificar build com `bun run build`
+- [x] Criar `src/app/(auth)/`
+- [x] Mover `login/` para `(auth)/login/`
+- [x] Mover `register/` para `(auth)/register/`
+- [x] Criar `(auth)/layout.tsx` (opcional)
+- [x] Verificar links da aplicação
+- [x] Verificar build com `bun run build`
 
 ---
 
@@ -600,11 +600,11 @@ Avatar.displayName = "Avatar";
 ```
 
 **Checklist:**
-- [ ] Adicionar `displayName` em `Button`
-- [ ] Adicionar `displayName` em `BookCover`
-- [ ] Adicionar `displayName` em `BookCard`
-- [ ] Adicionar `displayName` em `Badge`
-- [ ] Adicionar `displayName` em `Avatar`
+- [x] Adicionar `displayName` em `Button`
+- [x] Adicionar `displayName` em `BookCover`
+- [x] Adicionar `displayName` em `BookCard`
+- [x] Adicionar `displayName` em `Badge`
+- [x] Adicionar `displayName` em `Avatar`
 
 ---
 
@@ -624,9 +624,9 @@ Avatar.displayName = "Avatar";
 **Passo 2:** (Alternativa) Se houver planos futuros, manter mas marcar como `📅 Planejado`.
 
 **Checklist:**
-- [ ] Remover `screens/` do spec OU marcar como planejado
-- [ ] Remover `landing/` do spec OU marcar como planejado
-- [ ] Verificar se AGENTS.md também precisa de atualização
+- [x] Remover `screens/` do spec OU marcar como planejado
+- [x] Remover `landing/` do spec OU marcar como planejado
+- [x] Verificar se AGENTS.md também precisa de atualização
 
 ---
 
@@ -637,7 +637,7 @@ Avatar.displayName = "Avatar";
 **Passo 2:** (Alternativa) Se houver planos futuros, criar arquivos placeholder com `🚧 Em construção`.
 
 **Checklist:**
-- [ ] Remover rotas `audio/` e `audio-books/` do spec OU marcar como planejado
+- [x] Remover rotas `audio/` e `audio-books/` do spec OU marcar como planejado
 
 ---
 
@@ -645,11 +645,11 @@ Avatar.displayName = "Avatar";
 
 ```
 Fase 1 — ✅ 🔴 S2: Renomear hooks .hook.ts → .ts
-Fase 2 — ⏳ 🔴 S1: Criar loading/error/not-found no root
-Fase 3 — ⏸️ 🟡 S5: Adicionar displayName nos componentes UI
-Fase 4 — ⏸️ 🟡 S4: Criar route group (auth)/
-Fase 5 — ⏸️ 🟡 S3: Atualizar specs
-Fase 6 — ⏸️ 🟢 S6+S7: Limpar referências obsoletas
+Fase 2 — ✅ 🔴 S1: Criar loading/error/not-found no root
+Fase 3 — ✅ 🟡 S5: Adicionar displayName nos componentes UI
+Fase 4 — ✅ 🟡 S4: Criar route group (auth)/
+Fase 5 — ✅ 🟡 S3: Atualizar specs
+Fase 6 — ✅ 🟢 S6+S7: Limpar referências obsoletas
 ```
 
 **Justificativa da ordem:**
@@ -689,14 +689,14 @@ Fase 6 — ⏸️ 🟢 S6+S7: Limpar referências obsoletas
 
 ## 7. Critérios de Sucesso
 
-- [ ] Score de conformidade >= 95%
-- [ ] `bun run build` passa sem erros
-- [ ] `bun run lint` passa sem erros
+- [x] Score de conformidade >= 95%
+- [x] `bun run build` passa sem erros
+- [x] `bun run lint` passa sem erros
 - [x] Nenhum hook com extensão `.hook.ts`
-- [ ] `loading.tsx`, `error.tsx`, `not-found.tsx` presentes em `src/app/`
-- [ ] Todos os componentes com `forwardRef` têm `displayName`
-- [ ] Specs refletem a estrutura real do código
-- [ ] Rotas `login/` e `register/` funcionam inalteradas
+- [x] `loading.tsx`, `error.tsx`, `not-found.tsx` presentes em `src/app/`
+- [x] Todos os componentes com `forwardRef` têm `displayName`
+- [x] Specs refletem a estrutura real do código
+- [x] Rotas `login/` e `register/` funcionam inalteradas
 
 ---
 

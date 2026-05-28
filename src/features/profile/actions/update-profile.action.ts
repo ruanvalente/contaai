@@ -1,6 +1,8 @@
 "use server";
 
-import { UserResult } from "@/server/domain/entities/user.entity";
+import type { User } from "@/server/domain/entities/user.entity";
+import type { ActionResult } from "@/shared/types/action-result";
+import { success, failure } from "@/shared/types/action-result";
 
 export type UpdateProfileParams = {
   name?: string;
@@ -11,18 +13,18 @@ export type UpdateProfileParams = {
 
 export async function updateProfileAction(
   params: UpdateProfileParams,
-): Promise<UserResult> {
+): Promise<ActionResult<User>> {
   const { updateUserProfile } = await import("./profile.actions");
   const { uploadAvatar } = await import("./upload-avatar.action");
 
   const { name, bio, avatarUrl, avatarFile } = params;
 
   if (name !== undefined && name.length > 100) {
-    return { success: false, error: "Nome deve ter no máximo 100 caracteres." };
+    return failure("INVALID_NAME", "Nome deve ter no máximo 100 caracteres.");
   }
 
   if (bio !== undefined && bio.length > 500) {
-    return { success: false, error: "Bio deve ter no máximo 500 caracteres." };
+    return failure("INVALID_BIO", "Bio deve ter no máximo 500 caracteres.");
   }
 
   let finalAvatarUrl = avatarUrl;
@@ -32,26 +34,21 @@ export async function updateProfileAction(
     const profile = await getUserProfile();
 
     if (!profile) {
-      return { success: false, error: "Usuário não autenticado." };
+      return failure("NOT_AUTHENTICATED", "Usuário não autenticado.");
     }
 
     const uploadResult = await uploadAvatar(avatarFile, profile.id);
 
-    if (!uploadResult.success) {
-      return {
-        success: false,
-        error: uploadResult.error || "Erro ao fazer upload da imagem.",
-      };
+    if (!uploadResult.ok) {
+      return failure("UPLOAD_FAILED", uploadResult.error.message || "Erro ao fazer upload da imagem.");
     }
 
-    finalAvatarUrl = uploadResult.url;
+    finalAvatarUrl = uploadResult.data.url;
   }
 
-  const result = await updateUserProfile({
+  return await updateUserProfile({
     name: name || undefined,
     bio: bio || undefined,
     avatarUrl: finalAvatarUrl || undefined,
   });
-
-  return result;
 }

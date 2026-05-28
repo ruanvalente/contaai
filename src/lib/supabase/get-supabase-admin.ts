@@ -1,31 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-
-export async function getSupabaseAdmin() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY 
-    || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing");
-  }
-  
-  const cookieStore = await cookies();
-  
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Server Components
-        }
-      },
-    },
-  });
-}
+/**
+ * @deprecated Use `@/lib/supabase/admin-client` instead.
+ * This file is kept for backward compatibility during migration.
+ * All imports should be updated to use `@/lib/supabase/admin-client`.
+ */
+export { getSupabaseAdmin } from "./admin-client";

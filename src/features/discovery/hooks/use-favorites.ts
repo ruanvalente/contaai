@@ -66,7 +66,7 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
     try {
       const sessionId = getAnonymousSessionId();
       const result = await addToFavorites(book.id, sessionId);
-      if (result.success) {
+      if (result.ok) {
         addFavoriteToStore(book.id);
         const user = useAuthStore.getState().user;
         if (user) {
@@ -75,7 +75,7 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
           toast.success(`"${book.title}" favoritado! Faça login para acessar em outros dispositivos.`);
         }
       } else {
-        toast.error(result.error || "Erro ao adicionar aos favoritos");
+        toast.error(result.error.message || "Erro ao adicionar aos favoritos");
       }
     } catch {
       toast.error("Erro ao adicionar aos favoritos");
@@ -89,11 +89,11 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
     try {
       const sessionId = getAnonymousSessionId();
       const result = await removeFromFavorites(bookId, sessionId);
-      if (result.success) {
+      if (result.ok) {
         removeFavoriteFromStore(bookId);
         toast.success("Removido dos favoritos");
       } else {
-        toast.error(result.error || "Erro ao remover dos favoritos");
+        toast.error(result.error.message || "Erro ao remover dos favoritos");
       }
     } catch {
       toast.error("Erro ao remover dos favoritos");

@@ -1,11 +1,9 @@
 'use client';
 
 import { toast } from '@/features/notifications';
-import { useCallback, useState } from 'react';
-
-export type ActionResult<T = unknown> = 
-  | { success: true; data?: T }
-  | { success: false; error?: string };
+import { useCallback } from 'react';
+import type { ActionResult } from '@/shared/types/action-result';
+import { failure } from '@/shared/types/action-result';
 
 export interface ActionOptions {
   loadingMessage?: string;
@@ -29,20 +27,20 @@ export function useActionToast() {
     try {
       const result = await promise;
       
-      if (result.success) {
+      if (result.ok) {
         toast.dismiss();
         toast.success(successMessage);
       } else {
         toast.dismiss();
-        toast.error(result.error || errorMessage);
+        toast.error(result.error.message || errorMessage);
       }
       
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro interno';
+      const msg = error instanceof Error ? error.message : 'Erro interno';
       toast.dismiss();
-      toast.error(errorMessage);
-      return { success: false, error: errorMessage };
+      toast.error(msg);
+      return failure("UNKNOWN", msg);
     }
   }, []);
 

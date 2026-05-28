@@ -143,7 +143,7 @@ describe('useFavorites', () => {
   })
 
   it('addFavorite adds book to favorites', async () => {
-    mockAddToFavoritesAction.mockResolvedValue({ success: true })
+    mockAddToFavoritesAction.mockResolvedValue({ ok: true })
 
     const { result } = renderHook(() => useFavorites())
 
@@ -156,7 +156,7 @@ describe('useFavorites', () => {
   })
 
   it('addFavorite does not add to store when action fails', async () => {
-    mockAddToFavoritesAction.mockResolvedValue({ success: false, error: 'Error' })
+    mockAddToFavoritesAction.mockResolvedValue({ ok: false, error: { code: 'ERROR', message: 'Error' } })
 
     const { result } = renderHook(() => useFavorites())
 
@@ -168,7 +168,7 @@ describe('useFavorites', () => {
   })
 
   it('removeFavorite removes book from favorites', async () => {
-    mockRemoveFromFavoritesAction.mockResolvedValue({ success: true })
+    mockRemoveFromFavoritesAction.mockResolvedValue({ ok: true })
     mockFavoritedIds = new Set(['book-1'])
 
     const { result } = renderHook(() => useFavorites())
@@ -183,7 +183,7 @@ describe('useFavorites', () => {
 
   it('toggleFavorite removes when already favorited', async () => {
     mockIsFavoritedFromStore.mockReturnValue(true)
-    mockRemoveFromFavoritesAction.mockResolvedValue({ success: true })
+    mockRemoveFromFavoritesAction.mockResolvedValue({ ok: true })
 
     const { result } = renderHook(() => useFavorites())
 
@@ -197,7 +197,7 @@ describe('useFavorites', () => {
 
   it('toggleFavorite adds when not favorited', async () => {
     mockIsFavoritedFromStore.mockReturnValue(false)
-    mockAddToFavoritesAction.mockResolvedValue({ success: true })
+    mockAddToFavoritesAction.mockResolvedValue({ ok: true })
 
     const { result } = renderHook(() => useFavorites())
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin-client";
 
 export async function getAuthorStats(authorName: string, bookId?: string) {
   const supabase = await getSupabaseAdmin();

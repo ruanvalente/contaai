@@ -118,7 +118,7 @@ vi.mock('@/shared/storage/use-auth-store', () => ({
 
 vi.mock('@/features/book-details/actions/rate-book.action', () => ({
   getUserRating: vi.fn().mockResolvedValue(null),
-  rateBook: vi.fn().mockResolvedValue({ success: true, newRating: 4, ratingCount: 10 }),
+  rateBook: vi.fn().mockResolvedValue({ ok: true, data: { newRating: 4, ratingCount: 10 } }),
 }))
 
 import { BookDetailsPanelWidget } from '../book-details-panel.widget'

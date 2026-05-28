@@ -47,14 +47,14 @@ export async function syncPendingActions(userId: string): Promise<{ synced: numb
       if (action.type === 'follow') {
         const { followAuthor } = await import('@/features/author-follow/actions/author-follow.actions')
         const result = await followAuthor(action.payload.authorName as string)
-        if (result.success) synced++
+        if (result.ok) synced++
         else failed++
       } else if (action.type === 'favorite') {
         const { addToFavorites } = await import('@/features/discovery/actions/favorites.actions')
         const result = await addToFavorites(
           action.payload.bookId as string,
         )
-        if (result.success) synced++
+        if (result.ok) synced++
         else failed++
       } else if (action.type === 'rate') {
         const { rateBook } = await import('@/features/book-details/actions/rate-book.action')
@@ -62,7 +62,7 @@ export async function syncPendingActions(userId: string): Promise<{ synced: numb
           action.payload.bookId as string,
           action.payload.rating as number,
         )
-        if (result.success) synced++
+        if (result.ok) synced++
         else failed++
       }
     } catch {

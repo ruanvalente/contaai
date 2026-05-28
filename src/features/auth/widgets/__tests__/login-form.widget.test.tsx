@@ -124,7 +124,7 @@ describe('LoginFormWidget', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockSignInWithEmail.mockResolvedValue({ success: true, user: { id: 'user-1', email: 'test@test.com' } })
+    mockSignInWithEmail.mockResolvedValue({ ok: true, data: { user: { id: 'user-1', email: 'test@test.com' } } })
     mockMigrateSessionDataAction.mockResolvedValue({
       success: true,
       migrated: { follows: 0, ratings: 0, favorites: 0 },
@@ -148,7 +148,7 @@ describe('LoginFormWidget', () => {
   })
 
   it('shows error message when signIn fails', async () => {
-    mockSignInWithEmail.mockResolvedValue({ success: false, error: 'E-mail ou senha incorretos' })
+    mockSignInWithEmail.mockResolvedValue({ ok: false, error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'E-mail ou senha incorretos' } })
 
     render(<LoginFormWidget />)
 
@@ -247,7 +247,7 @@ describe('LoginFormWidget', () => {
   })
 
   it('shows error for unknown error from signIn', async () => {
-    mockSignInWithEmail.mockResolvedValue({ success: false })
+    mockSignInWithEmail.mockResolvedValue({ ok: false, error: { code: 'UNKNOWN', message: '' } })
 
     render(<LoginFormWidget />)
 
@@ -266,7 +266,7 @@ describe('LoginFormWidget', () => {
       payload: { bookId: 'book-1' },
       timestamp: Date.now(),
     })
-    mockAddToFavorites.mockResolvedValue({ success: true })
+    mockAddToFavorites.mockResolvedValue({ ok: true })
 
     render(<LoginFormWidget />)
 
@@ -285,8 +285,8 @@ describe('LoginFormWidget', () => {
       { type: 'follow', payload: { authorName: 'Author Name' }, timestamp: Date.now() },
       { type: 'rate', payload: { bookId: 'book-2', rating: 5 }, timestamp: Date.now() },
     ])
-    mockFollowAuthor.mockResolvedValue({ success: true })
-    mockRateBook.mockResolvedValue({ success: true })
+    mockFollowAuthor.mockResolvedValue({ ok: true })
+    mockRateBook.mockResolvedValue({ ok: true })
 
     render(<LoginFormWidget />)
 

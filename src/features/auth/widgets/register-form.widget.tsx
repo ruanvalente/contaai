@@ -43,11 +43,11 @@ export function RegisterFormWidget() {
 
       toast.dismiss(toastId);
 
-      if (!result.success) {
-        setError(result.error);
-        toast.error(result.error);
+      if (!result.ok) {
+        setError(result.error.message);
+        toast.error(result.error.message);
         setIsLoading(false);
-      } else if (result.needsConfirmation) {
+      } else if (result.data.needsConfirmation) {
         setSuccessMessage("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
         toast.success("Conta criada! Verifique seu e-mail.");
         setIsLoading(false);

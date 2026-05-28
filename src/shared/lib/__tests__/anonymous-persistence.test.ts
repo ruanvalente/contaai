@@ -135,7 +135,7 @@ describe('anonymous-persistence', () => {
     })
 
     it('processes favorite actions successfully', async () => {
-      mockAddToFavorites.mockResolvedValue({ success: true })
+      mockAddToFavorites.mockResolvedValue({ ok: true })
 
       savePendingAction(createAction({ type: 'favorite', payload: { bookId: 'book-1' } }))
 
@@ -145,7 +145,7 @@ describe('anonymous-persistence', () => {
     })
 
     it('handles failed actions gracefully', async () => {
-      mockAddToFavorites.mockResolvedValue({ success: false })
+      mockAddToFavorites.mockResolvedValue({ ok: false })
 
       savePendingAction(createAction({ type: 'favorite', payload: { bookId: 'book-1' } }))
 
@@ -155,7 +155,7 @@ describe('anonymous-persistence', () => {
     })
 
     it('clears all actions when all succeed', async () => {
-      mockAddToFavorites.mockResolvedValue({ success: true })
+      mockAddToFavorites.mockResolvedValue({ ok: true })
 
       savePendingAction(createAction({ type: 'favorite', payload: { bookId: 'book-1' } }))
       savePendingAction(createAction({ type: 'favorite', payload: { bookId: 'book-2' } }))

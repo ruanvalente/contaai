@@ -55,7 +55,7 @@ export function LoginFormWidget() {
       try {
         if (legacyAction.type === "follow" && legacyAction.payload.authorName) {
           const result = await followAuthor(legacyAction.payload.authorName as string);
-          if (result.success) synced++;
+          if (result.ok) synced++;
         } else if (legacyAction.type === "favorite" && legacyAction.payload.bookId) {
           await addToFavorites(
             legacyAction.payload.bookId as string,
@@ -66,7 +66,7 @@ export function LoginFormWidget() {
             legacyAction.payload.bookId as string,
             legacyAction.payload.rating as number,
           );
-          if (result.success) synced++;
+          if (result.ok) synced++;
         }
       } catch (err) {
         console.error("Error processing legacy pending action:", err);
@@ -80,7 +80,7 @@ export function LoginFormWidget() {
         try {
           if (action.type === "follow" && action.payload.authorName) {
             const result = await followAuthor(action.payload.authorName as string);
-            if (result.success) synced++;
+            if (result.ok) synced++;
           } else if (action.type === "favorite" && action.payload.bookId) {
             await addToFavorites(
               action.payload.bookId as string,
@@ -91,7 +91,7 @@ export function LoginFormWidget() {
               action.payload.bookId as string,
               action.payload.rating as number,
             );
-            if (result.success) synced++;
+            if (result.ok) synced++;
           }
         } catch (err) {
           console.error("Error processing pending action:", err);
@@ -115,8 +115,8 @@ export function LoginFormWidget() {
 
     setIsLoading(false);
 
-    if (!result.success) {
-      setError(result.error || "Erro ao fazer login");
+    if (!result.ok) {
+      setError(result.error.message || "Erro ao fazer login");
     } else {
       toast.loading("Sincronizando dados...");
 

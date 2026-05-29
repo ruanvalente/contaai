@@ -1,7 +1,7 @@
 "use server";
 
 import { cache } from "react";
-import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin-client";
 import { mapToBookEntity } from "@/server/infrastructure/mappers/book.mapper";
 import { mapToBookFromUserBook } from "@/server/infrastructure/mappers/book.mapper";
 import type {

@@ -5,14 +5,15 @@ import { createClient } from '@/utils/supabase/client';
 import { getAnonymousSessionId } from '@/shared/lib/anonymous-session';
 import { toast } from '@/features/notifications';
 import { useAuthStore } from '@/shared/storage/use-auth-store';
+import type { ActionResult } from '@/shared/types/action-result';
 
 type FollowState = {
   followedIds: string[];
   isLoading: boolean;
   isInitialized: boolean;
   initialize: () => Promise<void>;
-  follow: (authorName: string) => Promise<{ success: boolean; error?: string }>;
-  unfollow: (authorName: string) => Promise<{ success: boolean; error?: string }>;
+  follow: (authorName: string) => Promise<ActionResult>;
+  unfollow: (authorName: string) => Promise<ActionResult>;
   isFollowing: (authorName: string) => boolean;
 };
 
@@ -58,7 +59,7 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
       const sessionId = getAnonymousSessionId();
       const { followAuthor } = await import('@/features/author-follow/actions/author-follow.actions');
       const result = await followAuthor(authorName, sessionId);
-      if (result.success) {
+      if (result.ok) {
         set((state) => ({ followedIds: [...state.followedIds, authorName] }));
         const user = useAuthStore.getState().user;
         if (user) {
@@ -78,7 +79,7 @@ export const useAuthorFollowStore = create<FollowState>((set, get) => ({
       const sessionId = getAnonymousSessionId();
       const { unfollowAuthor } = await import('@/features/author-follow/actions/author-follow.actions');
       const result = await unfollowAuthor(authorName, sessionId);
-      if (result.success) {
+      if (result.ok) {
         set((state) => ({ followedIds: state.followedIds.filter((id) => id !== authorName) }));
       }
       return result;

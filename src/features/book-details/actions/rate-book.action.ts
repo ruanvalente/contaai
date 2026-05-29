@@ -2,25 +2,22 @@
 
 import { getCurrentUserIdOptional } from '@/utils/auth/get-current-user.server'
 import { getSupabaseServerClient } from '@/utils/supabase/server'
-
-export type RateBookResult =
-  | { success: true; newRating: number; ratingCount: number }
-  | { success: false; error: string }
+import type { ActionResult } from '@/shared/types/action-result'
+import { success, failure } from '@/shared/types/action-result'
 
 export async function rateBook(
   bookId: string,
   rating: number,
   sessionId?: string
-): Promise<RateBookResult> {
+): Promise<ActionResult<{ newRating: number; ratingCount: number }>> {
   if (rating < 1 || rating > 5) {
-    return { success: false, error: 'Avaliação deve ser entre 1 e 5 estrelas' }
+    return failure('INVALID_RATING', 'Avaliação deve ser entre 1 e 5 estrelas')
   }
 
   try {
     const userId = await getCurrentUserIdOptional()
     const supabase = await getSupabaseServerClient()
 
-    // Check if book exists in unified_books view (books + user_books)
     const { data: bookExists } = await supabase
       .from('unified_books')
       .select('id')
@@ -28,11 +25,10 @@ export async function rateBook(
       .single()
 
     if (!bookExists) {
-      return { success: false, error: 'Livro não encontrado para avaliação' }
+      return failure('BOOK_NOT_FOUND', 'Livro não encontrado para avaliação')
     }
 
-    // Build rating data
-    const ratingData: any = {
+    const ratingData: Record<string, unknown> = {
       book_id: bookId,
       rating: rating,
     }
@@ -47,7 +43,6 @@ export async function rateBook(
       ratingData.rated_by_type = 'user'
       query = query.eq('user_id', userId)
     } else {
-      // Use provided session_id or generate new one
       const finalSessionId = sessionId || ('anonymous-' + Math.random().toString(36).substring(7))
       ratingData.session_id = finalSessionId
       ratingData.rated_by_type = 'anonymous'
@@ -55,17 +50,15 @@ export async function rateBook(
       query = query.eq('session_id', finalSessionId).is('user_id', null)
     }
 
-    // Check if rating already exists
     const { data: existing } = await query.single()
 
     let error
     if (existing?.id) {
-      // UPDATE existing rating
-      const updateData: any = { rating: rating }
+      const updateData: Record<string, unknown> = { rating: rating }
       if (userId) {
         updateData.user_id = userId
       } else {
-        updateData.session_id = ratingData.session_id
+        updateData.session_id = ratingData.session_id as string
         updateData.user_id = null
       }
 
@@ -75,7 +68,6 @@ export async function rateBook(
         .eq('id', existing.id)
       error = result.error
     } else {
-      // INSERT new rating
       const result = await supabase
         .from('ratings')
         .insert(ratingData)
@@ -84,24 +76,22 @@ export async function rateBook(
 
     if (error) {
       console.error('Error rating book:', error)
-      return { success: false, error: 'Erro ao avaliar livro' }
+      return failure('RATE_ERROR', 'Erro ao avaliar livro')
     }
 
-    // Buscar média atualizada (trigger atualiza automaticamente)
     const { data: bookData } = await supabase
       .from('unified_books')
       .select('rating, rating_count')
       .eq('id', bookId)
       .single()
 
-    return { 
-      success: true, 
+    return success({ 
       newRating: bookData?.rating || rating, 
       ratingCount: bookData?.rating_count || 0 
-    }
+    })
   } catch (err) {
     console.error('Error in rateBook:', err)
-    return { success: false, error: 'Erro interno' }
+    return failure('RATE_ERROR', 'Erro interno')
   }
 }
 

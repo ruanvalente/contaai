@@ -68,7 +68,7 @@ describe('RegisterFormWidget', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockSignUpWithEmail.mockResolvedValue({ success: true, needsConfirmation: false })
+    mockSignUpWithEmail.mockResolvedValue({ ok: true, data: { needsConfirmation: false } })
   })
 
   it('renders the register form with all elements', () => {
@@ -133,7 +133,7 @@ describe('RegisterFormWidget', () => {
   })
 
   it('shows confirmation message when needsConfirmation is true', async () => {
-    mockSignUpWithEmail.mockResolvedValue({ success: true, needsConfirmation: true })
+    mockSignUpWithEmail.mockResolvedValue({ ok: true, data: { needsConfirmation: true } })
 
     render(<RegisterFormWidget />)
 
@@ -150,7 +150,7 @@ describe('RegisterFormWidget', () => {
   })
 
   it('shows error when signUp returns error', async () => {
-    mockSignUpWithEmail.mockResolvedValue({ success: false, error: 'Este e-mail já está cadastrado' })
+    mockSignUpWithEmail.mockResolvedValue({ ok: false, error: { code: 'EMAIL_EXISTS', message: 'Este e-mail já está cadastrado' } })
 
     render(<RegisterFormWidget />)
 

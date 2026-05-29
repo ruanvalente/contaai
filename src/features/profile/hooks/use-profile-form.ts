@@ -111,12 +111,12 @@ export function useProfileForm(userId?: string): UseProfileFormReturn {
           avatarFile: selectedFile || undefined,
         });
 
-        if (!result.success) {
-          setError(result.error || "Erro ao atualizar perfil.");
+        if (!result.ok) {
+          setError(result.error.message || "Erro ao atualizar perfil.");
           return;
         }
 
-        setProfile(result.user);
+        setProfile(result.data);
         setSelectedFile(null);
         setSuccess("Perfil atualizado com sucesso!");
       });

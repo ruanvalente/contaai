@@ -3,7 +3,7 @@
 import { GetBooksUseCase } from "@/server/domain/usecases/get-books.usecase";
 import { SupabaseBookRepository } from "@/server/infrastructure/database/supabase-book.repository";
 import { Book, BookCategory } from "@/server/domain/entities/book.entity";
-import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin-client";
 import { mapToBookFromUserBook } from "@/server/infrastructure/mappers/book.mapper";
 
 const bookRepository = new SupabaseBookRepository();

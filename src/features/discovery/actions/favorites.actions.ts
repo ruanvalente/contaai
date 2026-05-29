@@ -2,6 +2,8 @@
 
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import { SupabaseFavoriteRepository } from "@/server/infrastructure/database";
+import type { ActionResult } from "@/shared/types/action-result";
+import { success, failure } from "@/shared/types/action-result";
 
 const favoriteRepository = new SupabaseFavoriteRepository();
 
@@ -20,42 +22,42 @@ export type UserFavorite = {
 export async function addToFavorites(
   bookId: string,
   sessionId?: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<ActionResult> {
   try {
     const userId = await getCurrentUserIdOptional();
 
-    const success = await favoriteRepository.add(
+    const ok = await favoriteRepository.add(
       userId ? userId : (sessionId || `anonymous-${Math.random().toString(36).substring(7)}`), 
       { id: bookId }
     );
 
-    return success ? { success: true } : { success: false, error: "Erro ao adicionar aos favoritos" };
+    return ok ? success(undefined) : failure("ADD_FAVORITE_FAILED", "Erro ao adicionar aos favoritos");
   } catch (err) {
     console.error("Error in addToFavorites:", err);
-    return { success: false, error: "Erro interno. Tente novamente." };
+    return failure("ADD_FAVORITE_ERROR", "Erro interno. Tente novamente.");
   }
 }
 
 export async function removeFromFavorites(
   bookId: string,
   sessionId?: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<ActionResult> {
   try {
     const userId = await getCurrentUserIdOptional();
     
     if (!userId && !sessionId) {
-      return { success: false, error: "Faça login para remover favoritos" };
+      return failure("NOT_AUTHENTICATED", "Faça login para remover favoritos");
     }
     
-    const success = await favoriteRepository.remove(
+    const ok = await favoriteRepository.remove(
       userId ? userId : sessionId!,
       bookId
     );
 
-    return success ? { success: true } : { success: false, error: "Erro ao remover dos favoritos" };
+    return ok ? success(undefined) : failure("REMOVE_FAVORITE_FAILED", "Erro ao remover dos favoritos");
   } catch (err) {
     console.error("Error in removeFromFavorites:", err);
-    return { success: false, error: "Erro interno. Tente novamente." };
+    return failure("REMOVE_FAVORITE_ERROR", "Erro interno. Tente novamente.");
   }
 }
 

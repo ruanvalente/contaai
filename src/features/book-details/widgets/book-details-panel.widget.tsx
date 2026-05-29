@@ -115,7 +115,7 @@ export function BookDetailsPanelWidget({
     const sessionId = getAnonymousSessionId();
     import('@/features/book-details/actions/rate-book.action').then(({ rateBook }) => {
       rateBook(book!.id, rating, sessionId).then(result => {
-        if (result.success) {
+        if (result.ok) {
           const user = useAuthStore.getState().user;
           if (!user) {
             toast.success('Avaliação salva! Faça login para sincronizar com sua conta.');

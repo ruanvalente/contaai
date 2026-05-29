@@ -1,8 +1,11 @@
 "use server";
 
-import { User, UpdateUserInput, UserResult } from "@/server/domain/entities/user.entity";
+import type { User } from "@/server/domain/entities/user.entity";
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import { SupabaseUserRepository } from "@/server/infrastructure/database";
+import type { ActionResult } from "@/shared/types/action-result";
+import { success, failure } from "@/shared/types/action-result";
+import { updateProfileSchema } from "@/features/profile/schemas/profile.schema";
 
 const userRepository = new SupabaseUserRepository();
 
@@ -20,28 +23,26 @@ export async function getUserProfile(): Promise<User | null> {
 }
 
 export async function updateUserProfile(
-  data: UpdateUserInput
-): Promise<UserResult> {
+  data: Record<string, unknown>
+): Promise<ActionResult<User>> {
+  const parsed = updateProfileSchema.safeParse(data);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return failure("INVALID_INPUT", issue.message);
+  }
+
   try {
     const userId = await getCurrentUserIdOptional();
 
     if (!userId) {
-      return { success: false, error: "Usuário não autenticado." };
+      return failure("NOT_AUTHENTICATED", "Usuário não autenticado.");
     }
 
-    if (data.name !== undefined && data.name.length > 100) {
-      return { success: false, error: "Nome deve ter no máximo 100 caracteres." };
-    }
+    const user = await userRepository.update(userId, parsed.data);
 
-    if (data.bio !== undefined && data.bio.length > 500) {
-      return { success: false, error: "Bio deve ter no máximo 500 caracteres." };
-    }
-
-    const user = await userRepository.update(userId, data);
-
-    return { success: true, user };
+    return success(user);
   } catch (err) {
     console.error("Error in updateUserProfile:", err);
-    return { success: false, error: "Erro interno ao atualizar perfil." };
+    return failure("UPDATE_PROFILE_ERROR", "Erro interno ao atualizar perfil.");
   }
 }

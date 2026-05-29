@@ -64,8 +64,8 @@ describe('useAuthorFollowStore', () => {
     mockAuthState.isInitialized = true
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null })
     mockGetSessionId.mockReturnValue('session-abc')
-    mockFollowAuthor.mockResolvedValue({ success: true })
-    mockUnfollowAuthor.mockResolvedValue({ success: true })
+    mockFollowAuthor.mockResolvedValue({ ok: true } as any)
+    mockUnfollowAuthor.mockResolvedValue({ ok: true } as any)
     mockIs.mockResolvedValue({ data: [], error: null })
     mockEq.mockImplementation((key: string) => {
       if (key === 'user_id') return { data: [{ author_name: 'Author 1' }], error: null }
@@ -181,7 +181,7 @@ describe('useAuthorFollowStore', () => {
     })
 
     it('does not update state when followAuthor fails', async () => {
-      mockFollowAuthor.mockResolvedValue({ success: false, error: 'Error' })
+      mockFollowAuthor.mockResolvedValue({ ok: false, error: { code: 'ERROR', message: 'Error' } } as any)
 
       act(() => {
         useAuthorFollowStore.getState().follow('Author 2')
@@ -249,7 +249,7 @@ describe('useAuthorFollowStore', () => {
     })
 
     it('does not update state when unfollowAuthor fails', async () => {
-      mockUnfollowAuthor.mockResolvedValue({ success: false, error: 'Error' })
+      mockUnfollowAuthor.mockResolvedValue({ ok: false, error: { code: 'ERROR', message: 'Error' } } as any)
 
       act(() => {
         useAuthorFollowStore.getState().unfollow('Author 1')

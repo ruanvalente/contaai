@@ -1,126 +1,104 @@
 "use server";
 
-async function getSupabaseServerClient() {
-  const { createServerClient } = await import("@supabase/ssr");
-  const { cookies } = await import("next/headers");
+import { getSupabaseServerClient } from "@/utils/supabase/server";
+import type { ActionResult } from "@/shared/types/action-result";
+import { success, failure } from "@/shared/types/action-result";
+import { signInSchema, signUpSchema } from "@/features/auth/schemas/auth.schema";
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing");
-  }
-
-  const cookieStore = await cookies();
-
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Ignore errors from Server Components
-        }
-      },
-    },
-  });
-}
-
-export type SignInResult = 
-  | { success: true; user: { id: string; email: string } }
-  | { success: false; error: string };
+type SignInData = {
+  user: { id: string; email: string };
+};
 
 export async function signInWithEmail(
   email: string,
   password: string
-): Promise<SignInResult> {
+): Promise<ActionResult<SignInData>> {
+  const parsed = signInSchema.safeParse({ email, password });
+  if (!parsed.success) {
+    return failure("INVALID_INPUT", "E-mail ou senha inválidos.");
+  }
+
   try {
     const supabase = await getSupabaseServerClient();
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: parsed.data.email,
+      password: parsed.data.password,
     });
 
     if (error) {
-      return { success: false, error: getErrorMessage(error.code) };
+      return failure("SIGN_IN_FAILED", getErrorMessage(error.code));
     }
 
-    return {
-      success: true,
+    return success({
       user: {
         id: data.user.id,
         email: data.user.email!,
       },
-    };
+    });
   } catch (err) {
-    console.error("Error in signInWithEmail:", err);
-    return { success: false, error: "Erro interno. Tente novamente." };
+    console.error("[signInWithEmail]", err);
+    return failure("SIGN_IN_ERROR", "Erro interno. Tente novamente.");
   }
 }
 
-export type SignUpResult = 
-  | { success: true; needsConfirmation: boolean }
-  | { success: false; error: string };
+type SignUpData = {
+  needsConfirmation: boolean;
+};
 
 export async function signUpWithEmail(
   email: string,
   password: string,
   name?: string
-): Promise<SignUpResult> {
-  try {
-    if (password.length < 6) {
-      return { success: false, error: "A senha deve ter pelo menos 6 caracteres" };
-    }
+): Promise<ActionResult<SignUpData>> {
+  const parsed = signUpSchema.safeParse({ email, password, name });
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return failure("INVALID_INPUT", issue.message);
+  }
 
+  try {
     const supabase = await getSupabaseServerClient();
 
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: parsed.data.email,
+      password: parsed.data.password,
       options: {
         data: {
-          full_name: name || "",
+          full_name: parsed.data.name || "",
         },
       },
     });
 
     if (error) {
-      return { success: false, error: getErrorMessage(error.code) };
+      return failure("SIGN_UP_FAILED", getErrorMessage(error.code));
     }
 
     if (data.user && !data.session) {
-      return { success: true, needsConfirmation: true };
+      return success({ needsConfirmation: true });
     }
 
-    return { success: true, needsConfirmation: false };
+    return success({ needsConfirmation: false });
   } catch (err) {
-    console.error("Error in signUpWithEmail:", err);
-    return { success: false, error: "Erro interno. Tente novamente." };
+    console.error("[signUpWithEmail]", err);
+    return failure("SIGN_UP_ERROR", "Erro interno. Tente novamente.");
   }
 }
 
-export type SignOutResult = { success: boolean };
-
-export async function signOutAction(): Promise<SignOutResult> {
+export async function signOutAction(): Promise<ActionResult> {
   try {
     const supabase = await getSupabaseServerClient();
     await supabase.auth.signOut();
-    return { success: true };
+    return success(undefined);
   } catch (err) {
-    console.error("Error in signOutAction:", err);
-    return { success: false };
+    console.error("[signOutAction]", err);
+    return failure("SIGN_OUT_ERROR", "Erro ao sair.");
   }
 }
 
 function getErrorMessage(code: string | undefined): string {
   if (!code) return "Erro ao processar solicitação. Tente novamente.";
-  
+
   const errorMessages: Record<string, string> = {
     "invalid_credentials": "E-mail ou senha incorretos",
     "user_not_found": "Usuário não encontrado",
@@ -138,8 +116,8 @@ function getErrorMessage(code: string | undefined): string {
 export async function verifyAuthAction() {
   try {
     const supabase = await getSupabaseServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    return { authenticated: !!session };
+    const { data: { user } } = await supabase.auth.getUser();
+    return { authenticated: !!user };
   } catch {
     return { authenticated: false };
   }

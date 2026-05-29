@@ -2,20 +2,18 @@
 
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
-
-export type AuthorFollowResult =
-  | { success: boolean; error?: string }
-  | { success: false; error: string };
+import type { ActionResult } from "@/shared/types/action-result";
+import { success, failure } from "@/shared/types/action-result";
 
 export async function followAuthor(
   authorName: string,
   sessionId?: string,
-): Promise<AuthorFollowResult> {
+): Promise<ActionResult> {
   try {
     const userId = await getCurrentUserIdOptional();
     const supabase = await getSupabaseServerClient();
 
-    const insertData: any = {
+    const insertData: Record<string, unknown> = {
       author_name: authorName,
       created_at: new Date().toISOString(),
     };
@@ -26,30 +24,30 @@ export async function followAuthor(
       insertData.session_id = sessionId;
       insertData.user_id = null;
     } else {
-      return { success: false, error: "Sessão inválida" };
+      return failure("INVALID_SESSION", "Sessão inválida");
     }
 
     const { error } = await supabase.from("author_follow").insert(insertData);
 
     if (error) {
       if (error.code === "23505") {
-        return { success: false, error: "Você já segue este autor" };
+        return failure("ALREADY_FOLLOWING", "Você já segue este autor");
       }
       console.error("Error in followAuthor:", error);
-      return { success: false, error: "Erro ao seguir autor" };
+      return failure("FOLLOW_ERROR", "Erro ao seguir autor");
     }
 
-    return { success: true };
+    return success(undefined);
   } catch (err) {
     console.error("Error in followAuthor:", err);
-    return { success: false, error: "Erro interno" };
+    return failure("FOLLOW_ERROR", "Erro interno");
   }
 }
 
 export async function unfollowAuthor(
   authorName: string,
   sessionId?: string,
-): Promise<AuthorFollowResult> {
+): Promise<ActionResult> {
   try {
     const userId = await getCurrentUserIdOptional();
     const supabase = await getSupabaseServerClient();
@@ -62,7 +60,6 @@ export async function unfollowAuthor(
     if (userId) {
       query = query.eq("user_id", userId);
     } else if (sessionId) {
-      // For anonymous, use session_id
       query = supabase
         .from("author_follow")
         .delete()
@@ -70,20 +67,20 @@ export async function unfollowAuthor(
         .eq("session_id", sessionId)
         .is("user_id", null);
     } else {
-      return { success: false, error: "Faça login para deixar de seguir" };
+      return failure("NOT_AUTHENTICATED", "Faça login para deixar de seguir");
     }
 
     const { error } = await query;
 
     if (error) {
       console.error("Error in unfollowAuthor:", error);
-      return { success: false, error: "Erro ao deixar de seguir" };
+      return failure("UNFOLLOW_ERROR", "Erro ao deixar de seguir");
     }
 
-    return { success: true };
+    return success(undefined);
   } catch (err) {
     console.error("Error in unfollowAuthor:", err);
-    return { success: false, error: "Erro interno" };
+    return failure("UNFOLLOW_ERROR", "Erro interno");
   }
 }
 

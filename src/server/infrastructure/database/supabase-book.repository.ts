@@ -1,6 +1,6 @@
 import { IBookRepository } from "@/server/domain/repositories/book.repository";
 import { Book, BookCategory } from "@/server/domain/entities/book.entity";
-import { getSupabaseAdmin } from "@/lib/supabase/get-supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin-client";
 import { mapToBookEntity } from "../mappers/book.mapper";
 
 export class SupabaseBookRepository implements IBookRepository {

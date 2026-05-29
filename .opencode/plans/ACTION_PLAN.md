@@ -62,43 +62,6 @@
 
 > **Objetivo:** Corrigir vulnerabilidades críticas antes de qualquer outra mudança.
 
-### 1.1 Validação de Variáveis de Ambiente na Inicialização
-
-**Problema:** `src/shared/config/supabase.ts` apenas avisa sobre vars ausentes com `console.warn`, mas a aplicação continua subindo com dados inválidos.
-
-**Solução:**
-
-> Zod já está instalado (v4.3.6). Verificar com `bun pm ls | grep zod`.
-
-Criar `src/shared/config/env.ts`:
-
-```typescript
-import { z } from "zod";
-
-const envSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url("NEXT_PUBLIC_SUPABASE_URL inválida"),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z
-    .string()
-    .min(1, "NEXT_PUBLIC_SUPABASE_ANON_KEY ausente"),
-});
-
-export const env = envSchema.parse({
-  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-});
-```
-
-Atualizar `src/shared/config/supabase.ts` para importar de `env.ts`:
-
-```typescript
-import { env } from "./env";
-// Remover verificações manuais e usar env.NEXT_PUBLIC_SUPABASE_URL diretamente
-```
-
-**Critério de conclusão:** Build falha se vars ausentes; sem `console.warn` no arquivo.
-
----
-
 ### 1.2 Ocultar Mensagens de Erro Internas do Cliente
 
 **Problema:** Actions em `src/features/*/actions/` retornam ou propagam mensagens de erro do Supabase/DB diretamente ao cliente, expondo estrutura interna.

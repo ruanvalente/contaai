@@ -152,6 +152,33 @@ export class SupabaseFavoriteRepository implements IFavoriteRepository {
     }
   }
 
+  async countByBookId(bookId: string): Promise<number> {
+    try {
+      const supabase = await getSupabaseServerClient();
+      const { data } = await supabase
+        .from("user_favorites")
+        .select("book_id")
+        .eq("book_id", bookId);
+      return data?.length || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  async clearSession(sessionId: string): Promise<boolean> {
+    try {
+      const supabase = await getSupabaseServerClient();
+      const { error } = await supabase
+        .from("user_favorites")
+        .delete()
+        .eq("session_id", sessionId)
+        .is("user_id", null);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
   async isFavorited(userId: string | null, bookId: string): Promise<boolean> {
     if (!userId) return false;
     

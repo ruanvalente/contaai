@@ -19,4 +19,6 @@ export interface IFavoriteRepository {
   remove(userId: string, bookId: string): Promise<boolean>;
   getByUser(userId: string): Promise<UserFavorite[]>;
   isFavorited(userId: string | null, bookId: string): Promise<boolean>;
+  countByBookId(bookId: string): Promise<number>;
+  clearSession(sessionId: string): Promise<boolean>;
 }

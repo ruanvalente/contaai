@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { getAuthorStats, getBookStats } from "@/features/reading/actions/get-author-stats.action";
+import { VALID_BOOK_CATEGORIES } from "@/shared/config/constants";
 import { BookReader } from "./book-reader";
 import { ReadingPage } from "@/features/reading/widgets/reading-page.widget";
 
@@ -79,7 +80,7 @@ export function BookPageClient({ bookId }: { bookId: string }) {
         setIsUserBook(true);
       } else if (regularBookRes.data) {
         const data = regularBookRes.data;
-        const validCategories = ["Drama", "Fantasia", "Ficção", "Romance", "Suspense", "Terror", "Aventura", "Comédia", "Drama", "Ficção Científica", "Fantasia", "Mistério", "Não Ficção", "Poesia", "Conto", "Biografia", "História", "Filosofia", "Autoajuda", "Negócios"];
+        const validCategories = VALID_BOOK_CATEGORIES as readonly string[];
         const category = validCategories.includes(data.category) 
           ? data.category 
           : "Drama";

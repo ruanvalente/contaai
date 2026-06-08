@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { Container } from "@/shared/ui/container.ui";
 import { getPublicBooksAction } from "@/features/public-books/actions/public-books.actions";
 import type { Category } from "@/server/domain/entities/book.entity";
+import type { PageProps } from "@/shared/types/next.types";
 import { ExploreClient } from "./explore-client";
 
 export const metadata: Metadata = {
@@ -10,14 +11,7 @@ export const metadata: Metadata = {
   description: "Descubra todos os livros publicados em nossa plataforma.",
 };
 
-interface ExplorePageProps {
-  searchParams: Promise<{
-    category?: string;
-    page?: string;
-  }>;
-}
-
-export default async function ExplorePage({ searchParams }: ExplorePageProps) {
+export default async function ExplorePage({ searchParams }: PageProps<Record<string, never>, { category?: string; page?: string }>) {
   await connection();
   const { category } = await searchParams;
   const selectedCategory = (category as Category) || "All";

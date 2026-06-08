@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { UserBook } from "@/server/domain/entities/user-book.entity";
 import { Badge } from "@/shared/ui/badge.ui";
 import { Button } from "@/shared/ui/button.ui";
+import { BookCover } from "@/shared/ui/book-cover.ui";
 import { Pencil, Eye, Trash2 } from "lucide-react";
 import { LibraryTab } from "@/features/library/hooks/use-library-tabs";
 
@@ -29,20 +30,14 @@ export function BookCard({ book, tab, isDeleting, onDeleteClick }: BookCardProps
       className="flex gap-4 p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer"
       onClick={navigateToBook}
     >
-      <div
-        className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg shadow flex-shrink-0 flex items-center justify-center p-2 relative overflow-hidden"
-        style={{
-          backgroundColor: book.coverColor,
-          backgroundImage: book.coverUrl ? `url(${book.coverUrl})` : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {!book.coverUrl && (
-          <span className="text-white/90 font-display text-xs text-center line-clamp-4">
-            {book.title}
-          </span>
-        )}
+      <div className="w-20 h-28 sm:w-24 sm:h-32 shrink-0">
+        <BookCover
+          title={book.title}
+          coverUrl={book.coverUrl}
+          coverColor={book.coverColor}
+          size="sm"
+          className="w-full h-full"
+        />
       </div>
       <div className="flex-1 min-w-0">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2">

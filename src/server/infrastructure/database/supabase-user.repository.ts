@@ -1,4 +1,4 @@
-import { IUserRepository } from "@/server/domain/repositories/user.repository";
+import { IUserRepository, UserRole } from "@/server/domain/repositories/user.repository";
 import { User, UpdateUserInput } from "@/server/domain/entities/user.entity";
 import { getSupabaseServerClient } from "@/utils/supabase/server";
 import { mapToUserEntity } from "../mappers/user.mapper";
@@ -9,7 +9,7 @@ export class SupabaseUserRepository implements IUserRepository {
 
     const { data: profile, error } = await supabase
       .from("profiles")
-      .select("*")
+      .select("id, name, avatar_url, bio, created_at, updated_at")
       .eq("id", id)
       .maybeSingle();
 
@@ -53,5 +53,27 @@ export class SupabaseUserRepository implements IUserRepository {
 
   async getByEmail(email: string): Promise<User | null> {
     return null;
+  }
+
+  async getRole(userId: string): Promise<UserRole | null> {
+    const supabase = await getSupabaseServerClient();
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (profile?.role) return profile.role as UserRole;
+
+    const { count } = await supabase
+      .from('user_books')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('status', 'published');
+
+    if (count && count > 0) return 'author';
+
+    return 'reader';
   }
 }

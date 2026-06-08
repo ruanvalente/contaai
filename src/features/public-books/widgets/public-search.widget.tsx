@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/utils/cn";
 import { SearchInput } from "@/shared/ui/search-input.ui";
@@ -79,11 +80,11 @@ export function PublicSearchWidget({
               className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
             >
               <div
-                className="w-10 h-14 rounded flex-shrink-0 flex items-center justify-center text-white text-sm font-bold"
+                className="w-10 h-14 rounded flex-shrink-0 flex items-center justify-center text-white text-sm font-bold relative overflow-hidden"
                 style={{ backgroundColor: book.coverColor }}
               >
                 {book.coverUrl ? (
-                  <img src={book.coverUrl} alt="" className="w-full h-full object-cover rounded" />
+                  <Image src={book.coverUrl} alt="" fill className="object-cover rounded" />
                 ) : (
                   book.title.charAt(0)
                 )}

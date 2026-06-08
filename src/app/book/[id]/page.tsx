@@ -2,13 +2,8 @@ import { Suspense, use } from "react";
 import { BookPageClient } from "./book-page-client";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 import type { Metadata } from "next";
+import type { PageProps } from "@/shared/types/next.types";
 import { getPublicBookByIdAction } from "@/features/public-books/actions/public-books.actions";
-
-type PageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
 
 function BookSchemaLd({ book }: { book: NonNullable<Awaited<ReturnType<typeof getPublicBookByIdAction>>> }) {
   const schema = {
@@ -45,7 +40,7 @@ function BookSchemaLd({ book }: { book: NonNullable<Awaited<ReturnType<typeof ge
   );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<{ id: string }>): Promise<Metadata> {
   const { id } = await params;
   const book = await getPublicBookByIdAction(id);
   
@@ -72,7 +67,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-async function BookContent({ params }: { params: PageProps["params"] }) {
+async function BookContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const book = await getPublicBookByIdAction(id);
 
@@ -84,7 +79,7 @@ async function BookContent({ params }: { params: PageProps["params"] }) {
   );
 }
 
-export default function BookPage(props: PageProps) {
+export default function BookPage(props: PageProps<{ id: string }>) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <BookContent params={props.params} />

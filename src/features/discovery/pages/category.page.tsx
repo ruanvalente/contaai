@@ -1,17 +1,12 @@
 import { Suspense } from "react";
 import { getBooksPaginated, getCategories } from "@/features/book-dashboard/data/server-books";
 import { CategoryContent } from "@/features/book-dashboard/widgets/category-content.widget";
+import type { PagePropsWithSearch } from "@/shared/types/next.types";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
-type PageProps = {
-  searchParams: Promise<{
-    page?: string;
-    category?: string;
-    search?: string;
-  }>;
-}
+type CategoryPageProps = PagePropsWithSearch<{ page?: string; category?: string; search?: string }>;
 
-async function CategoryData({ searchParams }: PageProps) {
+async function CategoryData({ searchParams }: CategoryPageProps) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
   const category = params.category || undefined;
@@ -35,7 +30,7 @@ async function CategoryData({ searchParams }: PageProps) {
   );
 }
 
-export default async function CategoryPage({ searchParams }: PageProps) {
+export default async function CategoryPage({ searchParams }: CategoryPageProps) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <CategoryData searchParams={searchParams} />

@@ -9,7 +9,6 @@ const SessionLibraryWidget = dynamic(
       '@/features/session-library/widgets/session-library.widget'
     ).then((mod) => mod.SessionLibraryWidget),
   {
-    ssr: false,
     loading: () => <PageSkeleton />,
   }
 )

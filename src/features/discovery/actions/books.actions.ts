@@ -1,42 +1,51 @@
 'use server'
 
+import { cache } from "react";
 import { GetBooksUseCase } from "@/server/domain/usecases/get-books.usecase";
 import { SupabaseBookRepository } from "@/server/infrastructure/database/supabase-book.repository";
+import { SupabaseUserBookRepository } from "@/server/infrastructure/database/supabase-user-book.repository";
 import { Book, BookCategory } from "@/server/domain/entities/book.entity";
-import { getSupabaseAdmin } from "@/lib/supabase/admin-client";
-import { mapToBookFromUserBook } from "@/server/infrastructure/mappers/book.mapper";
 
 const bookRepository = new SupabaseBookRepository();
+const userBookRepository = new SupabaseUserBookRepository();
 const getBooksUseCase = new GetBooksUseCase(bookRepository);
 
-export async function getBooksAction(options?: {
+export const getBooksAction = cache(async (options?: {
   category?: BookCategory;
   search?: string;
-}): Promise<Book[]> {
+}): Promise<Book[]> => {
   const books = await getBooksUseCase.execute(options || {});
-  
-  const supabase = await getSupabaseAdmin();
-  const { data: userBooks } = await supabase
-    .from("user_books")
-    .select("id, title, author, cover_url, cover_color, category, word_count, created_at, published_at")
-    .eq("status", "published");
 
-  const formattedUserBooks = (userBooks || []).map(mapToBookFromUserBook);
-  
+  const userBooks = await userBookRepository.getPublishedBooks();
+  const formattedUserBooks = userBooks.map((ub) => ({
+    id: ub.id,
+    title: ub.title,
+    author: ub.author,
+    coverUrl: ub.coverUrl,
+    coverColor: ub.coverColor,
+    description: "",
+    category: ub.category,
+    pages: Math.ceil((ub.wordCount || 0) / 500),
+    rating: 0,
+    ratingCount: 0,
+    reviewCount: 0,
+    createdAt: ub.createdAt,
+  }));
+
   return [...books, ...formattedUserBooks];
-}
+});
 
-export async function getBookByIdAction(id: string): Promise<Book | null> {
+export const getBookByIdAction = cache(async (id: string): Promise<Book | null> => {
   return bookRepository.getById(id);
-}
+});
 
-export async function getFeaturedBooksAction(): Promise<Book[]> {
+export const getFeaturedBooksAction = cache(async (): Promise<Book[]> => {
   return bookRepository.getFeatured();
-}
+});
 
-export async function searchBooksAction(query: string): Promise<Book[]> {
+export const searchBooksAction = cache(async (query: string): Promise<Book[]> => {
   if (!query || query.trim().length === 0) {
     return [];
   }
   return bookRepository.search(query);
-}
+});

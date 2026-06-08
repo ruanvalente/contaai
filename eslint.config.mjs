@@ -13,6 +13,18 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "no-restricted-imports": ["error", {
+        paths: [
+          { name: "@/shared/ui", message: "Barrel file removido. Importe o arquivo direto (ex: @/shared/ui/button.ui)" },
+          { name: "@/shared/widgets", message: "Barrel file removido. Importe o arquivo direto (ex: @/shared/widgets/book-card.widget)" },
+        ],
+      }],
+      "no-console": ["warn", { allow: ["error", "warn"] }],
+      "@typescript-eslint/no-explicit-any": "error",
+    },
+  },
 ]);
 
 export default eslintConfig;

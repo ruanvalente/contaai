@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { useAuthStore } from '@/shared/storage/use-auth-store'
 import { getAnonymousSessionId } from '@/shared/lib/anonymous-session'
 import { migrateSessionDataAction } from '@/features/auth/actions/migrate-session-data.action'
@@ -10,9 +11,21 @@ import { clearCache } from '../lib/session-cache'
 import { CheckCircle, Loader2, X, AlertCircle } from 'lucide-react'
 
 export function SessionSyncBanner() {
-  const { user, isInitialized } = useAuthStore()
+  const { user, isInitialized } = useAuthStore(
+    useShallow((state) => ({ user: state.user, isInitialized: state.isInitialized })),
+  )
   const { isSyncing, lastSyncResult, syncError, setSyncing, setSyncResult, setSyncError, reset } =
-    useSessionSyncStore()
+    useSessionSyncStore(
+      useShallow((state) => ({
+        isSyncing: state.isSyncing,
+        lastSyncResult: state.lastSyncResult,
+        syncError: state.syncError,
+        setSyncing: state.setSyncing,
+        setSyncResult: state.setSyncResult,
+        setSyncError: state.setSyncError,
+        reset: state.reset,
+      })),
+    )
   const [dismissed, setDismissed] = useState(false)
   const [hasSynced, setHasSynced] = useState(false)
 

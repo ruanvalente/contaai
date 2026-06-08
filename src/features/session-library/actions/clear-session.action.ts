@@ -1,6 +1,10 @@
 'use server'
 
-import { getSupabaseServerClient } from '@/utils/supabase/server'
+import { SupabaseFavoriteRepository } from '@/server/infrastructure/database/supabase-favorite.repository'
+import { SupabaseAuthorFollowRepository } from '@/server/infrastructure/database/supabase-author-follow.repository'
+
+const favoriteRepository = new SupabaseFavoriteRepository()
+const authorFollowRepository = new SupabaseAuthorFollowRepository()
 
 export async function clearSessionDataAction(
   sessionId: string
@@ -10,25 +14,13 @@ export async function clearSessionDataAction(
       return { success: false, error: 'Session ID is required' }
     }
 
-    const supabase = await getSupabaseServerClient()
-
-    const { error: favError } = await supabase
-      .from('user_favorites')
-      .delete()
-      .eq('session_id', sessionId)
-      .is('user_id', null)
-
-    if (favError) {
+    const favOk = await favoriteRepository.clearSession(sessionId)
+    if (!favOk) {
       return { success: false, error: 'Failed to clear favorites' }
     }
 
-    const { error: followError } = await supabase
-      .from('author_follow')
-      .delete()
-      .eq('session_id', sessionId)
-      .is('user_id', null)
-
-    if (followError) {
+    const followOk = await authorFollowRepository.clearSession(sessionId)
+    if (!followOk) {
       return { success: false, error: 'Failed to clear followed authors' }
     }
 

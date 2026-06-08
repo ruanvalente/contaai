@@ -9,8 +9,8 @@ type UserBookRow = {
   author: string;
   cover_url: string | null;
   cover_color: string;
-  content: string | null;
-  content_url: string | null;
+  content?: string | null;
+  content_url?: string | null;
   status: "draft" | "published";
   reading_status: "none" | "reading" | "completed";
   reading_progress: number;
@@ -48,7 +48,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     let query = supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("user_id", userId);
 
     switch (filter) {
@@ -78,7 +78,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, content, content_url, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("id", id)
       .single();
 
@@ -182,7 +182,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("user_id", userId)
       .eq("status", status)
       .order("updated_at", { ascending: false });
@@ -200,7 +200,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("user_id", userId)
       .eq("reading_status", "reading")
       .order("updated_at", { ascending: false });
@@ -218,7 +218,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("user_id", userId)
       .eq("reading_status", "completed")
       .order("updated_at", { ascending: false });
@@ -236,7 +236,7 @@ export class SupabaseUserBookRepository implements IUserBookRepository {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select("*")
+      .select("id, user_id, title, author, cover_url, cover_color, status, reading_status, reading_progress, category, word_count, created_at, updated_at, published_at")
       .eq("status", "published")
       .order("published_at", { ascending: false });
 

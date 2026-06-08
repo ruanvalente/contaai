@@ -1,5 +1,6 @@
 "use server";
 
+import { cache } from "react";
 import type { User } from "@/server/domain/entities/user.entity";
 import { getCurrentUserIdOptional } from "@/utils/auth/get-current-user.server";
 import { SupabaseUserRepository } from "@/server/infrastructure/database";
@@ -9,7 +10,7 @@ import { updateProfileSchema } from "@/features/profile/schemas/profile.schema";
 
 const userRepository = new SupabaseUserRepository();
 
-export async function getUserProfile(): Promise<User | null> {
+export const getUserProfile = cache(async (): Promise<User | null> => {
   try {
     const userId = await getCurrentUserIdOptional();
     if (!userId) {
@@ -20,7 +21,7 @@ export async function getUserProfile(): Promise<User | null> {
     console.error("Error in getUserProfile:", err);
     return null;
   }
-}
+});
 
 export async function updateUserProfile(
   data: Record<string, unknown>

@@ -23,51 +23,47 @@ type UseFavoritesReturn = {
 };
 
 export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions = {}): UseFavoritesReturn {
-  const favoritedIds = useFavoritesStore((state) => state.favoritedIds);
-  const isLoading = useFavoritesStore((state) => state.isLoading);
-  const isLoaded = useFavoritesStore((state) => state.isLoaded);
-  const addFavoriteToStore = useFavoritesStore((state) => state.addFavorite);
-  const removeFavoriteFromStore = useFavoritesStore((state) => state.removeFavorite);
-  const isFavoritedFn = useFavoritesStore((state) => state.isFavorited);
-  const setInitialFavorites = useFavoritesStore((state) => state.setInitialFavorites);
-  const setLoading = useFavoritesStore((state) => state.setLoading);
+  const store = useFavoritesStore();
+  const favoritedIds = Array.from(store.favoritedIds);
 
   const initialFavoritedIdsRef = useRef(initialFavoritedIds);
-  
+
   useEffect(() => {
     initialFavoritedIdsRef.current = initialFavoritedIds;
   }, [initialFavoritedIds]);
 
   useEffect(() => {
-    if (!isLoaded && initialFavoritedIdsRef.current.length > 0) {
-      setInitialFavorites(initialFavoritedIdsRef.current);
+    if (!store.isLoaded && initialFavoritedIdsRef.current.length > 0) {
+      store.setInitialFavorites(initialFavoritedIdsRef.current);
     }
-  }, [isLoaded, setInitialFavorites]);
+  }, [store.isLoaded, store.setInitialFavorites]);
 
   useEffect(() => {
     async function loadFavorites() {
-      if (isLoaded) return;
-      
-      setLoading(true);
+      if (store.isLoaded) return;
+
+      store.setLoading(true);
       try {
         const sessionId = getAnonymousSessionId();
         const favorites = await getUserFavorites(sessionId);
         const ids = favorites.map((f) => f.bookId);
-        setInitialFavorites(ids);
+        store.setInitialFavorites(ids);
       } finally {
-        setLoading(false);
+        store.setLoading(false);
       }
     }
     loadFavorites();
-  }, [isLoaded, setInitialFavorites, setLoading]);
+  }, [store]);
 
   const addFavorite = useCallback(async (book: Book) => {
-    setLoading(true);
+    const prevIds = store.favoritedIds; // snapshot for rollback
+
+    store.addFavorite(book.id);
+
     try {
       const sessionId = getAnonymousSessionId();
       const result = await addToFavorites(book.id, sessionId);
       if (result.ok) {
-        addFavoriteToStore(book.id);
         const user = useAuthStore.getState().user;
         if (user) {
           toast.success(`"${book.title}" adicionado aos favoritos`);
@@ -75,52 +71,51 @@ export function useFavorites({ initialFavoritedIds = [] }: UseFavoritesOptions =
           toast.success(`"${book.title}" favoritado! Faça login para acessar em outros dispositivos.`);
         }
       } else {
+        store.setInitialFavorites(Array.from(prevIds));
         toast.error(result.error.message || "Erro ao adicionar aos favoritos");
       }
     } catch {
+      store.setInitialFavorites(Array.from(prevIds));
       toast.error("Erro ao adicionar aos favoritos");
-    } finally {
-      setLoading(false);
     }
-  }, [addFavoriteToStore, setLoading]);
+  }, [store]);
 
   const removeFavorite = useCallback(async (bookId: string) => {
-    setLoading(true);
+    const prevIds = store.favoritedIds;
+    store.removeFavorite(bookId);
+
     try {
       const sessionId = getAnonymousSessionId();
       const result = await removeFromFavorites(bookId, sessionId);
       if (result.ok) {
-        removeFavoriteFromStore(bookId);
         toast.success("Removido dos favoritos");
       } else {
+        store.setInitialFavorites(Array.from(prevIds));
         toast.error(result.error.message || "Erro ao remover dos favoritos");
       }
     } catch {
+      store.setInitialFavorites(Array.from(prevIds));
       toast.error("Erro ao remover dos favoritos");
-    } finally {
-      setLoading(false);
     }
-  }, [removeFavoriteFromStore, setLoading]);
+  }, [store]);
 
   const toggleFavorite = useCallback(async (book: Book) => {
-    if (isFavoritedFn(book.id)) {
+    if (store.isFavorited(book.id)) {
       await removeFavorite(book.id);
     } else {
       await addFavorite(book);
     }
-  }, [isFavoritedFn, addFavorite, removeFavorite]);
+  }, [store, addFavorite, removeFavorite]);
 
   const isFavorited = useCallback(
-    (bookId: string) => {
-      return isFavoritedFn(bookId);
-    },
-    [isFavoritedFn]
+    (bookId: string) => store.isFavorited(bookId),
+    [store]
   );
 
   return {
-    favoritedIds: Array.from(favoritedIds),
-    isLoading,
-    isLoaded,
+    favoritedIds,
+    isLoading: store.isLoading,
+    isLoaded: store.isLoaded,
     addFavorite,
     removeFavorite,
     toggleFavorite,

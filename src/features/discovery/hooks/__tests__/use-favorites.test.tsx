@@ -155,7 +155,7 @@ describe('useFavorites', () => {
     expect(mockAddFavoriteToStore).toHaveBeenCalledWith('book-1')
   })
 
-  it('addFavorite does not add to store when action fails', async () => {
+  it('addFavorite rolls back optimistic update when action fails', async () => {
     mockAddToFavoritesAction.mockResolvedValue({ ok: false, error: { code: 'ERROR', message: 'Error' } })
 
     const { result } = renderHook(() => useFavorites())
@@ -164,7 +164,8 @@ describe('useFavorites', () => {
       await result.current.addFavorite(mockBook as any)
     })
 
-    expect(mockAddFavoriteToStore).not.toHaveBeenCalled()
+    expect(mockAddFavoriteToStore).toHaveBeenCalledWith('book-1')
+    expect(mockSetInitialFavorites).toHaveBeenLastCalledWith([])
   })
 
   it('removeFavorite removes book from favorites', async () => {

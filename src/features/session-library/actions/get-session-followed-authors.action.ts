@@ -1,52 +1,31 @@
 'use server'
 
 import { getCurrentUserIdOptional } from '@/utils/auth/get-current-user.server'
+import { SupabaseAuthorFollowRepository } from '@/server/infrastructure/database/supabase-author-follow.repository'
 import { getSupabaseServerClient } from '@/utils/supabase/server'
 import type { SessionFollowedAuthor } from '../types/session-library.types'
+
+const authorFollowRepository = new SupabaseAuthorFollowRepository()
 
 export async function getSessionFollowedAuthorsAction(
   sessionId?: string
 ): Promise<SessionFollowedAuthor[]> {
   try {
     const userId = await getCurrentUserIdOptional()
-    const supabase = await getSupabaseServerClient()
+    const authors = await authorFollowRepository.getFollowedAuthors(userId, sessionId)
 
-    let authorNames: string[] = []
+    if (authors.length === 0) return []
 
-    if (userId) {
-      const { data, error } = await supabase
-        .from('author_follow')
-        .select('author_name, created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-
-      if (error) return []
-      authorNames = data?.map((r) => r.author_name) || []
-    } else if (sessionId) {
-      const { data, error } = await supabase
-        .from('author_follow')
-        .select('author_name, created_at')
-        .eq('session_id', sessionId)
-        .is('user_id', null)
-        .order('created_at', { ascending: false })
-
-      if (error) return []
-      authorNames = data?.map((r) => r.author_name) || []
-    }
-
-    if (authorNames.length === 0) return []
-
-    return enrichAuthors(supabase, authorNames)
+    return enrichAuthors(authors.map((a) => a.authorName))
   } catch {
     return []
   }
 }
 
 async function enrichAuthors(
-  supabase: any,
   authorNames: string[]
 ): Promise<SessionFollowedAuthor[]> {
-  // Fetch profile data for all authors in one query
+  const supabase = await getSupabaseServerClient()
   const lowerNames = authorNames.map((n) => n.toLowerCase())
 
   const { data: profiles } = await supabase
@@ -65,7 +44,6 @@ async function enrichAuthors(
     })
   }
 
-  // Fetch book counts for all authors in one query
   const { data: bookCounts } = await supabase
     .from('user_books')
     .select('author')

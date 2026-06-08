@@ -12,6 +12,7 @@ const PUBLIC_PATHS = [
   "/privacy",
   "/api/health",
   "/book/",
+  "/my-session",
 ];
 
 const AUTH_ONLY_PATHS = ["/login", "/register"];

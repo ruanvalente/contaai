@@ -30,7 +30,7 @@ export class SupabaseReadingRepository implements IReadingRepository {
 
     const { data, error } = await supabase
       .from("book_reading_progress")
-      .select("*")
+      .select("id, user_id, book_id, current_position, progress_percent, started_at, finished_at")
       .eq("user_id", userId)
       .eq("book_id", bookId)
       .maybeSingle();
@@ -74,7 +74,7 @@ export class SupabaseReadingRepository implements IReadingRepository {
 
     const { data, error } = await supabase
       .from("book_reading_progress")
-      .select("*")
+      .select("id, user_id, book_id, current_position, progress_percent, started_at, finished_at")
       .eq("user_id", userId)
       .order("started_at", { ascending: false });
 

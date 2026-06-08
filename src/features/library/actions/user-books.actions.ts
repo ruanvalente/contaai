@@ -1,5 +1,6 @@
 'use server'
 
+import { cache } from "react";
 import { UserBook } from "@/server/domain/entities/user-book.entity";
 
 export type UserBookFilter = "my-stories" | "reading" | "completed";
@@ -8,9 +9,9 @@ import { SupabaseUserBookRepository } from "@/server/infrastructure/database";
 
 const userBookRepository = new SupabaseUserBookRepository();
 
-export async function getUserBooksAction(
+export const getUserBooksAction = cache(async (
   type: UserBookFilter
-): Promise<UserBook[]> {
+): Promise<UserBook[]> => {
   try {
     const userId = await getCurrentUserIdOptional();
 
@@ -23,13 +24,13 @@ export async function getUserBooksAction(
     console.error("Error in getUserBooksAction:", err);
     return [];
   }
-}
+});
 
-export async function getUserBooksByIdAction(userId: string): Promise<UserBook[]> {
+export const getUserBooksByIdAction = cache(async (userId: string): Promise<UserBook[]> => {
   try {
     return userBookRepository.getByUserId(userId, "my-stories");
   } catch (err) {
     console.error("Error in getUserBooksByIdAction:", err);
     return [];
   }
-}
+});

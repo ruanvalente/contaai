@@ -1,35 +1,7 @@
 "use server"
 
 import { getCurrentUserId } from "@/utils/auth/get-current-user.server"
-
-async function getSupabaseServerClient() {
-  const { createServerClient } = await import("@supabase/ssr")
-  const { cookies } = await import("next/headers")
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase configuration missing")
-  }
-
-  const cookieStore = await cookies()
-
-  return createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        } catch {}
-      },
-    },
-  })
-}
+import { getSupabaseServerClient } from "@/utils/supabase/server"
 
 export type MigrationResult = {
   success: boolean

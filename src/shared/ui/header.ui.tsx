@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useSidebarStore } from "@/shared/store/sidebar.store";
 import { useAuthStore } from "@/shared/storage/use-auth-store";
 import { useSearchStore } from "@/shared/store/search.store";
@@ -25,7 +26,13 @@ const USER_DROPDOWN_ID = "user-dropdown-menu";
 
 export function Header() {
   const toggle = useSidebarStore((state) => state.toggle);
-  const { user, initialize, clearAuth } = useAuthStore();
+  const { user, initialize, clearAuth } = useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      initialize: state.initialize,
+      clearAuth: state.clearAuth,
+    })),
+  );
   const {
     query,
     setQuery,
@@ -36,7 +43,19 @@ export function Header() {
     getFromCache,
     addToCache,
     clearResults,
-  } = useSearchStore();
+  } = useSearchStore(
+    useShallow((state) => ({
+      query: state.query,
+      setQuery: state.setQuery,
+      results: state.results,
+      setResults: state.setResults,
+      isSearching: state.isSearching,
+      setIsSearching: state.setIsSearching,
+      getFromCache: state.getFromCache,
+      addToCache: state.addToCache,
+      clearResults: state.clearResults,
+    })),
+  );
   const router = useRouter();
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

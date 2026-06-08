@@ -1,16 +1,12 @@
 import { Suspense } from "react";
 import { getBooksPaginated } from "@/features/book-dashboard/data/server-books";
 import { DownloadsContent } from "@/features/library/widgets/downloads-content.widget";
+import type { PagePropsWithSearch } from "@/shared/types/next.types";
 import { PageSkeleton } from "@/shared/ui/skeleton.ui";
 
-type PageProps = {
-  searchParams: Promise<{
-    page?: string;
-    search?: string;
-  }>;
-}
+type DownloadsPageProps = PagePropsWithSearch<{ page?: string; search?: string }>;
 
-async function DownloadsData({ searchParams }: PageProps) {
+async function DownloadsData({ searchParams }: DownloadsPageProps) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
 
@@ -24,7 +20,7 @@ async function DownloadsData({ searchParams }: PageProps) {
   );
 }
 
-export default async function DownloadsPage({ searchParams }: PageProps) {
+export default async function DownloadsPage({ searchParams }: DownloadsPageProps) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <DownloadsData searchParams={searchParams} />

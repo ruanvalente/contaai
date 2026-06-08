@@ -1197,20 +1197,20 @@ export async function GET() {
 - [x] Validação Zod aplicada em `signInWithEmail`, `signUpWithEmail`, `updateUserProfile`
 - [x] `ErrorBoundary` criado e aplicado no `dashboard-shell-client.tsx` (Header + children)
 
-### Fase 3 — Performance
+### Fase 3 — Performance ✅
 
-- [ ] `React.cache()` em queries de servidor
-- [ ] `useShallow()` em todos os seletores Zustand
-- [ ] Barrel files substituídos por imports diretos
-- [ ] `<Image>` do Next.js em capas de livros
-- [ ] Zero `SELECT *` nos repositories
+- [x] `React.cache()` em queries de servidor
+- [x] `useShallow()` em todos os seletores Zustand
+- [x] Barrel files substituídos por imports diretos
+- [x] `<Image>` do Next.js em capas de livros
+- [x] Zero `SELECT *` nos repositories
 
-### Fase 4 — Arquitetura
+### Fase 4 — Arquitetura ✅
 
-- [ ] Actions chamam repositories (sem Supabase direto)
-- [ ] `src/shared/types/next.types.ts` com `PageProps` centralizado
-- [ ] Constante de categorias unificada
-- [ ] Optimistic updates nos favoritos
+- [x] Actions chamam repositories (sem Supabase direto)
+- [x] `src/shared/types/next.types.ts` com `PageProps` centralizado
+- [x] Constante de categorias unificada
+- [x] Optimistic updates nos favoritos
 
 ### Fase 5 — Type Safety
 
